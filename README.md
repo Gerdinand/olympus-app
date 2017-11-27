@@ -1,7 +1,4 @@
-# hora
-wallet
+# Hora
+Hora, Olympus Wallet.
 
-## Run in IOS Simulator
-```
-react-native run-ios
-```
+🔨UNDER CONSTRUCTION!😊
