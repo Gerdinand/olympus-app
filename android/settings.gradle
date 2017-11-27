@@ -1,0 +1,7 @@
+rootProject.name = 'Hora'
+include ':react-native-fast-crypto'
+project(':react-native-fast-crypto').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fast-crypto/android')
+include ':react-native-randombytes'
+project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-randombytes/android')
+
+include ':app'
