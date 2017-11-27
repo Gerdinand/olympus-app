@@ -26,6 +26,7 @@ export default class Hora extends Component {
         <TabBarIOS.Item
           selected = {this.state.selectedTab === 'wallet'}
           title = 'Wallet'
+          systemIcon = 'featured'
           onPress = {() => {
             this.setState({
               selectedTab: 'wallet',
@@ -36,6 +37,7 @@ export default class Hora extends Component {
         <TabBarIOS.Item
           selected = {this.state.selectedTab === 'me'}
           title = 'Me'
+          systemIcon = 'contacts'
           onPress = {() => {
             this.setState({
               selectedTab: 'me',
