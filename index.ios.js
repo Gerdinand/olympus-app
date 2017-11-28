@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView
+  ScrollView,
+  NavigatorIOS
 } from 'react-native';
 var Wallet = require('./components/views/wallet.ios');
 var Me = require('./components/views/me.ios');
@@ -32,7 +33,13 @@ export default class Hora extends Component {
               selectedTab: 'wallet',
             });
           }}>
-          <Wallet/>
+          <NavigatorIOS
+            initialRoute={{
+              component: Wallet,
+              title: 'Wallet',
+            }}
+            style={{flex: 1}}
+          />
         </TabBarIOS.Item>
         <TabBarIOS.Item
           selected = {this.state.selectedTab === 'me'}
@@ -43,7 +50,13 @@ export default class Hora extends Component {
               selectedTab: 'me',
             });
           }}>
-        <Me/>
+          <NavigatorIOS
+            initialRoute={{
+              component: Me,
+              title: 'Me',
+            }}
+            style={{flex: 1}}
+          />
         </TabBarIOS.Item>
       </TabBarIOS>
     );
