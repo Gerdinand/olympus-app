@@ -2,23 +2,38 @@
 
 import React, { Component } from 'react';
 import {
-  StyleSheet,
+  FlatList,
   View,
   Text,
-  Button
 } from 'react-native';
+import {
+  List,
+  ListItem
+} from 'react-native-elements';
 
 class NewWallet extends Component {
+  constructor() {
+    super();
+    this.state = {
+      data: [],
+    };
+  }
   static navigationOptions = {
     title: 'Create new wallet',
   };
   render() {
     return (
-      <View>
-        <Text>
-          Create New Wallet!
-        </Text>
-      </View>
+      <List>
+        <FlatList
+          data={ this.state.data }
+          renderItem={({ item }) => {
+            <ListItem
+              title={'!'}
+              subtitle={'???'}
+            />
+          }}
+        />
+      </List>
     );
   }
 }
