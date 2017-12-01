@@ -7,22 +7,24 @@ import {
   Text,
   Button
 } from 'react-native';
+import { StackNavigator } from 'react-navigation';
 
 var styles = StyleSheet.create({
   description: {
     fontSize: 20,
     textAlign: 'center',
-    color: '#FFFFFF'
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#123456',
   }
 });
 
 class Welcome extends Component {
+  static navigationOptions = {
+    title: 'Welcome',
+  };
   render() {
     return (
       <View style={styles.container}>
@@ -42,4 +44,6 @@ class Welcome extends Component {
   }
 }
 
-module.exports = Welcome;
+module.exports = StackNavigator({
+  Home: { screen: Welcome },
+});
