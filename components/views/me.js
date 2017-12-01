@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 import {
-    StyleSheet,
-    View,
-    Text
+  StyleSheet,
+  View,
+  Text
 } from 'react-native';
 
 var styles = StyleSheet.create({
