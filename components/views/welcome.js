@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 var NewWallet = require('./create-new-wallet');
+var ImportWallet = require('./import-exist-wallet');
 
 var styles = StyleSheet.create({
   description: {
@@ -38,7 +39,7 @@ class Welcome extends Component {
           onPress={() => navigate('NewWallet')}
         />
         <Button
-          title="Import exsit wallet"
+          title="Import exist wallet"
           onPress={() => {}}
         />
       </View>
@@ -49,4 +50,5 @@ class Welcome extends Component {
 module.exports = StackNavigator({
   Home: { screen: Welcome },
   NewWallet: { screen: NewWallet },
+  ImportWallet: { screen: ImportWallet },
 });
