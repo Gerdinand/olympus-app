@@ -7,33 +7,31 @@ import {
   Text,
 } from 'react-native';
 import {
-  List,
-  ListItem
+  FormLabel,
+  FormInput,
+  Button
 } from 'react-native-elements';
 
 class NewWallet extends Component {
-  constructor() {
-    super();
-    this.state = {
-      data: [],
-    };
-  }
   static navigationOptions = {
     title: 'Create new wallet',
   };
   render() {
     return (
-      <List>
-        <FlatList
-          data={ this.state.data }
-          renderItem={({ item }) => {
-            <ListItem
-              title={'!'}
-              subtitle={'???'}
-            />
-          }}
-        />
-      </List>
+      <View>
+        <FormLabel>Wallet Name</FormLabel>
+        <FormInput/>
+        <FormLabel>Password</FormLabel>
+        <FormInput/>
+        <FormLabel>Repeat Password</FormLabel>
+        <FormInput/>
+        <View style={{padding: 10}}>
+          <Button
+            raised
+            title={"Create New Wallet"}
+          />
+        </View>
+      </View>
     );
   }
 }
