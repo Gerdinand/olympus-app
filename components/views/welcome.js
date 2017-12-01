@@ -40,7 +40,7 @@ class Welcome extends Component {
         />
         <Button
           title="Import exist wallet"
-          onPress={() => {}}
+          onPress={() => navigate('ImportWallet')}
         />
       </View>
     );
