@@ -36,7 +36,8 @@ class Welcome extends Component {
           Welcome to Olympus Wallet!
         </Text>
         <Button
-          title="Create new wallet"
+          raised
+          title={"Create new wallet"}
           onPress={() => navigate('NewWallet')}
         />
         <Button
