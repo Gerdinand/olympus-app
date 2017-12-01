@@ -11,6 +11,7 @@ import { StackNavigator } from 'react-navigation';
 var NewWallet = require('./create-new-wallet');
 var ImportWallet = require('./import-exist-wallet');
 
+// Style
 var styles = StyleSheet.create({
   description: {
     fontSize: 20,
@@ -35,7 +36,8 @@ class Welcome extends Component {
           Welcome to Olympus Wallet!
         </Text>
         <Button
-          title="Create new wallet"
+          raised
+          title={"Create new wallet"}
           onPress={() => navigate('NewWallet')}
         />
         <Button
