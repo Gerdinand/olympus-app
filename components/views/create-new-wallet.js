@@ -2,9 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  FlatList,
   View,
-  Text,
 } from 'react-native';
 import {
   FormLabel,
@@ -25,7 +23,9 @@ class NewWallet extends Component {
         <FormInput/>
         <FormLabel>Repeat Password</FormLabel>
         <FormInput/>
-        <View style={{padding: 10}}>
+        <View style={{
+          padding: 10,
+        }}>
           <Button
             raised
             title={"Create New Wallet"}
