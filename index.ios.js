@@ -10,9 +10,9 @@ import {
   ScrollView,
   NavigatorIOS
 } from 'react-native';
-var Welcome = require('./components/views/welcome.ios');
-var Wallet = require('./components/views/wallet.ios');
-var Me = require('./components/views/me.ios');
+var Welcome = require('./components/views/welcome');
+var Wallet = require('./components/views/wallet');
+var Me = require('./components/views/me');
 
 export default class Hora extends Component {
   constructor(props) {

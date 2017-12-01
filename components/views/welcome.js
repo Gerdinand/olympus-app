@@ -8,6 +8,7 @@ import {
   Button
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+var NewWallet = require('./create-new-wallet');
 
 var styles = StyleSheet.create({
   description: {
