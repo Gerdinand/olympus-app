@@ -27,6 +27,7 @@ class Welcome extends Component {
     title: 'Welcome',
   };
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <Text style={styles.description}>
@@ -34,7 +35,7 @@ class Welcome extends Component {
         </Text>
         <Button
           title="Create new wallet"
-          onPress={() => {}}
+          onPress={() => navigate('NewWallet')}
         />
         <Button
           title="Import exsit wallet"
@@ -47,4 +48,5 @@ class Welcome extends Component {
 
 module.exports = StackNavigator({
   Home: { screen: Welcome },
+  NewWallet: { screen: NewWallet },
 });
