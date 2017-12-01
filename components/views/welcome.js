@@ -25,6 +25,9 @@ var styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'stretch',
   },
+  titleContainer: {
+    flex: 2
+  },
   title: {
     color: '#4A4A4A',
     fontSize: 30,
@@ -38,6 +41,7 @@ var styles = StyleSheet.create({
   },
   button1: {
     paddingTop: 15,
+    backgroundColor: '#5589FF',
   },
   button2: {
     marginTop: 15,
@@ -54,7 +58,7 @@ class Welcome extends Component {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
-        <View style={{flex: 2}}>
+        <View style={styles.titleContainer}>
           <Text style={styles.title}>
             Welcome to Olympus
           </Text>
@@ -70,6 +74,7 @@ class Welcome extends Component {
         <Button buttonStyle={styles.button2}
           title="Import exist wallet"
           onPress={() => navigate('ImportWallet')}
+          color={'#4A4A4A'}
         />
       </View>
     );
