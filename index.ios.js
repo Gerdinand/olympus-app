@@ -23,7 +23,7 @@ export default class Hora extends Component {
   }
 
   render() {
-    if (1) {
+    if (0) {
       return (<Welcome/>);
     } else {
       return (
