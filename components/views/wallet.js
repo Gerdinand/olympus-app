@@ -11,6 +11,7 @@ import {
   List,
   ListItem
 } from 'react-native-elements';
+var WalletHeader = require('../ui-elements/wallet-header');
 
 var styles = StyleSheet.create({
   description: {
@@ -51,21 +52,22 @@ class Wallet extends Component {
   render() {
     return (
       <ScrollView>
-      <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
-        {
-          list.map((l, i) => (
-            <ListItem
-              roundAvatar
-              hideChevron={true}
-              avatar={{uri: l.avatar}}
-              key={i}
-              title={l.symbol.toUpperCase()}
-              subtitle={l.name}
-              rightTitle={l.amount.toString()}
-            />
-          ))
-        }
-      </List>
+        <WalletHeader/>
+        <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
+          {
+            list.map((l, i) => (
+              <ListItem
+                roundAvatar
+                hideChevron={true}
+                avatar={{uri: l.avatar}}
+                key={i}
+                title={l.symbol.toUpperCase()}
+                subtitle={l.name}
+                rightTitle={l.amount.toString()}
+              />
+            ))
+          }
+        </List>
       </ScrollView>
     );
   }
