@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Text
+  Text,
+  ScrollView
 } from 'react-native';
 import {
   List,
@@ -49,7 +50,8 @@ const list = [
 class Wallet extends Component {
   render() {
     return (
-      <List style={{flex: 1}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
+      <ScrollView>
+      <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
         {
           list.map((l, i) => (
             <ListItem
@@ -64,11 +66,7 @@ class Wallet extends Component {
           ))
         }
       </List>
-      // <View style={styles.container}>
-      //   <Text style={styles.description}>
-      //     Welcome to Olympus Wallet!
-      //   </Text>
-      // </View>
+      </ScrollView>
     );
   }
 }
