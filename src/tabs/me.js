@@ -11,11 +11,13 @@ import {
   List,
   ListItem
 } from 'react-native-elements';
+
 import { StackNavigator } from 'react-navigation';
-import WalletView from '../views/wallet';
+
+import MeView from '../views/me';
 
 const MeTabView = ({navigation}) => (
-  <WalletView banner="Me" navigation={navigation}/>
+  <MeView banner="Me" navigation={navigation}/>
 );
 
 const MeTab = StackNavigator({
