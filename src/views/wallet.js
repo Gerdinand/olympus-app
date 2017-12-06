@@ -64,6 +64,7 @@ class WalletView extends Component {
                 title={l.symbol.toUpperCase()}
                 subtitle={l.name}
                 rightTitle={l.amount.toString()}
+                rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
               />
             ))
           }
