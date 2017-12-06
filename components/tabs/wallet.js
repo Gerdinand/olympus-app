@@ -11,18 +11,23 @@ import {
   List,
   ListItem
 } from 'react-native-elements';
+
 import { StackNavigator } from 'react-navigation';
-import WalletTabVew from '../views/wallet';
+
+import WalletHome from '../views/wallet';
+
+const WalletTabView = ({navigation}) => (
+  <WalletHome banner="Wallet" navigation={navigation}/>
+);
 
 const WalletTab = StackNavigator({
   Home: {
-    screen: ListsTabView,
+    screen: WalletTabView,
     path: '/',
     navigationOptions: () => ({
-      title: 'Lists',
+      title: 'Wallet',
     }),
   }
-  },
 });
 
 export default WalletTab;
