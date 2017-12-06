@@ -50,7 +50,7 @@ var styles = StyleSheet.create({
 class WalletHeader extends Component {
   render() {
     return (
-      <View>
+      <View style={{backgroundColor: 'transparent'}}>
         <View style={styles.container}>
           <Text style={styles.name}>NeoWallet</Text>
           <Text style={styles.address}>0x7d401a85103a43a41e74a8E2314909333C8a4099</Text>
