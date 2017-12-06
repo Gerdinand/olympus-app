@@ -11,9 +11,21 @@ import {
   List,
   ListItem
 } from 'react-native-elements';
+import { StackNavigator } from 'react-navigation';
+import MeHome from '../views/wallet';
 
-class MeTab extends Component {
+const MeTabView = ({navigation}) => (
+  <MeHome banner="Me" navigation={navigation}/>
+);
 
-}
+const MeTab = StackNavigator({
+  Home: {
+    screen: MeTabView,
+    path: '/',
+    navigationOptions: () => ({
+      title: 'Me',
+    }),
+  }
+});
 
 export default MeTab;
