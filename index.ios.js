@@ -8,12 +8,12 @@ import {
   Text,
   View,
   ScrollView,
-  NavigatorIOS
+  Image,
 } from 'react-native';
 import { TabNavigator } from 'react-navigation';
-var Welcome = require('./components/views/welcome');
-import WalletTab from './components/tabs/wallet';
-import MeTab from './components/tabs/me';
+var Welcome = require('./src/views/welcome');
+import WalletTab from './src/tabs/wallet';
+import MeTab from './src/tabs/me';
 
 const Root = TabNavigator(
   {
@@ -22,6 +22,9 @@ const Root = TabNavigator(
       path: '/wallet',
       navigationOptions: {
         tabBarLabel: 'Wallet',
+        tabBarIcon: ({ tintColor }) => (
+          <Image source={require('./images/wallet.png')} style={{tintColor: tintColor}}/>
+        )
       }
     },
     MeTab: {
@@ -29,6 +32,9 @@ const Root = TabNavigator(
       path: '/me',
       navigationOptions: {
         tabBarLabel: 'Me',
+        tabBarIcon: ({ tintColor }) => (
+          <Image source={require('./images/me.png')} style={{tintColor: tintColor}}/>
+        )
       }
     },
   },
@@ -37,7 +43,7 @@ const Root = TabNavigator(
     animationEnabled: false,
     swipeEnabled: true,
     tabBarOptions: {
-      activeTintColor: '#e91e63',
+      activeTintColor: '#5589FF',
     },
   }
 );
