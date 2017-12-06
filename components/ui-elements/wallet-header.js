@@ -34,4 +34,4 @@ class WalletHeader extends Component {
   }
 }
 
-module.exports = WalletHeader;
+export default WalletHeader;

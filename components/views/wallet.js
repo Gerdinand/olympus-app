@@ -73,4 +73,4 @@ class Wallet extends Component {
   }
 }
 
-module.exports = Wallet;
+export default Wallet;
