@@ -11,7 +11,7 @@ import {
   List,
   ListItem
 } from 'react-native-elements';
-var WalletHeader = require('../ui-elements/wallet-header');
+import WalletHeader from '../ui-elements/wallet-header';
 
 var styles = StyleSheet.create({
   description: {
@@ -48,7 +48,7 @@ const list = [
   },
 ];
 
-class Wallet extends Component {
+class WalletView extends Component {
   render() {
     return (
       <ScrollView>
@@ -73,4 +73,4 @@ class Wallet extends Component {
   }
 }
 
-export default Wallet;
+export default WalletView;
