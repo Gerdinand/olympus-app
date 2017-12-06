@@ -51,7 +51,7 @@ const list = [
 class WalletView extends Component {
   render() {
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor: 'white'}}>
         <WalletHeader/>
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
           {
