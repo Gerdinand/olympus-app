@@ -4,8 +4,14 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Text
+  Text,
+  ScrollView,
+  Image
 } from 'react-native';
+import {
+  List,
+  ListItem
+} from 'react-native-elements';
 
 var styles = StyleSheet.create({
   description: {
@@ -21,16 +27,53 @@ var styles = StyleSheet.create({
   }
 });
 
-class Me extends Component {
+const list1 = [
+  {
+    icon: <Image source={require('../../images/wallet.png')}/>,
+    title: 'Wallet Management'
+  },
+];
+
+const list2 = [
+  {
+    icon: <Image source={require('../../images/wallet.png')}/>,
+    title: 'Olympus Project'
+  },
+  {
+    icon: <Image source={require('../../images/wallet.png')}/>,
+    title: 'Team'
+  }
+];
+
+class MeView extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.description}>
-          This could be Me!
-        </Text>
-      </View>
+      <ScrollView style={{backgroundColor: '#F5F5F5'}}>
+        <List>
+        {
+          list1.map((l, i) => (
+            <ListItem
+              key={i}
+              leftIcon={{image: l.icon}}
+              title={l.title}
+            />
+          ))
+        }
+        </List>
+        <List>
+        {
+          list2.map((l, i) => (
+            <ListItem
+              key={i}
+              leftIcon={{image: l.icon}}
+              title={l.title}
+            />
+          ))
+        }
+        </List>
+      </ScrollView>
     );
   }
 }
 
-module.exports = Me;
+export default MeView;

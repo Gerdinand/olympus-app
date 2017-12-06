@@ -54,20 +54,20 @@ class WalletView extends Component {
       <ScrollView style={{backgroundColor: 'white'}}>
         <WalletHeader/>
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
-          {
-            list.map((l, i) => (
-              <ListItem
-                roundAvatar
-                hideChevron={true}
-                avatar={{uri: l.avatar}}
-                key={i}
-                title={l.symbol.toUpperCase()}
-                subtitle={l.name}
-                rightTitle={l.amount.toString()}
-                rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
-              />
-            ))
-          }
+        {
+          list.map((l, i) => (
+            <ListItem
+              roundAvatar
+              hideChevron={true}
+              avatar={{uri: l.avatar}}
+              key={i}
+              title={l.symbol.toUpperCase()}
+              subtitle={l.name}
+              rightTitle={l.amount.toString()}
+              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
+            />
+          ))
+        }
         </List>
       </ScrollView>
     );
