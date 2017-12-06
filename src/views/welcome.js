@@ -10,6 +10,8 @@ import {
   Button
 } from 'react-native-elements';
 import { StackNavigator } from 'react-navigation';
+
+import NewWalletWarningView from './new-wallet-warning';
 var NewWallet = require('./create-new-wallet');
 var ImportWallet = require('./import-exist-wallet');
 
@@ -69,7 +71,7 @@ class Welcome extends Component {
           raised
           primary1={true}
           title={"Create new wallet"}
-          onPress={() => navigate('NewWallet')}
+          onPress={() => navigate('NewWalletWarning')}
         />
         <Button buttonStyle={styles.button2}
           title="Import exist wallet"
@@ -83,6 +85,7 @@ class Welcome extends Component {
 
 module.exports = StackNavigator({
   Home: { screen: Welcome },
+  NewWalletWarning: { screen: NewWalletWarningView },
   NewWallet: { screen: NewWallet },
   ImportWallet: { screen: ImportWallet },
 }, {
