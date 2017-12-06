@@ -27,17 +27,20 @@ var styles = StyleSheet.create({
   }
 });
 
-const list = [
+const list1 = [
   {
-    icon: <Image/>,
+    icon: <Image source={require('../../images/wallet.png')}/>,
     title: 'Wallet Management'
   },
+];
+
+const list2 = [
   {
-    icon: <Image/>,
+    icon: <Image source={require('../../images/wallet.png')}/>,
     title: 'Olympus Project'
   },
   {
-    icon: <Image/>,
+    icon: <Image source={require('../../images/wallet.png')}/>,
     title: 'Team'
   }
 ];
@@ -46,16 +49,28 @@ class MeView extends Component {
   render() {
     return (
       <ScrollView>
-        <list>
+        <List>
         {
-          list.map((l, i) => (
+          list1.map((l, i) => (
             <ListItem
-              avatar={{image: l.icon}}
+              key={i}
+              leftIcon={{image: l.icon}}
               title={l.title}
             />
           ))
         }
-        </list>
+        </List>
+        <List>
+        {
+          list2.map((l, i) => (
+            <ListItem
+              key={i}
+              leftIcon={{image: l.icon}}
+              title={l.title}
+            />
+          ))
+        }
+        </List>
       </ScrollView>
     );
   }
