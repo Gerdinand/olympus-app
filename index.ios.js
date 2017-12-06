@@ -8,11 +8,45 @@ import {
   Text,
   View,
   ScrollView,
-  NavigatorIOS
+  Image,
 } from 'react-native';
-var Welcome = require('./components/views/welcome');
-var Wallet = require('./components/views/wallet');
-var Me = require('./components/views/me');
+import { TabNavigator } from 'react-navigation';
+var Welcome = require('./src/views/welcome');
+import WalletTab from './src/tabs/wallet';
+import MeTab from './src/tabs/me';
+
+const Root = TabNavigator(
+  {
+    WalletTab: {
+      screen: WalletTab,
+      path: '/wallet',
+      navigationOptions: {
+        tabBarLabel: 'Wallet',
+        tabBarIcon: ({ tintColor }) => (
+          <Image source={require('./images/wallet.png')} style={{tintColor: tintColor}}/>
+        )
+      }
+    },
+    MeTab: {
+      screen: MeTab,
+      path: '/me',
+      navigationOptions: {
+        tabBarLabel: 'Me',
+        tabBarIcon: ({ tintColor }) => (
+          <Image source={require('./images/me.png')} style={{tintColor: tintColor}}/>
+        )
+      }
+    },
+  },
+  {
+    initialRouteName: 'WalletTab',
+    animationEnabled: false,
+    swipeEnabled: true,
+    tabBarOptions: {
+      activeTintColor: '#5589FF',
+    },
+  }
+);
 
 export default class Hora extends Component {
   constructor(props) {
@@ -23,47 +57,10 @@ export default class Hora extends Component {
   }
 
   render() {
-    if (1) {
+    if (0) {
       return (<Welcome/>);
     } else {
-      return (
-        <TabBarIOS selectedTab = {this.state.selectedTab}>
-          <TabBarIOS.Item
-            selected = {this.state.selectedTab === 'wallet'}
-            title = 'Wallet'
-            systemIcon = 'featured'
-            onPress = {() => {
-              this.setState({
-                selectedTab: 'wallet',
-              });
-            }}>
-            <NavigatorIOS
-              initialRoute={{
-                component: Wallet,
-                title: 'Wallet',
-              }}
-              style={{flex: 1}}
-            />
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            selected = {this.state.selectedTab === 'me'}
-            title = 'Me'
-            systemIcon = 'contacts'
-            onPress = {() => {
-              this.setState({
-                selectedTab: 'me',
-              });
-            }}>
-            <NavigatorIOS
-              initialRoute={{
-                component: Me,
-                title: 'Me',
-              }}
-              style={{flex: 1}}
-            />
-          </TabBarIOS.Item>
-        </TabBarIOS>
-      );
+      return (<Root/>);
     }
   }
 }
