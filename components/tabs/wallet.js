@@ -14,10 +14,10 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 
-import WalletHome from '../views/wallet';
+import WalletView from '../views/wallet';
 
 const WalletTabView = ({navigation}) => (
-  <WalletHome banner="Wallet" navigation={navigation}/>
+  <WalletView banner="Wallet" navigation={navigation}/>
 );
 
 const WalletTab = StackNavigator({
