@@ -48,7 +48,7 @@ const list2 = [
 class MeView extends Component {
   render() {
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor: '#F5F5F5'}}>
         <List>
         {
           list1.map((l, i) => (
