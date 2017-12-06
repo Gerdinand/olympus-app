@@ -10,9 +10,37 @@ import {
   ScrollView,
   NavigatorIOS
 } from 'react-native';
+import { TabNavigator } from 'react-navigation';
 var Welcome = require('./components/views/welcome');
-var Wallet = require('./components/views/wallet');
-var Me = require('./components/views/me');
+import WalletTab from './components/tabs/wallet';
+import MeTab from './components/tabs/me';
+
+const Root = TabNavigator(
+  {
+    WalletTab: {
+      screen: WalletTab,
+      path: '/wallet',
+      navigationOptions: {
+        tabBarLabel: 'Wallet',
+      }
+    },
+    MeTab: {
+      screen: MeTab,
+      path: '/me',
+      navigationOptions: {
+        tabBarLabel: 'Me',
+      }
+    },
+  },
+  {
+    initialRouteName: 'WalletTab',
+    animationEnabled: false,
+    swipeEnabled: true,
+    tabBarOptions: {
+      activeTintColor: '#e91e63',
+    },
+  }
+);
 
 export default class Hora extends Component {
   constructor(props) {
@@ -26,44 +54,7 @@ export default class Hora extends Component {
     if (0) {
       return (<Welcome/>);
     } else {
-      return (
-        <TabBarIOS selectedTab = {this.state.selectedTab}>
-          <TabBarIOS.Item
-            selected = {this.state.selectedTab === 'wallet'}
-            title = 'Wallet'
-            systemIcon = 'featured'
-            onPress = {() => {
-              this.setState({
-                selectedTab: 'wallet',
-              });
-            }}>
-            <NavigatorIOS
-              initialRoute={{
-                component: Wallet,
-                title: 'Wallet',
-              }}
-              style={{flex: 1}}
-            />
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            selected = {this.state.selectedTab === 'me'}
-            title = 'Me'
-            systemIcon = 'contacts'
-            onPress = {() => {
-              this.setState({
-                selectedTab: 'me',
-              });
-            }}>
-            <NavigatorIOS
-              initialRoute={{
-                component: Me,
-                title: 'Me',
-              }}
-              style={{flex: 1}}
-            />
-          </TabBarIOS.Item>
-        </TabBarIOS>
-      );
+      return (<Root/>);
     }
   }
 }
