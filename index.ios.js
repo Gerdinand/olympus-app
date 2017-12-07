@@ -11,6 +11,7 @@ import {
   Image,
 } from 'react-native';
 import { TabNavigator } from 'react-navigation';
+import { EventRegister } from 'react-native-event-listeners';
 var Welcome = require('./src/views/welcome');
 import WalletTab from './src/tabs/wallet';
 import MeTab from './src/tabs/me';
@@ -52,12 +53,25 @@ export default class Hora extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'wallet'
+      hasWallet: false
     };
   }
 
+  componentWillMount() {
+    this.listener = EventRegister.addEventListener('hasWallet', (data) => {
+      console.log('[event] hasWallet: ${data}');
+      this.setState({
+        hasWallet: data,
+      })
+    });
+  }
+
+  componentWillUnmount() {
+    EventRegister.removeEventListener(this.listener);
+  }
+
   render() {
-    if (1) {
+    if (!this.state.hasWallet) {
       return (<Welcome/>);
     } else {
       return (<Root/>);
