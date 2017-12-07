@@ -68,7 +68,6 @@ class WalletView extends Component {
               rightTitle={l.amount.toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
               onPress={() => {
-                console.log('Attach a method here.');
                 navigation.navigate('WalletDetail', { asset: 'eth' })
               }}
             />
