@@ -3,6 +3,15 @@ Hora, Olympus Wallet.
 
 🔨🔨🔨UNDER CONSTRUCTION!⚡️⚡️⚡️
 
+## MVP features
+
+- [ ] bip39 mnemonic
+- [ ] bip44 HDWallet
+- [ ] basic ethereum wallet
+- [ ] integrates kyber
+
+## Run
+
 ```shell
 // clean up and install
 watchman watch-del-all
