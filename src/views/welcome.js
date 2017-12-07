@@ -10,6 +10,7 @@ import {
   Button
 } from 'react-native-elements';
 import { StackNavigator } from 'react-navigation';
+import { EventRegister } from 'react-native-event-listeners';
 
 import NewWalletWarningView from './new-wallet-warning';
 var NewWallet = require('./create-new-wallet');
@@ -71,7 +72,9 @@ class Welcome extends Component {
           raised
           primary1={true}
           title={"Create new wallet"}
-          onPress={() => navigate('NewWalletWarning')}
+          onPress={() => {
+            EventRegister.emit('hasWallet', true);
+          }}
         />
         <Button buttonStyle={styles.button2}
           title="Import exist wallet"
