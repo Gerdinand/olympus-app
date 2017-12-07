@@ -50,6 +50,8 @@ const list = [
 
 class WalletView extends Component {
   render() {
+    const { navigation } = this.props;
+
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
         <WalletHeader/>
@@ -65,6 +67,10 @@ class WalletView extends Component {
               subtitle={l.name}
               rightTitle={l.amount.toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
+              onPress={() => {
+                console.log(l.symbol);
+                navigation.navigate('WalletDetail', { title: l.symbol })
+              }}
             />
           ))
         }
