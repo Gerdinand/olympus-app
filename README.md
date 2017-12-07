@@ -29,7 +29,6 @@ npm i --save-dev mvayngrib/rn-nodeify
 ## Run
 
 ```shell
+// MVP iOS only
 react-native run-ios
-// or
-react-native run-android
 ```
