@@ -8,7 +8,7 @@ Hora, Olympus Wallet.
 - [ ] bip39 mnemonic
 - [ ] bip44 HDWallet
 - [ ] basic ethereum wallet
-- [ ] integrates kyber
+- [ ] kyber integration
 
 ## Run
 
