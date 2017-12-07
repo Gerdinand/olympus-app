@@ -12,7 +12,7 @@ Hora, Olympus Wallet.
 
 [MVP Milestone is here.](https://github.com/Olympus-Labs/Hora/milestone/1)
 
-## Run
+## Config
 
 ```shell
 // clean up and install
@@ -24,4 +24,12 @@ rm -fr $TMPDIR/react-*
 // hack
 npm i --save-dev mvayngrib/rn-nodeify
 ./node_modules/.bin/rn-nodeify --hack --install
+```
+
+## Run
+
+```shell
+react-native run-ios
+// or
+react-native run-android
 ```
