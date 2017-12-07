@@ -26,14 +26,14 @@ const WalletDetail = ({navigation}) => (
 );
 
 const WalletTab = StackNavigator({
-  Home: {
+  WalletHome: {
     screen: WalletHome,
     path: '/',
     navigationOptions: () => ({
       title: 'Wallet',
     }),
   },
-  Detail: {
+  WalletDetail: {
     screen: WalletDetail,
     path: 'wallet_detail',
     navigationOptions: () => ({
