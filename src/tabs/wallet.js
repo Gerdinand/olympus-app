@@ -36,9 +36,9 @@ const WalletTab = StackNavigator({
   WalletDetail: {
     screen: WalletDetail,
     path: 'wallet_detail',
-    navigationOptions: () => ({
-      title: 'Asset',
-    }),
+    // navigationOptions: () => ({
+    //   title: 'Asset',
+    // }),
   }
 });
 
