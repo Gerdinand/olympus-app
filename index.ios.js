@@ -59,7 +59,7 @@ export default class Hora extends Component {
 
   componentWillMount() {
     this.listener = EventRegister.addEventListener('hasWallet', (data) => {
-      console.log('[event] hasWallet: ${data}');
+      console.log('[event] hasWallet');
       this.setState({
         hasWallet: data,
       })
