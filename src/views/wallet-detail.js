@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import {
   List,
-  ListItem
+  ListItem,
+  Card
 } from 'react-native-elements';
 
 const txs = [
@@ -37,16 +38,40 @@ const txs = [
 ];
 
 var styles = StyleSheet.create({
-  description: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: '#FFFFFF'
-  },
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
+    marginRight:10,
+    marginLeft:10,
+    marginTop:10,
+    paddingTop:20,
+    paddingBottom:20,
+    aspectRatio: 16/9,
+    backgroundColor:'#4B5FFE',
+    borderRadius:8,
+    borderWidth: 0,
+    borderColor: 'transparent'
+  },
+  name: {
+    fontSize: 30,
+    color: '#4A4A4A',
+    marginLeft: 15,
+  },
+  address: {
+    fontSize: 10,
+    color: '#4A4A4A',
+    marginLeft: 15,
+    marginTop: 6,
+  },
+  tips: {
+    fontSize: 10,
+    color: '#4A4A4A',
+    marginLeft: 15,
+    marginTop: 40,
+  },
+  assets: {
+    fontSize: 40,
+    color: '#4A4A4A',
+    marginLeft: 15,
+    marginTop: 6,
   }
 });
 
@@ -61,8 +86,10 @@ class WalletDetailView extends Component {
   render() {
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
-        <View>
-        </View>
+        <Card style={{backgroundColor: 'transparent'}}>
+          <Text style={styles.name}>ETH</Text>
+          <Text style={styles.assets}>2.34</Text>
+        </Card>
         <List>
         {
           txs.map((l, i) => (
