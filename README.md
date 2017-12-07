@@ -3,12 +3,14 @@ Hora, Olympus Wallet.
 
 🔨🔨🔨UNDER CONSTRUCTION!⚡️⚡️⚡️
 
-## MVP features
+## MVP
 
 - [ ] bip39 mnemonic
 - [ ] bip44 HDWallet
 - [ ] basic ethereum wallet
 - [ ] kyber integration
+
+[MVP Milestone is here.](https://github.com/Olympus-Labs/Hora/milestone/1)
 
 ## Run
 
