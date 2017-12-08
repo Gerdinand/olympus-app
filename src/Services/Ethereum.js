@@ -2,17 +2,7 @@
 
 import Web3 from 'web3';
 import Wallet from 'ethereumjs-wallet-react-native';
-
-const promisify = (inner) =>
-    new Promise((resolve, reject) =>
-        inner((err, res) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(res);
-            }
-        })
-    );
+import Promisify from '../Utils/Promisify';
 
 class EthereumService {
   constructor() {
@@ -25,7 +15,7 @@ class EthereumService {
 
   async getBalance(address) {
     var balance;
-    const wei = promisify(cb => this.rpc.eth.getBalance(address, cb));
+    const wei = Promisify(cb => this.rpc.eth.getBalance(address, cb));
     try {
       balance = web3.fromWei(await wei, 'ether');
       return balance;
