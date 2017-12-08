@@ -14,7 +14,7 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 
-import MeView from '../views/me';
+import MeView from '../Views/Me';
 
 const MeTabView = ({navigation}) => (
   <MeView banner="Me" navigation={navigation}/>

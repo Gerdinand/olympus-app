@@ -14,8 +14,8 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 
-import WalletView from '../views/wallet';
-import WalletDetailView from '../views/wallet-detail';
+import WalletView from '../Views/Wallet';
+import WalletDetailView from '../Views/WalletDetail';
 
 const WalletHome = ({navigation}) => (
   <WalletView banner="Wallet" navigation={navigation}/>

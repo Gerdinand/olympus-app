@@ -12,9 +12,9 @@ import {
 import { StackNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
-import NewWalletWarningView from './new-wallet-warning';
-var NewWallet = require('./create-new-wallet');
-var ImportWallet = require('./import-exist-wallet');
+import NewWalletWarningView from './NewWalletWarning';
+import CreateNewWallet from './CreateNewWallet';
+import ImportWallet from './ImportExistWallet';
 
 // Style
 var styles = StyleSheet.create({
@@ -72,13 +72,11 @@ class Welcome extends Component {
           raised
           primary1={true}
           title={"Create new wallet"}
-          onPress={() => {
-            EventRegister.emit('hasWallet', true);
-          }}
+          onPress={() => navigate("CreateNewWallet")}
         />
         <Button buttonStyle={styles.button2}
           title="Import exist wallet"
-          onPress={() => navigate('ImportWallet')}
+          onPress={() => navigate("ImportWallet")}
           color={'#4A4A4A'}
         />
       </View>
@@ -86,11 +84,13 @@ class Welcome extends Component {
   }
 }
 
-module.exports = StackNavigator({
+const WelcomeNav = StackNavigator({
   Home: { screen: Welcome },
   NewWalletWarning: { screen: NewWalletWarningView },
-  NewWallet: { screen: NewWallet },
+  CreateNewWallet: { screen: CreateNewWallet },
   ImportWallet: { screen: ImportWallet },
 }, {
   cardStyle: {backgroundColor: 'white'}
 });
+
+export default WelcomeNav;
