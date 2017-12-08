@@ -11,7 +11,7 @@ import {
   List,
   ListItem
 } from 'react-native-elements';
-import WalletHeader from '../ui-elements/wallet-header';
+import WalletHeader from '../UIElements/WalletHeader';
 
 var styles = StyleSheet.create({
   description: {

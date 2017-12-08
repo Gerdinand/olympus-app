@@ -12,9 +12,9 @@ import {
 import { StackNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
-import NewWalletWarningView from './new-wallet-warning';
-var NewWallet = require('./create-new-wallet');
-var ImportWallet = require('./import-exist-wallet');
+import NewWalletWarningView from './NewWalletWarning';
+import NewWallet from './CreateNewWallet';
+import ImportWallet from './ImportExistWallet';
 
 // Style
 var styles = StyleSheet.create({
@@ -86,7 +86,7 @@ class Welcome extends Component {
   }
 }
 
-module.exports = StackNavigator({
+const WelcomeNav = StackNavigator({
   Home: { screen: Welcome },
   NewWalletWarning: { screen: NewWalletWarningView },
   NewWallet: { screen: NewWallet },
@@ -94,3 +94,5 @@ module.exports = StackNavigator({
 }, {
   cardStyle: {backgroundColor: 'white'}
 });
+
+export default WelcomeNav;
