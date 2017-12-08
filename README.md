@@ -15,7 +15,7 @@ Hora, Olympus Wallet.
 ```shell
 // clean up and install
 watchman watch-del-all
-rm -rf node_modules && npm install
+rm -rf node_modules && rm shim.js && npm install
 npm i --save react-native-vector-icons && react-native link react-native-vector-icons
 rm -fr $TMPDIR/react-*
 

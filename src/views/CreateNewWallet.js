@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import {
+  Alert,
   View,
 } from 'react-native';
 import {
@@ -10,6 +11,9 @@ import {
   FormValidationMessage,
   Button
 } from 'react-native-elements';
+
+import ethereum from '../Services/Ethereum';
+import { addressFromJSONString } from '../Utils/Keys';
 
 class NewWallet extends Component {
   constructor(props) {
@@ -23,9 +27,28 @@ class NewWallet extends Component {
       passwordErrorMessage2: null,
     };
   }
+
   static navigationOptions = {
     title: 'Create new wallet',
   };
+
+  isValidate() {
+    this.setState({nameErrorMessage: null, passwordErrorMessage1: null, passwordErrorMessage2: null});
+
+    if (this.state.name == null || this.state.name.length == 0) {
+      this.setState({nameErrorMessage: "Name required"});
+    } else if (this.state.password1 == null || this.state.password1.length == 0) {
+      this.setState({passwordErrorMessage1: "Password required"});
+    } else if (this.state.password2 == null || this.state.password2.length == 0) {
+      this.setState({passwordErrorMessage2: "Please retype password"});
+    } else if (this.state.password1 != this.state.password2) {
+      this.setState({passwordErrorMessage2: "Password is different"});
+    } else {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     return (
       <View>
@@ -33,7 +56,7 @@ class NewWallet extends Component {
         <FormInput
           placeholder="Give your wallet a name"
           onChangeText={(text) => this.state.name = text}
-          value={this.state.name}
+          // value={this.state.name}
         />
         {this.state.nameErrorMessage &&
           <FormValidationMessage>
@@ -44,7 +67,7 @@ class NewWallet extends Component {
         <FormInput
           placeholder="Type in your passphrase"
           onChangeText={(text) => this.state.password1 = text}
-          value={this.state.password1}
+          // value={this.state.password1}
         />
         {this.state.passwordErrorMessage1 &&
           <FormValidationMessage>
@@ -55,7 +78,7 @@ class NewWallet extends Component {
         <FormInput
           placeholder="Retype your passphrase"
           onChangeText={(text) => this.state.password2 = text}
-          value={this.state.password2}
+          // value={this.state.password2}
         />
         {this.state.passwordErrorMessage2 &&
           <FormValidationMessage>
@@ -69,7 +92,20 @@ class NewWallet extends Component {
             raised
             title={"Create New Wallet"}
             onPress={() => {
+              if (this.isValidate()) {
+                const password = this.state.password1;
+                const jsonString = JSON.stringfy(ethereum.createNewAddress(password));
+                const address = addressFromJSONString(jsonString);
 
+                Alert.alert(
+                  address,
+                  null,
+                  [
+                    {text: "Cancel", onPress: () => console.log("Cancel"), style: 'cancel'},
+                  ],
+                  { cancelable: false}
+                )
+              }
             }}
           />
         </View>
