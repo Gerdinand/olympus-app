@@ -97,7 +97,7 @@ class WalletDetailView extends Component {
               // roundAvatar
               hideChevron={true}
               key={i}
-              title={(l.operation == 'receive') ? l.from : l.to}
+              title={(l.operation == "receive") ? l.from : l.to}
               subtitle={l.when}
               rightTitle={l.amount.toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
