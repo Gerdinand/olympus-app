@@ -12,35 +12,35 @@ import {
 } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
-var Welcome = require('./src/views/welcome');
-import WalletTab from './src/tabs/wallet';
-import MeTab from './src/tabs/me';
+import Welcome from './src/Views/Welcome';
+import WalletTab from './src/Tabs/Wallet';
+import MeTab from './src/Tabs/Me';
 
 const Root = TabNavigator(
   {
     WalletTab: {
       screen: WalletTab,
-      path: '/wallet',
+      path: "/wallet",
       navigationOptions: {
-        tabBarLabel: 'Wallet',
+        tabBarLabel: "Wallet",
         tabBarIcon: ({ tintColor }) => (
-          <Image source={require('./images/wallet.png')} style={{tintColor: tintColor}}/>
+          <Image source={require("./images/wallet.png")} style={{tintColor: tintColor}}/>
         )
       }
     },
     MeTab: {
       screen: MeTab,
-      path: '/me',
+      path: "/me",
       navigationOptions: {
-        tabBarLabel: 'Me',
+        tabBarLabel: "Me",
         tabBarIcon: ({ tintColor }) => (
-          <Image source={require('./images/me.png')} style={{tintColor: tintColor}}/>
+          <Image source={require("./images/me.png")} style={{tintColor: tintColor}}/>
         )
       }
     },
   },
   {
-    initialRouteName: 'WalletTab',
+    initialRouteName: "WalletTab",
     animationEnabled: false,
     swipeEnabled: true,
     tabBarOptions: {
@@ -58,8 +58,8 @@ export default class Hora extends Component {
   }
 
   componentWillMount() {
-    this.listener = EventRegister.addEventListener('hasWallet', (data) => {
-      console.log('[event] hasWallet');
+    this.listener = EventRegister.addEventListener("hasWallet", (data) => {
+      console.log("[event] hasWallet");
       this.setState({
         hasWallet: data,
       })
@@ -79,4 +79,4 @@ export default class Hora extends Component {
   }
 }
 
-AppRegistry.registerComponent('Hora', () => Hora);
+AppRegistry.registerComponent("Hora", () => Hora);
