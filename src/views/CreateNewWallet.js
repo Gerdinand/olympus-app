@@ -31,7 +31,7 @@ class NewWallet extends Component {
       <View>
         <FormLabel>Wallet Name</FormLabel>
         <FormInput
-          placeholder="Please enter your new wallet name"
+          placeholder="Give your wallet a name"
           onChangeText={(text) => this.state.name = text}
           value={this.state.name}
         />
@@ -40,9 +40,9 @@ class NewWallet extends Component {
             {this.state.nameErrorMessage}
           </FormValidationMessage>
         }
-        <FormLabel>Password</FormLabel>
+        <FormLabel>Passphrase</FormLabel>
         <FormInput
-          placeholder="Please enter password"
+          placeholder="Type in your passphrase"
           onChangeText={(text) => this.state.password1 = text}
           value={this.state.password1}
         />
@@ -51,9 +51,9 @@ class NewWallet extends Component {
             {this.state.passwordErrorMessage1}
           </FormValidationMessage>
         }
-        <FormLabel>Repeat Password</FormLabel>
+        <FormLabel>Retype Passphrase</FormLabel>
         <FormInput
-          placeholder="Please re-enter password"
+          placeholder="Retype your passphrase"
           onChangeText={(text) => this.state.password2 = text}
           value={this.state.password2}
         />
@@ -68,6 +68,9 @@ class NewWallet extends Component {
           <Button buttonStyle={{backgroundColor: '#5589FF'}}
             raised
             title={"Create New Wallet"}
+            onPress={() => {
+
+            }}
           />
         </View>
       </View>
