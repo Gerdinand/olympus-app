@@ -5,7 +5,6 @@ Hora, Olympus Wallet.
 
 ## MVP
 
-- [ ] bip39 mnemonic
 - [ ] basic ethereum wallet
 - [ ] kyber integration
 
