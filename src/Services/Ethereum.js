@@ -1,5 +1,3 @@
-'use strict'
-
 import '../../shim.js'
 
 import Web3 from 'web3';
