@@ -8,7 +8,7 @@ import {
   Button
 } from 'react-native';
 
-class ImportWallet extends Component {
+class ImportWalletView extends Component {
   static navigationOptions = {
     title: 'Create new wallet',
   };
@@ -23,4 +23,4 @@ class ImportWallet extends Component {
   }
 }
 
-module.exports = ImportWallet;
+export default ImportWalletView;

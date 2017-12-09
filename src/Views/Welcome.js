@@ -12,8 +12,8 @@ import {
 import { StackNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
-import CreateNewWallet from './CreateNewWallet';
-import ImportWallet from './ImportExistWallet';
+import CreateWalletView from './CreateWallet';
+import ImportWalletView from './ImportWallet';
 
 // Style
 var styles = StyleSheet.create({
@@ -51,7 +51,7 @@ var styles = StyleSheet.create({
   },
 });
 
-class Welcome extends Component {
+class WelcomeView extends Component {
   static navigationOptions = {
     title: 'Welcome',
     header: null,
@@ -71,7 +71,7 @@ class Welcome extends Component {
           raised
           primary1={true}
           title={"Create new wallet"}
-          onPress={() => navigate("CreateNewWallet")}
+          onPress={() => navigate("CreateWallet")}
         />
         <Button buttonStyle={styles.button2}
           title="Import exist wallet"
@@ -84,9 +84,9 @@ class Welcome extends Component {
 }
 
 const WelcomeNav = StackNavigator({
-  Home: { screen: Welcome },
-  CreateNewWallet: { screen: CreateNewWallet },
-  ImportWallet: { screen: ImportWallet },
+  Home: { screen: WelcomeView },
+  CreateWallet: { screen: CreateWalletView },
+  ImportWallet: { screen: ImportWalletView },
 }, {
   cardStyle: {backgroundColor: 'white'}
 });
