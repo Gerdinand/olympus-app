@@ -2,11 +2,9 @@
 
 import '../../shim.js'
 
-import { asyncRandomBytes } from 'react-native-secure-randombytes'
-// import safeCrypto from 'react-native-safe-crypto'
+import { asyncRandomBytes } from 'react-native-secure-randombytes';
 
 window.randomBytes = asyncRandomBytes
-// window.scryptsy = safeCrypto.scrypt
 
 import bip39 from 'react-native-bip39';
 import hdkey from 'ethereumjs-wallet-react-native/hdkey';
