@@ -12,7 +12,7 @@ import {
   Button
 } from 'react-native-elements';
 
-import ethereumWallet from '../Services/EthereumWallet';
+import EthereumWalletService from '../Services/EthereumWallet';
 import { addressFromJSONString } from '../Utils/Keys';
 
 class NewWallet extends Component {
@@ -26,6 +26,7 @@ class NewWallet extends Component {
       password2: null,
       passwordErrorMessage2: null,
     };
+    this.eth = new EthereumWalletService();
   }
 
   static navigationOptions = {
@@ -46,6 +47,7 @@ class NewWallet extends Component {
     } else {
       return true;
     }
+
     return false;
   }
 
@@ -91,11 +93,16 @@ class NewWallet extends Component {
           <Button buttonStyle={{backgroundColor: '#5589FF'}}
             raised
             title={"Create New Wallet"}
-            onPress={() => {
+            onPress={async () => {
               if (this.isValidate()) {
                 const password = this.state.password1;
-                const jsonString = JSON.stringfy(ethereumWallet.createNewAddress(password));
-                const address = addressFromJSONString(jsonString);
+                try {
+                  const json = await this.eth.generateV3Wallet(password);
+                  const jsonString = JSON.stringify(json);
+                  const address = addressFromJSONString(jsonString);
+                } catch (e) {
+                  console.error(e);
+                }
               }
             }}
           />
