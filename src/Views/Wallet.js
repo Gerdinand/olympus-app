@@ -56,8 +56,8 @@ class WalletView extends Component {
     super(props);
     this.eth = EthereumWalletService.getInstance();
     this.state = {
-      name: null,
-      address: null,
+      name: "",
+      address: "",
     };
   }
 
