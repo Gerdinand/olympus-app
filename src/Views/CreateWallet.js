@@ -12,6 +12,7 @@ import {
   Button
 } from 'react-native-elements';
 
+import { EventRegister } from 'react-native-event-listeners';
 import EthereumWalletService from '../Services/EthereumWallet';
 import { addressFromJSONString } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
@@ -115,6 +116,8 @@ class CreateWalletView extends Component {
                   const infoString = JSON.stringify(info);
 
                   await saveItem("wallets", infoString);
+
+                  EventRegister.emit("hasWallet", true);
                 } catch (e) {
                   console.error(e);
                 }
