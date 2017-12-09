@@ -14,8 +14,6 @@ import {
 
 import { EventRegister } from 'react-native-event-listeners';
 import EthereumWalletService from '../Services/EthereumWallet';
-import { addressFromJSONString } from '../Utils/Keys';
-import { saveItem, readItem } from '../Utils/KeyStore';
 
 class CreateWalletView extends Component {
   constructor(props) {
@@ -27,10 +25,8 @@ class CreateWalletView extends Component {
       passwordErrorMessage1: null,
       password2: null,
       passwordErrorMessage2: null,
-      address: null,
-      keyString: null,
     };
-    this.eth = new EthereumWalletService();
+    this.eth = EthereumWalletService.getInstance();
   }
 
   static navigationOptions = {
@@ -105,18 +101,8 @@ class CreateWalletView extends Component {
                 const name = this.state.name;
                 const password = this.state.password1;
                 try {
-                  const json = await this.eth.generateV3Wallet(password);
-                  const keyString = JSON.stringify(json);
-                  const address = addressFromJSONString(keyString);
-                  this.setState({ keyString: keyString, address: address });
-
-                  const info = [
-                    { address: address, name: name, v3: keyString }
-                  ];
-                  const infoString = JSON.stringify(info);
-
-                  await saveItem("wallets", infoString);
-
+                  const json = await this.eth.generateV3Wallet(name, password, { persistence: true });
+                  console.log(json);
                   EventRegister.emit("hasWallet", true);
                 } catch (e) {
                   console.error(e);
