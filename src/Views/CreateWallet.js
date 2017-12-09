@@ -115,7 +115,6 @@ class CreateWalletView extends Component {
                   const infoString = JSON.stringify(info);
 
                   await saveItem("wallets", infoString);
-                  console.log(await readItem("wallets"));
                 } catch (e) {
                   console.error(e);
                 }
