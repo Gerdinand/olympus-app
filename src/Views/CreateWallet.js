@@ -12,10 +12,10 @@ import {
   Button
 } from 'react-native-elements';
 
+import { EventRegister } from 'react-native-event-listeners';
 import EthereumWalletService from '../Services/EthereumWallet';
-import { addressFromJSONString } from '../Utils/Keys';
 
-class NewWallet extends Component {
+class CreateWalletView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +26,7 @@ class NewWallet extends Component {
       password2: null,
       passwordErrorMessage2: null,
     };
-    this.eth = new EthereumWalletService();
+    this.eth = EthereumWalletService.getInstance();
   }
 
   static navigationOptions = {
@@ -60,7 +60,8 @@ class NewWallet extends Component {
           onChangeText={(text) => this.state.name = text}
           // value={this.state.name}
         />
-        {this.state.nameErrorMessage &&
+        {
+          this.state.nameErrorMessage &&
           <FormValidationMessage>
             {this.state.nameErrorMessage}
           </FormValidationMessage>
@@ -71,7 +72,8 @@ class NewWallet extends Component {
           onChangeText={(text) => this.state.password1 = text}
           // value={this.state.password1}
         />
-        {this.state.passwordErrorMessage1 &&
+        {
+          this.state.passwordErrorMessage1 &&
           <FormValidationMessage>
             {this.state.passwordErrorMessage1}
           </FormValidationMessage>
@@ -82,7 +84,8 @@ class NewWallet extends Component {
           onChangeText={(text) => this.state.password2 = text}
           // value={this.state.password2}
         />
-        {this.state.passwordErrorMessage2 &&
+        {
+          this.state.passwordErrorMessage2 &&
           <FormValidationMessage>
             {this.state.passwordErrorMessage2}
           </FormValidationMessage>
@@ -95,11 +98,12 @@ class NewWallet extends Component {
             title={"Create New Wallet"}
             onPress={async () => {
               if (this.isValidate()) {
+                const name = this.state.name;
                 const password = this.state.password1;
                 try {
-                  const json = await this.eth.generateV3Wallet(password);
-                  const jsonString = JSON.stringify(json);
-                  const address = addressFromJSONString(jsonString);
+                  const json = await this.eth.generateV3Wallet(name, password, { persistence: true });
+                  console.log(json);
+                  EventRegister.emit("hasWallet", true);
                 } catch (e) {
                   console.error(e);
                 }
@@ -112,4 +116,4 @@ class NewWallet extends Component {
   }
 }
 
-module.exports = NewWallet;
+export default CreateWalletView;
