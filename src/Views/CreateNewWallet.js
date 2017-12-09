@@ -25,6 +25,8 @@ class NewWallet extends Component {
       passwordErrorMessage1: null,
       password2: null,
       passwordErrorMessage2: null,
+      address: null,
+      keyString: null,
     };
     this.eth = new EthereumWalletService();
   }
@@ -60,7 +62,8 @@ class NewWallet extends Component {
           onChangeText={(text) => this.state.name = text}
           // value={this.state.name}
         />
-        {this.state.nameErrorMessage &&
+        {
+          this.state.nameErrorMessage &&
           <FormValidationMessage>
             {this.state.nameErrorMessage}
           </FormValidationMessage>
@@ -71,7 +74,8 @@ class NewWallet extends Component {
           onChangeText={(text) => this.state.password1 = text}
           // value={this.state.password1}
         />
-        {this.state.passwordErrorMessage1 &&
+        {
+          this.state.passwordErrorMessage1 &&
           <FormValidationMessage>
             {this.state.passwordErrorMessage1}
           </FormValidationMessage>
@@ -82,7 +86,8 @@ class NewWallet extends Component {
           onChangeText={(text) => this.state.password2 = text}
           // value={this.state.password2}
         />
-        {this.state.passwordErrorMessage2 &&
+        {
+          this.state.passwordErrorMessage2 &&
           <FormValidationMessage>
             {this.state.passwordErrorMessage2}
           </FormValidationMessage>
@@ -98,8 +103,9 @@ class NewWallet extends Component {
                 const password = this.state.password1;
                 try {
                   const json = await this.eth.generateV3Wallet(password);
-                  const jsonString = JSON.stringify(json);
-                  const address = addressFromJSONString(jsonString);
+                  const keyString = JSON.stringify(json);
+                  const address = addressFromJSONString(keyString);
+                  this.setState({ keyString: keyString, address: address });
                 } catch (e) {
                   console.error(e);
                 }
