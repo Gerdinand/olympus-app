@@ -56,6 +56,8 @@ class EthereumWalletService {
       ];
       const infoString = JSON.stringify(info);
 
+      this.wallet = { address: address, name: name };
+
       await saveItem("wallets", infoString);
     }
 
