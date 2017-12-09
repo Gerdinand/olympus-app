@@ -12,7 +12,7 @@ import {
   Button
 } from 'react-native-elements';
 
-// import ethereum from '../Services/Ethereum';
+import ethereum from '../Services/Ethereum';
 import { addressFromJSONString } from '../Utils/Keys';
 
 class NewWallet extends Component {
@@ -94,7 +94,7 @@ class NewWallet extends Component {
             onPress={() => {
               if (this.isValidate()) {
                 const password = this.state.password1;
-                // const jsonString = JSON.stringfy(ethereum.createNewAddress(password));
+                const jsonString = JSON.stringfy(ethereum.createNewAddress(password));
                 const address = addressFromJSONString(jsonString);
 
                 Alert.alert(
@@ -104,7 +104,7 @@ class NewWallet extends Component {
                     {text: "Cancel", onPress: () => console.log("Cancel"), style: 'cancel'},
                   ],
                   { cancelable: false}
-                )
+                );
               }
             }}
           />

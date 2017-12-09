@@ -4,6 +4,11 @@ import Web3 from 'web3';
 import Wallet from 'ethereumjs-wallet-react-native';
 import Promisify from '../Utils/Promisify';
 
+import {
+  Alert,
+  View,
+} from 'react-native';
+
 class EthereumService {
   constructor() {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT ", 9000));
