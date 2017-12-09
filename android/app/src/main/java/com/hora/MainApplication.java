@@ -3,6 +3,7 @@ package com.hora;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import br.com.classapp.RNSensitiveInfo.RNSensitiveInfoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import co.airbitz.fastcrypto.RNFastCryptoPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSensitiveInfoPackage(),
             new VectorIconsPackage(),
             new RNFastCryptoPackage(),
             new RandomBytesPackage()
