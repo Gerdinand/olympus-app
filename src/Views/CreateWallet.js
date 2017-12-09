@@ -15,7 +15,7 @@ import {
 import EthereumWalletService from '../Services/EthereumWallet';
 import { addressFromJSONString } from '../Utils/Keys';
 
-class NewWallet extends Component {
+class CreateWalletView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -118,4 +118,4 @@ class NewWallet extends Component {
   }
 }
 
-module.exports = NewWallet;
+export default CreateWalletView;
