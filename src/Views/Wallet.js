@@ -76,7 +76,11 @@ class WalletView extends Component {
 
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
-        <WalletHeader />
+        <WalletHeader
+          name={this.state.name}
+          address={this.state.address}
+          balance={"$ " + 0}
+        />
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
         {
           list.map((l, i) => (
