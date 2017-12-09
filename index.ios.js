@@ -10,11 +10,14 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+
 import { TabNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
+
 import Welcome from './src/Views/Welcome';
 import WalletTab from './src/Tabs/Wallet';
 import MeTab from './src/Tabs/Me';
+import EthereumWalletService from './src/Services/EthereumWallet';
 
 const Root = TabNavigator(
   {
@@ -50,14 +53,18 @@ const Root = TabNavigator(
 );
 
 export default class Hora extends Component {
+
   constructor(props) {
     super(props);
+
     this.state = {
-      hasWallet: false
+      loading: true,
+      hasWallet: false,
     };
   }
 
   componentWillMount() {
+    this.loadingWallet();
     this.listener = EventRegister.addEventListener("hasWallet", (data) => {
       console.log("[event] hasWallet");
       this.setState({
@@ -70,7 +77,16 @@ export default class Hora extends Component {
     EventRegister.removeEventListener(this.listener);
   }
 
+  async loadingWallet() {
+    const wallet = await EthereumWalletService.getInstance().getActiveWallet();
+    this.setState({ loading: false, hasWallet: wallet != null });
+  }
+
   render() {
+    if (this.state.loading) {
+      return <View />
+    }
+
     if (!this.state.hasWallet) {
       return (<Welcome/>);
     } else {

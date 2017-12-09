@@ -11,7 +11,9 @@ import {
   List,
   ListItem
 } from 'react-native-elements';
+
 import WalletHeader from '../UIElements/WalletHeader';
+import EthereumWalletService from '../Services/EthereumWallet';
 
 var styles = StyleSheet.create({
   description: {
@@ -49,12 +51,32 @@ const list = [
 ];
 
 class WalletView extends Component {
+
+  constructor(props) {
+    super(props);
+    this.eth = EthereumWalletService.getInstance();
+    this.state = {
+      name: null,
+      address: null,
+    };
+  }
+
+  componentWillMount() {
+    const wallet = this.eth.wallet;
+    console.log(wallet);
+    this.setState({ name: wallet.name, address: wallet.address });
+  }
+
+  componentWillUnmount() {
+
+  }
+
   render() {
     const { navigation } = this.props;
 
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
-        <WalletHeader/>
+        <WalletHeader />
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
         {
           list.map((l, i) => (

@@ -15,6 +15,10 @@ import { saveItem, readItem } from '../Utils/KeyStore';
 
 class EthereumWalletService {
 
+  constructor(props) {
+    this.wallet = null;
+  }
+
   static myInstance = null;
 
   static getInstance() {
@@ -23,6 +27,21 @@ class EthereumWalletService {
     }
 
     return this.myInstance;
+  }
+
+  async getActiveWallet() {
+    const infoString = await readItem("wallets");
+
+    if (infoString) {
+      const info = JSON.parse(infoString);
+      const result = { address: info[0].address, name: info[0].name };
+
+      this.wallet = result;
+
+      return result;
+    } else {
+      return null;
+    }
   }
 
   async generateV3Wallet(name, passphrase, options) {
