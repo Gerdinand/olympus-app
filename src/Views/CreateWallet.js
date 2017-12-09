@@ -14,7 +14,7 @@ import {
 
 import EthereumWalletService from '../Services/EthereumWallet';
 import { addressFromJSONString } from '../Utils/Keys';
-import * as KeyStore from '../Utils/KeyStore';
+import { saveItem, readItem } from '../Utils/KeyStore';
 
 class CreateWalletView extends Component {
   constructor(props) {
@@ -113,8 +113,8 @@ class CreateWalletView extends Component {
                     { address: address, name: name, v3: keyString }
                   ];
                   const infoString = JSON.stringify(info);
-                  
-                  KeyStore.saveItem("wallets", infoString);
+
+                  saveItem("wallets", infoString);
                 } catch (e) {
                   console.error(e);
                 }
