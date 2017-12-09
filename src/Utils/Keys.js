@@ -2,7 +2,7 @@
 
 export function addressFromJSONString(jsonString) {
   try {
-    var keyObj = JSON.parse(keystring)
+    var keyObj = JSON.parse(jsonString)
     var address = keyObj.address
     if (address == undefined || address == "") {
       throw new Error("Invalid keystore format")
