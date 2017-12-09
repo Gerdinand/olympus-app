@@ -12,7 +12,6 @@ import {
 import { StackNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
-import NewWalletWarningView from './NewWalletWarning';
 import CreateNewWallet from './CreateNewWallet';
 import ImportWallet from './ImportExistWallet';
 
@@ -86,7 +85,6 @@ class Welcome extends Component {
 
 const WelcomeNav = StackNavigator({
   Home: { screen: Welcome },
-  NewWalletWarning: { screen: NewWalletWarningView },
   CreateNewWallet: { screen: CreateNewWallet },
   ImportWallet: { screen: ImportWallet },
 }, {
