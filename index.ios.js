@@ -9,6 +9,7 @@ import {
   View,
   ScrollView,
   Image,
+  AsyncStorage,
 } from 'react-native';
 
 import { TabNavigator } from 'react-navigation';
@@ -78,8 +79,13 @@ export default class Hora extends Component {
   }
 
   async loadingWallet() {
-    const wallet = await EthereumWalletService.getInstance().getActiveWallet();
-    this.setState({ loading: false, hasWallet: wallet != null });
+    const isUsed = await AsyncStorage.getItem("used");
+    if (isUsed) {
+      const wallet = await EthereumWalletService.getInstance().getActiveWallet();
+      this.setState({ loading: false, hasWallet: wallet != null });
+    } else {
+      this.setState({ loading: false, hasWallet: null });
+    }
   }
 
   render() {

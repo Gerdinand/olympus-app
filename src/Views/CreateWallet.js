@@ -4,12 +4,13 @@ import React, { Component } from 'react';
 import {
   Alert,
   View,
+  AsyncStorage,
 } from 'react-native';
 import {
   FormLabel,
   FormInput,
   FormValidationMessage,
-  Button
+  Button,
 } from 'react-native-elements';
 
 import { EventRegister } from 'react-native-event-listeners';
@@ -102,7 +103,7 @@ class CreateWalletView extends Component {
                 const password = this.state.password1;
                 try {
                   const json = await this.eth.generateV3Wallet(name, password, { persistence: true });
-                  console.log(json);
+                  await AsyncStorage.setItem("used", "true");
                   EventRegister.emit("hasWallet", true);
                 } catch (e) {
                   console.error(e);
