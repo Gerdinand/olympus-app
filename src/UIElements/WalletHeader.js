@@ -28,16 +28,17 @@ var styles = StyleSheet.create({
     marginLeft: 15,
   },
   address: {
-    fontSize: 10,
+    fontSize: 13,
     color: 'white',
     marginLeft: 15,
+    marginRight: 15,
     marginTop: 6,
   },
   tips: {
-    fontSize: 10,
+    fontSize: 12,
     color: 'white',
     marginLeft: 15,
-    marginTop: 40,
+    marginTop: 30,
   },
   assets: {
     fontSize: 40,
@@ -48,14 +49,25 @@ var styles = StyleSheet.create({
 });
 
 class WalletHeader extends Component {
+
+  static propTypes = {
+    name: React.PropTypes.string.isRequired,
+    address: React.PropTypes.string.isRequired,
+    balance: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number,
+    ]).isRequired,
+  }
+
   render() {
+    const { name, address, balance } = this.props;
     return (
       <View style={{backgroundColor: 'transparent'}}>
         <View style={styles.container}>
-          <Text style={styles.name}>Kai Wallet</Text>
-          <Text style={styles.address}>0x7d401a85103a43a41e74a8E2314909333C8a4099</Text>
-          <Text style={styles.tips}>Total assets</Text>
-          <Text style={styles.assets}>$1,023</Text>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.address}>{address}</Text>
+          <Text style={styles.tips}>BALANCE</Text>
+          <Text style={styles.assets}>{balance}</Text>
         </View>
       </View>
     );
