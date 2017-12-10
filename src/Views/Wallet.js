@@ -13,7 +13,7 @@ import {
 } from 'react-native-elements';
 
 import WalletHeader from '../UIElements/WalletHeader';
-import EthereumWalletService from '../Services/EthereumWallet';
+import WalletService from '../Services/Wallet';
 
 var styles = StyleSheet.create({
   description: {
@@ -54,7 +54,7 @@ class WalletView extends Component {
 
   constructor(props) {
     super(props);
-    this.eth = EthereumWalletService.getInstance();
+    this.eth = WalletService.getInstance();
     this.state = {
       name: "",
       address: "",
