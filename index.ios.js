@@ -18,7 +18,7 @@ import { EventRegister } from 'react-native-event-listeners';
 import Welcome from './src/Views/Welcome';
 import WalletTab from './src/Tabs/Wallet';
 import MeTab from './src/Tabs/Me';
-import EthereumWalletService from './src/Services/EthereumWallet';
+import WalletService from './src/Services/Wallet';
 
 const Root = TabNavigator(
   {
@@ -81,7 +81,7 @@ export default class Hora extends Component {
   async loadingWallet() {
     const isUsed = await AsyncStorage.getItem("used");
     if (isUsed) {
-      const wallet = await EthereumWalletService.getInstance().getActiveWallet();
+      const wallet = await WalletService.getInstance().getActiveWallet();
       this.setState({ loading: false, hasWallet: wallet != null });
     } else {
       this.setState({ loading: false, hasWallet: null });

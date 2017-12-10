@@ -14,7 +14,7 @@ import {
 } from 'react-native-elements';
 
 import { EventRegister } from 'react-native-event-listeners';
-import EthereumWalletService from '../Services/EthereumWallet';
+import WalletService from '../Services/Wallet';
 
 class CreateWalletView extends Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class CreateWalletView extends Component {
       password2: null,
       passwordErrorMessage2: null,
     };
-    this.eth = EthereumWalletService.getInstance();
+    this.eth = WalletService.getInstance();
   }
 
   static navigationOptions = {

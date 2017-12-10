@@ -13,7 +13,8 @@ import {
 } from 'react-native-elements';
 
 import WalletHeader from '../UIElements/WalletHeader';
-import EthereumWalletService from '../Services/EthereumWallet';
+import WalletService from '../Services/Wallet';
+import EthereumService from '../Services/Ethereum';
 
 var styles = StyleSheet.create({
   description: {
@@ -54,7 +55,7 @@ class WalletView extends Component {
 
   constructor(props) {
     super(props);
-    this.eth = EthereumWalletService.getInstance();
+
     this.state = {
       name: "",
       address: "",
@@ -62,9 +63,13 @@ class WalletView extends Component {
   }
 
   componentWillMount() {
-    const wallet = this.eth.wallet;
-    console.log(wallet);
+    const wallet = WalletService.getInstance().wallet;
+    const eth = EthereumService.getInstance();
+
     this.setState({ name: wallet.name, address: wallet.address });
+    
+    eth.getBalance(wallet.address);
+    eth.watch(wallet.address);
   }
 
   componentWillUnmount() {

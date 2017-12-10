@@ -6,14 +6,14 @@ import { asyncRandomBytes } from 'react-native-secure-randombytes';
 
 window.randomBytes = asyncRandomBytes
 
-import bip39 from 'react-native-bip39';
-import hdkey from 'ethereumjs-wallet-react-native/hdkey';
+// import bip39 from 'react-native-bip39';
+// import hdkey from 'ethereumjs-wallet-react-native/hdkey';
 import EthJs from 'ethereumjs-wallet-react-native';
 
 import { addressFromJSONString } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
 
-class EthereumWalletService {
+class WalletService {
 
   constructor(props) {
     this.wallet = null;
@@ -23,7 +23,7 @@ class EthereumWalletService {
 
   static getInstance() {
     if (this.myInstance == null) {
-      this.myInstance = new EthereumWalletService();
+      this.myInstance = new WalletService();
     }
 
     return this.myInstance;
@@ -35,6 +35,7 @@ class EthereumWalletService {
     if (infoString) {
       const info = JSON.parse(infoString);
       const result = { address: info[0].address, name: info[0].name };
+      console.log(result);
 
       this.wallet = result;
 
@@ -65,4 +66,4 @@ class EthereumWalletService {
   }
 }
 
-export default EthereumWalletService;
+export default WalletService;
