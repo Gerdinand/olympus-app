@@ -14,27 +14,26 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 
-import WalletView from '../Views/Wallet';
-import WalletDetailView from '../Views/WalletDetail';
+import { Wallet, WalletDetail } from '../Containers';
 
-const WalletHome = ({navigation}) => (
-  <WalletView banner="Wallet" navigation={navigation}/>
+const WalletScreen = ({navigation}) => (
+  <Wallet banner="Wallet" navigation={navigation}/>
 );
 
-const WalletDetail = ({navigation}) => (
-  <WalletDetailView banner="Wallet Detail" navigation={navigation}/>
+const WalletDetailScreen = ({navigation}) => (
+  <WalletDetail banner="Wallet Detail" navigation={navigation}/>
 );
 
 const WalletTab = StackNavigator({
   WalletHome: {
-    screen: WalletHome,
+    screen: WalletScreen,
     path: '/',
     navigationOptions: () => ({
       title: 'Wallet',
     }),
   },
   WalletDetail: {
-    screen: WalletDetail,
+    screen: WalletDetailScreen,
     path: 'wallet_detail',
     navigationOptions: () => ({
       title: 'Asset',
