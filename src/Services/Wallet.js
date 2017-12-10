@@ -35,6 +35,7 @@ class WalletService {
     if (infoString) {
       const info = JSON.parse(infoString);
       const result = { address: info[0].address, name: info[0].name };
+      console.log(result);
 
       this.wallet = result;
 
