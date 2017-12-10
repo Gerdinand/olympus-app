@@ -10,6 +10,8 @@ class EthereumService {
 
   constructor() {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
+    this.pendingTransactionsSubscription = null;
+    this.newBlockHeadersSubscription = null;
   }
 
   static myInstance = null;
@@ -22,15 +24,17 @@ class EthereumService {
     return this.myInstance;
   }
 
-  async getBalance(address) {
-    const balance = await this.rpc.eth.getBalance(address);
+  getBalance(address) {
+    const balance = this.rpc.eth.getBalance(address);
     console.log("balance: " + balance);
     return balance;
   }
 
-  async watch() {
-    const filter = this.rpc.eth.filter("latest");
-    await filter.watch(this.actAndWatch.bind(this));
+  async watch(address) {
+    this.rpc.eth.filter("latest").watch(function() {
+      const currentBalance = web3.eth.getBalance(address);
+      console.log("watch balance: " + currentBalance);
+    });
   }
 
   actAndWatch(error, result) {
