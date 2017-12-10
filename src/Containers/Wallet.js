@@ -66,8 +66,7 @@ class WalletView extends Component {
     const eth = EthereumService.getInstance();
 
     this.setState({ name: wallet.name, address: wallet.address });
-
-    eth.getBalance(wallet.address);
+    
     eth.watch(wallet.address);
   }
 
