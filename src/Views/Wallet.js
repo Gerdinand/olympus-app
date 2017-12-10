@@ -56,9 +56,6 @@ class WalletView extends Component {
   constructor(props) {
     super(props);
 
-    this.wallet = WalletService.getInstance();
-    this.eth = EthereumService.getInstance();
-
     this.state = {
       name: "",
       address: "",
@@ -66,12 +63,13 @@ class WalletView extends Component {
   }
 
   componentWillMount() {
-    const wallet = this.wallet.wallet;
-    this.setState({ name: wallet.name, address: wallet.address });
+    const wallet = WalletService.getInstance().wallet;
+    const eth = EthereumService.getInstance();
 
-    const eth = this.eth;
+    this.setState({ name: wallet.name, address: wallet.address });
+    
     eth.getBalance(wallet.address);
-    eth.watch();
+    eth.watch(wallet.address);
   }
 
   componentWillUnmount() {

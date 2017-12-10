@@ -4,14 +4,15 @@ import '../../shim.js'
 
 import Web3 from 'web3';
 import EthJs from 'ethereumjs-wallet-react-native';
-import Tx from 'ethereumjs-tx'
+import Tx from 'ethereumjs-tx';
+import Promisify from '../Utils/Promisify';
 
 class EthereumService {
 
   constructor() {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
-    this.pendingTransactionsSubscription = null;
-    this.newBlockHeadersSubscription = null;
+
+    this.getBalance = this.getBalance.bind(this);
   }
 
   static myInstance = null;
@@ -24,15 +25,23 @@ class EthereumService {
     return this.myInstance;
   }
 
-  getBalance(address) {
-    const balance = this.rpc.eth.getBalance(address);
-    console.log("balance: " + balance);
-    return balance;
+  async getBalance(address) {
+    try {
+      console.log("begin getBalance: " + address);
+      const balance = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
+      console.log("end getBalance: " + balance);
+      return balance;
+    } catch (e) {
+      console.error(e);
+      return e;
+    }
   }
 
-  async watch(address) {
-    this.rpc.eth.filter("latest").watch(function() {
-      const currentBalance = web3.eth.getBalance(address);
+  watch(address) {
+    var self = this;
+    this.rpc.eth.filter("latest").watch(async function() {
+      console.log("watch address: " + address);
+      const currentBalance = await self.getBalance(address) ;
       console.log("watch balance: " + currentBalance);
     });
   }
