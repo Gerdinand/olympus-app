@@ -6,8 +6,8 @@ import { asyncRandomBytes } from 'react-native-secure-randombytes';
 
 window.randomBytes = asyncRandomBytes
 
-import bip39 from 'react-native-bip39';
-import hdkey from 'ethereumjs-wallet-react-native/hdkey';
+// import bip39 from 'react-native-bip39';
+// import hdkey from 'ethereumjs-wallet-react-native/hdkey';
 import EthJs from 'ethereumjs-wallet-react-native';
 
 import { addressFromJSONString } from '../Utils/Keys';
