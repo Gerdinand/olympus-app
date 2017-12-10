@@ -15,10 +15,9 @@ import {
 import { TabNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
-import Welcome from './src/Views/Welcome';
-import WalletTab from './src/Tabs/Wallet';
-import MeTab from './src/Tabs/Me';
-import WalletService from './src/Services/Wallet';
+import { WalletTab, MeTab } from './src/Tabs';
+import { Welcome } from './src/Containers';
+import { WalletService } from './src/Services';
 
 const Root = TabNavigator(
   {

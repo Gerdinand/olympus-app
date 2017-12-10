@@ -14,15 +14,15 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 
-import MeView from '../Views/Me';
+import { Me } from '../Containers';
 
-const MeTabView = ({navigation}) => (
-  <MeView banner="Me" navigation={navigation}/>
+const MeScreen = ({navigation}) => (
+  <Me banner="Me" navigation={navigation}/>
 );
 
 const MeTab = StackNavigator({
   Home: {
-    screen: MeTabView,
+    screen: MeScreen,
     path: '/',
     navigationOptions: () => ({
       title: 'Me',
