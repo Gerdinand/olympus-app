@@ -9,7 +9,7 @@ import Tx from 'ethereumjs-tx'
 class EthereumService {
 
   constructor() {
-    this.rpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/0BRKxQ0SFvAxGL72cbXi", 9000));
+    this.rpc = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
   }
 
   static myInstance = null;
@@ -18,7 +18,7 @@ class EthereumService {
     if (this.myInstance == null) {
       this.myInstance = new EthereumService();
     }
-
+    
     return this.myInstance;
   }
 

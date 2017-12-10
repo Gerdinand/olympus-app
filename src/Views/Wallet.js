@@ -14,6 +14,7 @@ import {
 
 import WalletHeader from '../UIElements/WalletHeader';
 import WalletService from '../Services/Wallet';
+import EthereumService from '../Services/Ethereum';
 
 var styles = StyleSheet.create({
   description: {
@@ -54,7 +55,10 @@ class WalletView extends Component {
 
   constructor(props) {
     super(props);
-    this.eth = WalletService.getInstance();
+
+    this.wallet = WalletService.getInstance();
+    this.eth = EthereumService.getInstance();
+
     this.state = {
       name: "",
       address: "",
@@ -62,9 +66,11 @@ class WalletView extends Component {
   }
 
   componentWillMount() {
-    const wallet = this.eth.wallet;
-    console.log(wallet);
+    const wallet = this.wallet.wallet;
     this.setState({ name: wallet.name, address: wallet.address });
+
+    const eth = this.eth;
+    eth.getBalance(wallet.address);
   }
 
   componentWillUnmount() {
