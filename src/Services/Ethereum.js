@@ -18,7 +18,7 @@ class EthereumService {
     if (this.myInstance == null) {
       this.myInstance = new EthereumService();
     }
-    
+
     return this.myInstance;
   }
 
@@ -26,6 +26,19 @@ class EthereumService {
     const balance = await this.rpc.eth.getBalance(address);
     console.log("balance: " + balance);
     return balance;
+  }
+
+  async watch() {
+    const filter = this.rpc.eth.filter("latest");
+    await filter.watch(this.actAndWatch.bind(this));
+  }
+
+  actAndWatch(error, result) {
+    if (error != null) {
+      console.error(error);
+    } else {
+      console.log(result);
+    }
   }
 }
 

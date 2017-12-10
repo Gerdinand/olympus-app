@@ -71,6 +71,7 @@ class WalletView extends Component {
 
     const eth = this.eth;
     eth.getBalance(wallet.address);
+    eth.watch();
   }
 
   componentWillUnmount() {
