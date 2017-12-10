@@ -13,7 +13,7 @@ import EthJs from 'ethereumjs-wallet-react-native';
 import { addressFromJSONString } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
 
-class EthereumWalletService {
+class WalletService {
 
   constructor(props) {
     this.wallet = null;
@@ -23,7 +23,7 @@ class EthereumWalletService {
 
   static getInstance() {
     if (this.myInstance == null) {
-      this.myInstance = new EthereumWalletService();
+      this.myInstance = new WalletService();
     }
 
     return this.myInstance;
@@ -65,4 +65,4 @@ class EthereumWalletService {
   }
 }
 
-export default EthereumWalletService;
+export default WalletService;
