@@ -14,7 +14,7 @@ import {
 } from 'react-native-elements';
 
 import { EventRegister } from 'react-native-event-listeners';
-import WalletService from '../Services/Wallet';
+import { WalletService } from '../Services';
 
 class CreateWalletView extends Component {
   constructor(props) {
