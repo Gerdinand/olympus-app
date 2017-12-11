@@ -5,12 +5,17 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView
+  ScrollView,
+  Modal
 } from 'react-native';
 import {
   List,
   ListItem,
-  Card
+  Card,
+  ButtonGroup,
+  Button,
+  FormLabel,
+  FormInput
 } from 'react-native-elements';
 
 const txs = [
@@ -38,17 +43,10 @@ const txs = [
 ];
 
 var styles = StyleSheet.create({
-  container: {
-    marginRight:10,
-    marginLeft:10,
-    marginTop:10,
-    paddingTop:20,
-    paddingBottom:20,
-    aspectRatio: 16/9,
-    backgroundColor:'#4B5FFE',
-    borderRadius:8,
-    borderWidth: 0,
-    borderColor: 'transparent'
+  modelContainer: {
+    flex: 1,
+    paddingTop: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   name: {
     fontSize: 30,
@@ -72,10 +70,30 @@ var styles = StyleSheet.create({
     color: '#4A4A4A',
     marginLeft: 15,
     marginTop: 6,
-  }
+  },
+  modalSendButton: {
+    marginTop: 30,
+    backgroundColor: '#5589FF',
+  },
+  modalCloseButton: {
+    marginTop: 15,
+    backgroundColor: 'transparent',
+  },
 });
 
 class WalletDetailView extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sendModalVisible: false,
+      recieveModalVisible: false,
+      txs: txs,
+      sendAddress: null,
+      sendAmount: 0
+    };
+  }
+
   static navigationOptions = ({navigation}) => ({
     title: `${navigation.state.params.title}`,
     tabBar: {
@@ -83,18 +101,81 @@ class WalletDetailView extends Component {
     }
   });
 
+  onSend() {
+    console.log("Send Action");
+    this.setState({sendModalVisible: true});
+  }
+
+  onReceive() {
+    console.log("Receive Action");
+    this.setState({recieveModalVisible: true});
+  }
+
   render() {
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
+        <Modal
+          animationType={"fade"}
+          transparent={true}
+          visible={this.state.sendModalVisible}
+          onRequestClose={() => {this.setState({sendModalVisible: false})}}
+          >
+          <View style={styles.modelContainer}>
+            <Card>
+              <FormLabel>To</FormLabel>
+              <FormInput
+                placeholder="0x0..."
+                onChangeText={(text) => this.state.sendAddress = text}
+                // value={this.state.sendAddress}
+              />
+              <FormLabel>Amount</FormLabel>
+              <FormInput
+                placeholder="0"
+                keyboardType={"numeric"}
+                onChangeText={(text) => this.state.sendAmount = Number(text)}
+                // value={String(this.state.sendAmount)}
+              />
+              <View style={{
+                padding: 10,
+              }}>
+                <Button
+                  title={"Send"}
+                  buttonStyle={styles.modalSendButton}
+                  raised
+                  onPress={() => {this.setState({sendModalVisible: false})}}
+                >
+                </Button>
+                <Button buttonStyle={styles.modalCloseButton}
+                  title="Cancel"
+                  onPress={() => {this.setState({sendModalVisible: false})}}
+                  color={'#4A4A4A'}
+                />
+              </View>
+            </Card>
+          </View>
+        </Modal>
+
         <Card style={{backgroundColor: 'transparent'}}>
           <Text style={styles.name}>ETH</Text>
           <Text style={styles.assets}>2.34</Text>
         </Card>
+        <View style={{ marginTop: 20 }}>
+          <ButtonGroup
+            textStyle={{ fontSize: 13 }}
+            onPress= {(selectedIndex) => {
+              if (0 == selectedIndex) {
+                this.onSend();
+              } else {
+                this.onReceive();
+              }
+            }}
+            buttons={["Send", "Receive"]}
+          />
+        </View>
         <List>
         {
           txs.map((l, i) => (
             <ListItem
-              // roundAvatar
               hideChevron={true}
               key={i}
               title={(l.operation == "receive") ? l.from : l.to}
