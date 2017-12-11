@@ -10,7 +10,7 @@ window.randomBytes = asyncRandomBytes
 // import hdkey from 'ethereumjs-wallet-react-native/hdkey';
 import EthJs from 'ethereumjs-wallet-react-native';
 
-import { addressFromJSONString } from '../Utils/Keys';
+import { addressFromJSONString, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
 
 class WalletService {
@@ -35,7 +35,10 @@ class WalletService {
     if (infoString) {
       const info = JSON.parse(infoString);
       const result = { address: info[0].address, name: info[0].name };
-      console.log(result);
+      console.log(info[0]);
+
+      const seed = unlock(info[0].v3, "123", true);
+      console.log(seed);
 
       this.wallet = result;
 
