@@ -19,7 +19,9 @@ import {
   FormInput
 } from 'react-native-elements';
 
+import EthereumTx from 'ethereumjs-tx';
 import QRCode from 'react-native-qrcode';
+import { EthereumService, WalletService } from '../Services';
 
 const txs = [
   {
@@ -56,8 +58,8 @@ class WalletDetailView extends Component {
       assetSymbol: this.props.navigation.state.params.symbol,
       address: this.props.navigation.state.params.address,
       balance: this.props.navigation.state.params.balance,
-      sendAddress: null,
-      sendAmount: 0,
+      sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
+      sendAmount: 0.1,
       password: null,
     };
   }
@@ -103,7 +105,7 @@ class WalletDetailView extends Component {
               />
               <FormLabel>Password</FormLabel>
               <FormInput
-                placeholder="Password to unlock the wallet"
+                placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
               <View style={{
@@ -113,7 +115,27 @@ class WalletDetailView extends Component {
                   title={"Send"}
                   buttonStyle={styles.modalSendButton}
                   raised
-                  onPress={() => {this.setState({sendModalVisible: false})}}
+                  onPress={async () => {
+                    var isValidate = true;
+
+                    // TODO: address validation
+                    // TODO: amount validation
+                    // TODO: passwrd validation
+
+                    if (isValidate) {
+                      // generate tx
+                      const privateKey = await WalletService.getInstance().getSeed(this.state.password);
+                      const tx = await EthereumService.getInstance().generateTx(this.state.sendAddress, this.state.sendAmount, "21000");
+
+                      // sign tx
+                      tx.sign(privateKey);
+
+                      // send tx
+                      EthereumService.getInstance().sendTx(tx);
+
+                      this.setState({sendModalVisible: false});
+                    }
+                  }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title="Cancel"
@@ -152,7 +174,6 @@ class WalletDetailView extends Component {
                   buttonStyle={styles.modalSendButton}
                   raised
                   onPress={() => {
-
                     Clipboard.setString(this.state.address)
                     this.setState({receiveModalVisible: false});
                   }}
