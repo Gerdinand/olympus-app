@@ -17,7 +17,6 @@ class EthereumService {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
 
-
     this.getBalance = this.getBalance.bind(this);
   }
 
@@ -36,14 +35,14 @@ class EthereumService {
   }
 
   async getNonce(address) {
-    const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, cb));
+    const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb));
     console.log("nonce: " + nonce);
     return nonce
   }
 
   async getGasPrice() {
     const gasPrice = await Promisify(cb => this.rpc.eth.getGasPrice(cb));
-    console.log("gapPrice: " + gasPrice);
+    console.log("gapPrice: " + gasPrice * 10);
     return gasPrice * 10;
   }
 
@@ -54,6 +53,8 @@ class EthereumService {
       gasLimit: this.rpc.toHex(gasLimit),
       to: address,
       value: this.rpc.toHex(this.rpc.toWei(value, "ether")),
+      data: "",
+      chainId: 3,
     };
     console.log("raw tx: " + JSON.stringify(rawTx));
     const tx = new EthereumTx(rawTx);
@@ -61,15 +62,10 @@ class EthereumService {
     return tx;
   }
 
-  sendTx(tx) {
+  async sendTx(tx) {
     let serializedTx = tx.serialize();
-    this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(error, hash) {
-        if (error != null) {
-          console.error(error);
-        } else {
-          console.log(hash);
-        }
-      });
+    const result = await Promisify(cb => this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb));
+    console.log(result);
   }
 
   async getBalance(address) {
