@@ -66,7 +66,7 @@ class WalletView extends Component {
     const eth = EthereumService.getInstance();
 
     this.setState({ name: wallet.name, address: wallet.address });
-    
+
     eth.watch(wallet.address);
   }
 
@@ -98,7 +98,7 @@ class WalletView extends Component {
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
               onPress={() => {
                 console.log(l.symbol);
-                navigation.navigate('WalletDetail', { title: l.symbol })
+                navigation.navigate('WalletDetail', { title: l.symbol, address: WalletService.getInstance().wallet.address })
               }}
             />
           ))
