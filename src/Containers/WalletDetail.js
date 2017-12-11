@@ -45,45 +45,6 @@ const txs = [
   }
 ];
 
-var styles = StyleSheet.create({
-  modelContainer: {
-    flex: 1,
-    paddingTop: 40,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  name: {
-    fontSize: 30,
-    color: '#4A4A4A',
-    marginLeft: 15,
-  },
-  address: {
-    fontSize: 10,
-    color: '#4A4A4A',
-    marginLeft: 15,
-    marginTop: 6,
-  },
-  tips: {
-    fontSize: 10,
-    color: '#4A4A4A',
-    marginLeft: 15,
-    marginTop: 40,
-  },
-  assets: {
-    fontSize: 40,
-    color: '#4A4A4A',
-    marginLeft: 15,
-    marginTop: 6,
-  },
-  modalSendButton: {
-    marginTop: 30,
-    backgroundColor: '#5589FF',
-  },
-  modalCloseButton: {
-    marginTop: 15,
-    backgroundColor: 'transparent',
-  },
-});
-
 class WalletDetailView extends Component {
   constructor(props) {
     super(props);
@@ -94,6 +55,7 @@ class WalletDetailView extends Component {
       txs: txs,
       assetSymbol: this.props.navigation.state.params.symbol,
       address: this.props.navigation.state.params.address,
+      balance: this.props.navigation.state.params.balance,
       sendAddress: null,
       sendAmount: 0
     };
@@ -126,7 +88,7 @@ class WalletDetailView extends Component {
           onRequestClose={() => {this.setState({sendModalVisible: false})}}
           >
           <View style={styles.modelContainer}>
-            <Card>
+            <Card title="SEND">
               <FormLabel>To</FormLabel>
               <FormInput
                 placeholder="0x0abc..."
@@ -166,7 +128,7 @@ class WalletDetailView extends Component {
           onRequestClose={() => {this.setState({receiveModalVisible: false})}}
           >
           <View style={styles.modelContainer}>
-            <Card>
+            <Card title="RECEIVE">
               <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
                 <View style={{flex:1, maxWidth: 200, flexDirection:'row', justifyContent:'space-between'}}>
                   <QRCode
@@ -203,7 +165,7 @@ class WalletDetailView extends Component {
 
         <Card style={{backgroundColor: 'transparent'}}>
           <Text style={styles.name}>{this.state.assetSymbol.toUpperCase()}</Text>
-          <Text style={styles.assets}>2.34</Text>
+          <Text style={styles.balance}>{this.state.balance}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup
@@ -236,5 +198,44 @@ class WalletDetailView extends Component {
     );
   }
 }
+
+var styles = StyleSheet.create({
+  modelContainer: {
+    flex: 1,
+    paddingTop: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  name: {
+    fontSize: 30,
+    color: '#4A4A4A',
+    marginLeft: 15,
+  },
+  address: {
+    fontSize: 10,
+    color: '#4A4A4A',
+    marginLeft: 15,
+    marginTop: 6,
+  },
+  tips: {
+    fontSize: 10,
+    color: '#4A4A4A',
+    marginLeft: 15,
+    marginTop: 40,
+  },
+  balance: {
+    fontSize: 40,
+    color: '#4A4A4A',
+    marginLeft: 15,
+    marginTop: 6,
+  },
+  modalSendButton: {
+    marginTop: 30,
+    backgroundColor: '#5589FF',
+  },
+  modalCloseButton: {
+    marginTop: 15,
+    backgroundColor: 'transparent',
+  },
+});
 
 export default WalletDetailView;
