@@ -44,18 +44,16 @@ class EthereumService {
   async getGasPrice() {
     const gasPrice = await Promisify(cb => this.rpc.eth.getGasPrice(cb));
     console.log("gapPrice: " + gasPrice);
-    return gasPrice;
+    return gasPrice * 10;
   }
 
   async generateTx(address, value, gasLimit) {
     let rawTx = {
-      nonce: numberToHex(await this.getNonce(address)),
-      gasPrice: numberToHex(await this.getGasPrice()),
-      gasLimit: numberToHex(gasLimit),
+      nonce: this.rpc.toHex(await this.getNonce(address)),
+      gasPrice: this.rpc.toHex(await this.getGasPrice()),
+      gasLimit: this.rpc.toHex(gasLimit),
       to: address,
-      value: numberToHex(toTWei()),
-      data:'',
-      chainId: 3
+      value: this.rpc.toHex(this.rpc.toWei(value, "ether")),
     };
     console.log("raw tx: " + JSON.stringify(rawTx));
     const tx = new EthereumTx(rawTx);
@@ -65,7 +63,7 @@ class EthereumService {
 
   sendTx(tx) {
     let serializedTx = tx.serialize();
-    this.rpc.eth.sendRawTransaction(ethUtil.bufferToHex(serializedTx), (error, hash) => {
+    this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(error, hash) {
         if (error != null) {
           console.error(error);
         } else {
@@ -76,7 +74,8 @@ class EthereumService {
 
   async getBalance(address) {
     try {
-      const balance = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
+      const balanceInWei = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
+      const balance = this.rpc.fromWei(balanceInWei);
       console.log("balance: " + address + ", " + balance);
 
       return balance;
