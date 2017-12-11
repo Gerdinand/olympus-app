@@ -129,13 +129,16 @@ class WalletDetailView extends Component {
                       const privateKey = await WalletService.getInstance().getSeed(this.state.password);
                       const tx = await EthereumService.getInstance().generateTx(this.state.sendAddress, this.state.sendAmount, "21000");
 
+                      console.log("prvKey: " + privateKey);
+
                       // sign tx
                       console.log("sign tx");
                       tx.sign(privateKey);
+                      console.log("signed tx: " + tx.serialize().toString('hex'));
 
                       // send tx
                       console.log("send tx");
-                      EthereumService.getInstance().sendTx(tx);
+                      await EthereumService.getInstance().sendTx(tx);
 
                       this.setState({sendModalVisible: false});
                     }
@@ -150,7 +153,7 @@ class WalletDetailView extends Component {
             </Card>
           </View>
         </Modal>
-
+        
         <Modal
           animationType={"fade"}
           transparent={true}
