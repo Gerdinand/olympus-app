@@ -7,6 +7,7 @@ import EthJs from 'ethereumjs-wallet-react-native';
 import Tx from 'ethereumjs-tx';
 import Promisify from '../Utils/Promisify';
 import Constants from './Constants';
+import { numberToHex, hexToNumber } from '../Utils/Converter';
 
 class EthereumService {
 
@@ -30,6 +31,38 @@ class EthereumService {
 
   version() {
     return this.rpc.version.api
+  }
+
+  async getNonce(address) {
+    return await this.rpc.eth.getTransactionCount(address);
+  }
+
+  async getGasPrice() {
+    return await this.rpc.eth.getGasPrice();
+  }
+
+  async generateTx(address, value, gasLimit) {
+    let rawTx = {
+      nonce: numberToHex(await this.getNonce),
+      gasPrice: numberToHex(await this.getGasPrice),
+      gasLimit: numberToHex(gasLimit),
+      to: address,
+      value: numberToHex(this.rpc.utils.toWei(value, 'ether')),
+      data:'',
+      chainId: 3
+    };
+    console.log("raw tx: " + rawTx);
+    const tx = new EthereumTx(rawTx);
+
+    return tx;
+  }
+
+  sendTx(tx) {
+    let serializedTx = tx.serialize();
+    this.rpc.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+      .on('receipt', function(data) {
+        console.log(data.transactionHash)
+      });
   }
 
   async getBalance(address) {

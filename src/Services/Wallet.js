@@ -35,14 +35,27 @@ class WalletService {
     if (infoString) {
       const info = JSON.parse(infoString);
       const result = { address: info[0].address, name: info[0].name };
-      console.log(info[0]);
-
-      const seed = unlock(info[0].v3, "123", true);
-      console.log(seed);
+      console.log(result);
 
       this.wallet = result;
 
       return result;
+    } else {
+      return null;
+    }
+  }
+
+  async getSeed(password) {
+    const infoString = await readItem("wallets");
+
+    if (infoString) {
+      const info = JSON.parse(infoString);
+      console.log(info[0]);
+
+      const seed = unlock(info[0].v3, password, true);
+      console.log(seed);
+
+      return seed;
     } else {
       return null;
     }
