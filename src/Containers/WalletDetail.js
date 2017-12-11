@@ -18,6 +18,8 @@ import {
   FormInput
 } from 'react-native-elements';
 
+import QRCode from 'react-native-qrcode';
+
 const txs = [
   {
     from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
@@ -87,15 +89,17 @@ class WalletDetailView extends Component {
 
     this.state = {
       sendModalVisible: false,
-      recieveModalVisible: false,
+      receiveModalVisible: false,
       txs: txs,
+      assetSymbol: this.props.navigation.state.params.symbol,
+      address: this.props.navigation.state.params.address,
       sendAddress: null,
       sendAmount: 0
     };
   }
 
   static navigationOptions = ({navigation}) => ({
-    title: `${navigation.state.params.title}`,
+    title: "Asset",
     tabBar: {
       visible: false,
     }
@@ -108,7 +112,7 @@ class WalletDetailView extends Component {
 
   onReceive() {
     console.log("Receive Action");
-    this.setState({recieveModalVisible: true});
+    this.setState({receiveModalVisible: true});
   }
 
   render() {
@@ -124,7 +128,7 @@ class WalletDetailView extends Component {
             <Card>
               <FormLabel>To</FormLabel>
               <FormInput
-                placeholder="0x0..."
+                placeholder="0x0abc..."
                 onChangeText={(text) => this.state.sendAddress = text}
                 // value={this.state.sendAddress}
               />
@@ -143,8 +147,7 @@ class WalletDetailView extends Component {
                   buttonStyle={styles.modalSendButton}
                   raised
                   onPress={() => {this.setState({sendModalVisible: false})}}
-                >
-                </Button>
+                />
                 <Button buttonStyle={styles.modalCloseButton}
                   title="Cancel"
                   onPress={() => {this.setState({sendModalVisible: false})}}
@@ -155,8 +158,46 @@ class WalletDetailView extends Component {
           </View>
         </Modal>
 
+        <Modal
+          animationType={"fade"}
+          transparent={true}
+          visible={this.state.receiveModalVisible}
+          onRequestClose={() => {this.setState({receiveModalVisible: false})}}
+          >
+          <View style={styles.modelContainer}>
+            <Card>
+              <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{flex:1, maxWidth: 200, flexDirection:'row', justifyContent:'space-between'}}>
+                  <QRCode
+                    value={this.address}
+                    size={200}
+                    bgColor='black'
+                    fgColor='white'
+                  />
+                </View>
+              </View>
+              <Text style={{color: "black", fontSize: 12, textAlign: 'center', marginTop: 15}}>{this.state.address}</Text>
+              <View style={{
+                padding: 10,
+              }}>
+                <Button
+                  title={"Copy address"}
+                  buttonStyle={styles.modalSendButton}
+                  raised
+                  onPress={() => {this.setState({receiveModalVisible: false})}}
+                />
+                <Button buttonStyle={styles.modalCloseButton}
+                  title="Cancel"
+                  onPress={() => {this.setState({receiveModalVisible: false})}}
+                  color={'#4A4A4A'}
+                />
+              </View>
+            </Card>
+          </View>
+        </Modal>
+
         <Card style={{backgroundColor: 'transparent'}}>
-          <Text style={styles.name}>ETH</Text>
+          <Text style={styles.name}>{this.state.assetSymbol.toUpperCase()}</Text>
           <Text style={styles.assets}>2.34</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
