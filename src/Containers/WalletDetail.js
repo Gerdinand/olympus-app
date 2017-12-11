@@ -57,7 +57,8 @@ class WalletDetailView extends Component {
       address: this.props.navigation.state.params.address,
       balance: this.props.navigation.state.params.balance,
       sendAddress: null,
-      sendAmount: 0
+      sendAmount: 0,
+      password: null,
     };
   }
 
@@ -93,14 +94,17 @@ class WalletDetailView extends Component {
               <FormInput
                 placeholder="0x0abc..."
                 onChangeText={(text) => this.state.sendAddress = text}
-                // value={this.state.sendAddress}
               />
               <FormLabel>Amount</FormLabel>
               <FormInput
                 placeholder="0"
                 keyboardType={"numeric"}
                 onChangeText={(text) => this.state.sendAmount = Number(text)}
-                // value={String(this.state.sendAmount)}
+              />
+              <FormLabel>Password</FormLabel>
+              <FormInput
+                placeholder="Password to unlock the wallet"
+                onChangeText={(text) => this.state.password = text}
               />
               <View style={{
                 padding: 10,
