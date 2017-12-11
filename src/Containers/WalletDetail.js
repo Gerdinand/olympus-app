@@ -6,7 +6,8 @@ import {
   View,
   Text,
   ScrollView,
-  Modal
+  Modal,
+  Clipboard
 } from 'react-native';
 import {
   List,
@@ -169,7 +170,7 @@ class WalletDetailView extends Component {
               <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
                 <View style={{flex:1, maxWidth: 200, flexDirection:'row', justifyContent:'space-between'}}>
                   <QRCode
-                    value={this.address}
+                    value={this.state.address}
                     size={200}
                     bgColor='black'
                     fgColor='white'
@@ -184,7 +185,11 @@ class WalletDetailView extends Component {
                   title={"Copy address"}
                   buttonStyle={styles.modalSendButton}
                   raised
-                  onPress={() => {this.setState({receiveModalVisible: false})}}
+                  onPress={() => {
+
+                    Clipboard.setString(this.state.address)
+                    this.setState({receiveModalVisible: false});
+                  }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title="Cancel"
