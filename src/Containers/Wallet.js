@@ -34,19 +34,19 @@ const list = [
     symbol: 'eth',
     name: 'Ethereum',
     avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/ethereum.png',
-    amount: 2.34
+    balance: 2.34
   },
   {
     symbol: 'knc',
     name: 'Kyber Network',
     avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/kyber-network.png',
-    amount: 3201
+    balance: 3201
   },
   {
     symbol: 'snt',
     name: 'Status',
     avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/status.png',
-    amount: 3431
+    balance: 3431
   },
 ];
 
@@ -66,7 +66,7 @@ class WalletView extends Component {
     const eth = EthereumService.getInstance();
 
     this.setState({ name: wallet.name, address: wallet.address });
-    
+
     eth.watch(wallet.address);
   }
 
@@ -94,11 +94,15 @@ class WalletView extends Component {
               key={i}
               title={l.symbol.toUpperCase()}
               subtitle={l.name}
-              rightTitle={l.amount.toString()}
+              rightTitle={l.balance.toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
               onPress={() => {
                 console.log(l.symbol);
-                navigation.navigate('WalletDetail', { title: l.symbol })
+                navigation.navigate('WalletDetail', {
+                  symbol: l.symbol,
+                  address: WalletService.getInstance().wallet.address,
+                  balance: l.balance,
+                })
               }}
             />
           ))
