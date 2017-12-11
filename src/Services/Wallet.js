@@ -6,11 +6,9 @@ import { asyncRandomBytes } from 'react-native-secure-randombytes';
 
 window.randomBytes = asyncRandomBytes
 
-// import bip39 from 'react-native-bip39';
-// import hdkey from 'ethereumjs-wallet-react-native/hdkey';
 import EthJs from 'ethereumjs-wallet-react-native';
 
-import { addressFromJSONString } from '../Utils/Keys';
+import { addressFromJSONString, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
 
 class WalletService {
@@ -40,6 +38,22 @@ class WalletService {
       this.wallet = result;
 
       return result;
+    } else {
+      return null;
+    }
+  }
+
+  async getSeed(password) {
+    const infoString = await readItem("wallets");
+
+    if (infoString) {
+      const info = JSON.parse(infoString);
+      console.log(info[0]);
+
+      const seed = unlock(info[0].v3, password, true);
+      console.log(seed);
+
+      return seed;
     } else {
       return null;
     }

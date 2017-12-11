@@ -71,7 +71,6 @@ class CreateWalletView extends Component {
         <FormInput
           placeholder="Type in your passphrase"
           onChangeText={(text) => this.state.password1 = text}
-          // value={this.state.password1}
         />
         {
           this.state.passwordErrorMessage1 &&
@@ -83,7 +82,6 @@ class CreateWalletView extends Component {
         <FormInput
           placeholder="Retype your passphrase"
           onChangeText={(text) => this.state.password2 = text}
-          // value={this.state.password2}
         />
         {
           this.state.passwordErrorMessage2 &&

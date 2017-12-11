@@ -5,13 +5,22 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView
+  ScrollView,
+  Modal,
+  Clipboard
 } from 'react-native';
 import {
   List,
   ListItem,
-  Card
+  Card,
+  ButtonGroup,
+  Button,
+  FormLabel,
+  FormInput
 } from 'react-native-elements';
+
+import QRCode from 'react-native-qrcode';
+import { EthereumService, WalletService } from '../Services';
 
 const txs = [
   {
@@ -37,18 +46,196 @@ const txs = [
   }
 ];
 
+class WalletDetailView extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sendModalVisible: false,
+      receiveModalVisible: false,
+      txs: txs,
+      assetSymbol: this.props.navigation.state.params.symbol,
+      address: this.props.navigation.state.params.address,
+      balance: this.props.navigation.state.params.balance,
+      sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
+      sendAmount: 0.1,
+      password: null,
+    };
+  }
+
+  static navigationOptions = ({navigation}) => ({
+    title: "Asset",
+    tabBar: {
+      visible: false,
+    }
+  });
+
+  onSend() {
+    console.log("send modal");
+    this.setState({sendModalVisible: true});
+  }
+
+  onReceive() {
+    console.log("receive modal");
+    this.setState({receiveModalVisible: true});
+  }
+
+  render() {
+    return (
+      <ScrollView style={{backgroundColor: 'white'}}>
+        <Modal
+          animationType={"fade"}
+          transparent={true}
+          visible={this.state.sendModalVisible}
+          onRequestClose={() => {this.setState({sendModalVisible: false})}}
+          >
+          <View style={styles.modelContainer}>
+            <Card title="SEND">
+              <FormLabel>To</FormLabel>
+              <FormInput
+                placeholder="0x0abc..."
+                onChangeText={(text) => this.state.sendAddress = text}
+              />
+              <FormLabel>Amount</FormLabel>
+              <FormInput
+                placeholder="0"
+                keyboardType={"numeric"}
+                onChangeText={(text) => this.state.sendAmount = Number(text)}
+              />
+              <FormLabel>Password</FormLabel>
+              <FormInput
+                placeholder="To unlock the wallet"
+                onChangeText={(text) => this.state.password = text}
+              />
+              <View style={{
+                padding: 10,
+              }}>
+                <Button
+                  title={"Send"}
+                  buttonStyle={styles.modalSendButton}
+                  raised
+                  onPress={async () => {
+                    console.log("send action");
+                    var isValidate = true;
+
+                    // TODO: address validation
+                    // TODO: amount validation
+                    // TODO: passwrd validation
+
+                    console.log("validate end");
+                    if (isValidate) {
+                      // generate tx
+                      console.log("generate tx");
+                      const privateKey = await WalletService.getInstance().getSeed(this.state.password);
+                      const tx = await EthereumService.getInstance().generateTx(this.state.sendAddress, this.state.sendAmount, "21000");
+
+                      console.log("prvKey: " + privateKey);
+
+                      // sign tx
+                      console.log("sign tx");
+                      tx.sign(privateKey);
+                      console.log("signed tx: " + tx.serialize().toString('hex'));
+
+                      // send tx
+                      console.log("send tx");
+                      await EthereumService.getInstance().sendTx(tx);
+
+                      this.setState({sendModalVisible: false});
+                    }
+                  }}
+                />
+                <Button buttonStyle={styles.modalCloseButton}
+                  title="Cancel"
+                  onPress={() => {this.setState({sendModalVisible: false})}}
+                  color={'#4A4A4A'}
+                />
+              </View>
+            </Card>
+          </View>
+        </Modal>
+        
+        <Modal
+          animationType={"fade"}
+          transparent={true}
+          visible={this.state.receiveModalVisible}
+          onRequestClose={() => {this.setState({receiveModalVisible: false})}}
+          >
+          <View style={styles.modelContainer}>
+            <Card title="RECEIVE">
+              <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{flex:1, maxWidth: 200, flexDirection:'row', justifyContent:'space-between'}}>
+                  <QRCode
+                    value={this.state.address}
+                    size={200}
+                    bgColor='black'
+                    fgColor='white'
+                  />
+                </View>
+              </View>
+              <Text style={{color: "black", fontSize: 12, textAlign: 'center', marginTop: 15}}>{this.state.address}</Text>
+              <View style={{
+                padding: 10,
+              }}>
+                <Button
+                  title={"Copy address"}
+                  buttonStyle={styles.modalSendButton}
+                  raised
+                  onPress={() => {
+                    Clipboard.setString(this.state.address)
+                    this.setState({receiveModalVisible: false});
+                  }}
+                />
+                <Button buttonStyle={styles.modalCloseButton}
+                  title="Cancel"
+                  onPress={() => {this.setState({receiveModalVisible: false})}}
+                  color={'#4A4A4A'}
+                />
+              </View>
+            </Card>
+          </View>
+        </Modal>
+
+        <Card style={{backgroundColor: 'transparent'}}>
+          <Text style={styles.name}>{this.state.assetSymbol.toUpperCase()}</Text>
+          <Text style={styles.balance}>{this.state.balance}</Text>
+        </Card>
+        <View style={{ marginTop: 20 }}>
+          <ButtonGroup
+            textStyle={{ fontSize: 13 }}
+            onPress= {(selectedIndex) => {
+              if (0 == selectedIndex) {
+                this.onSend();
+              } else {
+                this.onReceive();
+              }
+            }}
+            buttons={["Send", "Receive"]}
+          />
+        </View>
+        <List>
+        {
+          txs.map((l, i) => (
+            <ListItem
+              hideChevron={true}
+              key={i}
+              title={(l.operation == "receive") ? l.from : l.to}
+              subtitle={l.when}
+              rightTitle={l.amount.toString()}
+              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
+            />
+          ))
+        }
+        </List>
+      </ScrollView>
+    );
+  }
+}
+
 var styles = StyleSheet.create({
-  container: {
-    marginRight:10,
-    marginLeft:10,
-    marginTop:10,
-    paddingTop:20,
-    paddingBottom:20,
-    aspectRatio: 16/9,
-    backgroundColor:'#4B5FFE',
-    borderRadius:8,
-    borderWidth: 0,
-    borderColor: 'transparent'
+  modelContainer: {
+    flex: 1,
+    paddingTop: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   name: {
     fontSize: 30,
@@ -67,47 +254,20 @@ var styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: 40,
   },
-  assets: {
+  balance: {
     fontSize: 40,
     color: '#4A4A4A',
     marginLeft: 15,
     marginTop: 6,
-  }
+  },
+  modalSendButton: {
+    marginTop: 30,
+    backgroundColor: '#5589FF',
+  },
+  modalCloseButton: {
+    marginTop: 15,
+    backgroundColor: 'transparent',
+  },
 });
-
-class WalletDetailView extends Component {
-  static navigationOptions = ({navigation}) => ({
-    title: `${navigation.state.params.title}`,
-    tabBar: {
-      visible: false,
-    }
-  });
-
-  render() {
-    return (
-      <ScrollView style={{backgroundColor: 'white'}}>
-        <Card style={{backgroundColor: 'transparent'}}>
-          <Text style={styles.name}>ETH</Text>
-          <Text style={styles.assets}>2.34</Text>
-        </Card>
-        <List>
-        {
-          txs.map((l, i) => (
-            <ListItem
-              // roundAvatar
-              hideChevron={true}
-              key={i}
-              title={(l.operation == "receive") ? l.from : l.to}
-              subtitle={l.when}
-              rightTitle={l.amount.toString()}
-              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
-            />
-          ))
-        }
-        </List>
-      </ScrollView>
-    );
-  }
-}
 
 export default WalletDetailView;
