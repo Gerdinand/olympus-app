@@ -98,7 +98,7 @@ class WalletView extends Component {
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
               onPress={() => {
                 console.log(l.symbol);
-                navigation.navigate('WalletDetail', { title: l.symbol, address: WalletService.getInstance().wallet.address })
+                navigation.navigate('WalletDetail', { symbol: l.symbol, address: WalletService.getInstance().wallet.address })
               }}
             />
           ))
