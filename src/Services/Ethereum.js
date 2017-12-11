@@ -4,10 +4,12 @@ import '../../shim.js'
 
 import Web3 from 'web3';
 import EthJs from 'ethereumjs-wallet-react-native';
+import * as ethUtil from 'ethereumjs-util';
 import Tx from 'ethereumjs-tx';
 import Promisify from '../Utils/Promisify';
 import Constants from './Constants';
-import { numberToHex, hexToNumber } from '../Utils/Converter';
+import { numberToHex, hexToNumber, toTWei, toT } from '../Utils/Converter';
+import EthereumTx from 'ethereumjs-tx';
 
 class EthereumService {
 
@@ -34,24 +36,28 @@ class EthereumService {
   }
 
   async getNonce(address) {
-    return await this.rpc.eth.getTransactionCount(address);
+    const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, cb));
+    console.log("nonce: " + nonce);
+    return nonce
   }
 
   async getGasPrice() {
-    return await this.rpc.eth.getGasPrice();
+    const gasPrice = await Promisify(cb => this.rpc.eth.getGasPrice(cb));
+    console.log("gapPrice: " + gasPrice);
+    return gasPrice;
   }
 
   async generateTx(address, value, gasLimit) {
     let rawTx = {
-      nonce: numberToHex(await this.getNonce),
-      gasPrice: numberToHex(await this.getGasPrice),
+      nonce: numberToHex(await this.getNonce(address)),
+      gasPrice: numberToHex(await this.getGasPrice()),
       gasLimit: numberToHex(gasLimit),
       to: address,
-      value: numberToHex(this.rpc.utils.toWei(value, 'ether')),
+      value: numberToHex(toTWei()),
       data:'',
       chainId: 3
     };
-    console.log("raw tx: " + rawTx);
+    console.log("raw tx: " + JSON.stringify(rawTx));
     const tx = new EthereumTx(rawTx);
 
     return tx;
@@ -59,9 +65,12 @@ class EthereumService {
 
   sendTx(tx) {
     let serializedTx = tx.serialize();
-    this.rpc.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-      .on('receipt', function(data) {
-        console.log(data.transactionHash)
+    this.rpc.eth.sendRawTransaction(ethUtil.bufferToHex(serializedTx), (error, hash) => {
+        if (error != null) {
+          console.error(error);
+        } else {
+          console.log(hash);
+        }
       });
   }
 

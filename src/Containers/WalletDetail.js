@@ -19,7 +19,6 @@ import {
   FormInput
 } from 'react-native-elements';
 
-import EthereumTx from 'ethereumjs-tx';
 import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
 
@@ -72,12 +71,12 @@ class WalletDetailView extends Component {
   });
 
   onSend() {
-    console.log("Send Action");
+    console.log("send modal");
     this.setState({sendModalVisible: true});
   }
 
   onReceive() {
-    console.log("Receive Action");
+    console.log("receive modal");
     this.setState({receiveModalVisible: true});
   }
 
@@ -116,21 +115,26 @@ class WalletDetailView extends Component {
                   buttonStyle={styles.modalSendButton}
                   raised
                   onPress={async () => {
+                    console.log("send action");
                     var isValidate = true;
 
                     // TODO: address validation
                     // TODO: amount validation
                     // TODO: passwrd validation
 
+                    console.log("validate end");
                     if (isValidate) {
                       // generate tx
+                      console.log("generate tx");
                       const privateKey = await WalletService.getInstance().getSeed(this.state.password);
                       const tx = await EthereumService.getInstance().generateTx(this.state.sendAddress, this.state.sendAmount, "21000");
 
                       // sign tx
+                      console.log("sign tx");
                       tx.sign(privateKey);
 
                       // send tx
+                      console.log("send tx");
                       EthereumService.getInstance().sendTx(tx);
 
                       this.setState({sendModalVisible: false});
