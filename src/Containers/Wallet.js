@@ -12,8 +12,80 @@ import {
   ListItem
 } from 'react-native-elements';
 
+import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
-import { WalletService, EthereumService } from '../Services';
+import { WalletService, EthereumService, SupportedTokens } from '../Services';
+
+class WalletView extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.walletListener = null;
+
+    this.state = {
+      wallet: null,
+    };
+  }
+
+  componentWillMount() {
+    var _ = this;
+    this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
+      console.log("event wallet.updated " + JSON.stringify(wallet));
+      _.setState({ wallet: wallet });
+    });
+
+    const wallet = WalletService.getInstance().wallet;
+    const eth = EthereumService.getInstance();
+
+    this.setState({ wallet: wallet });
+
+    eth.sync(wallet);
+    // eth.watch(wallet);
+  }
+
+  componentWillUnmount() {
+    EventRegister.removeEventListener(this.walletListener);
+  }
+
+  render() {
+    const { navigation } = this.props;
+
+    return (
+      <ScrollView style={{backgroundColor: 'white'}}>
+        <WalletHeader
+          name={this.state.wallet.name}
+          address={this.state.wallet.address}
+          balance={"$ --"}
+        />
+        <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
+        {
+          this.state.wallet.tokens.map((t, i) => (
+            <ListItem
+              roundAvatar
+              hideChevron={true}
+              avatar={{uri: t.icon}}
+              key={i}
+              title={t.symbol}
+              subtitle={t.name}
+              rightTitle={t.balance.toString()}
+              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
+              onPress={() => {
+                console.log("navigate to : " + t.symbol);
+
+                navigation.navigate('WalletDetail', {
+                  address: WalletService.getInstance().wallet.address,
+                  token: t,
+                })
+              }}
+            />
+          ))
+        }
+        </List>
+      </ScrollView>
+    );
+  }
+}
 
 var styles = StyleSheet.create({
   description: {
@@ -28,89 +100,5 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
   }
 });
-
-const list = [
-  {
-    symbol: 'eth',
-    name: 'Ethereum',
-    avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/ethereum.png',
-    balance: 2.34
-  },
-  {
-    symbol: 'knc',
-    name: 'Kyber Network',
-    avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/kyber-network.png',
-    balance: 3201
-  },
-  {
-    symbol: 'snt',
-    name: 'Status',
-    avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/status.png',
-    balance: 3431
-  },
-];
-
-class WalletView extends Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      name: "",
-      address: "",
-    };
-  }
-
-  componentWillMount() {
-    const wallet = WalletService.getInstance().wallet;
-    const eth = EthereumService.getInstance();
-
-    this.setState({ name: wallet.name, address: wallet.address });
-
-    eth.watch(wallet.address);
-  }
-
-  componentWillUnmount() {
-
-  }
-
-  render() {
-    const { navigation } = this.props;
-
-    return (
-      <ScrollView style={{backgroundColor: 'white'}}>
-        <WalletHeader
-          name={this.state.name}
-          address={this.state.address}
-          balance={"$ " + 0}
-        />
-        <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
-        {
-          list.map((l, i) => (
-            <ListItem
-              roundAvatar
-              hideChevron={true}
-              avatar={{uri: l.avatar}}
-              key={i}
-              title={l.symbol.toUpperCase()}
-              subtitle={l.name}
-              rightTitle={l.balance.toString()}
-              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
-              onPress={() => {
-                console.log(l.symbol);
-                navigation.navigate('WalletDetail', {
-                  symbol: l.symbol,
-                  address: WalletService.getInstance().wallet.address,
-                  balance: l.balance,
-                })
-              }}
-            />
-          ))
-        }
-        </List>
-      </ScrollView>
-    );
-  }
-}
 
 export default WalletView;

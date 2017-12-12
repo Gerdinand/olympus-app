@@ -23,27 +23,27 @@ import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
 
 const txs = [
-  {
-    from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-    to: '0x277A304D7C69e03898120567937245d1406D5F36',
-    when: '2017/12/04 12:08',
-    amount: 21.2,
-    operation: 'send'
-  },
-  {
-    from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-    to: '0x5185129f2872C6ef729a3B5C89CC41e997036115',
-    when: '2017/12/03 3:32',
-    amount: 4.79,
-    operation: 'send'
-  },
-  {
-    from: '0xC07cAACC6414A676a1929916Ad1AbDa5E9D3d0eD',
-    to: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-    when: '2017/11/27 20:41',
-    amount: 174,
-    operation: 'receive'
-  }
+  // {
+  //   from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
+  //   to: '0x277A304D7C69e03898120567937245d1406D5F36',
+  //   when: '2017/12/04 12:08',
+  //   amount: 21.2,
+  //   operation: 'send'
+  // },
+  // {
+  //   from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
+  //   to: '0x5185129f2872C6ef729a3B5C89CC41e997036115',
+  //   when: '2017/12/03 3:32',
+  //   amount: 4.79,
+  //   operation: 'send'
+  // },
+  // {
+  //   from: '0xC07cAACC6414A676a1929916Ad1AbDa5E9D3d0eD',
+  //   to: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
+  //   when: '2017/11/27 20:41',
+  //   amount: 174,
+  //   operation: 'receive'
+  // }
 ];
 
 class WalletDetailView extends Component {
@@ -54,9 +54,8 @@ class WalletDetailView extends Component {
       sendModalVisible: false,
       receiveModalVisible: false,
       txs: txs,
-      assetSymbol: this.props.navigation.state.params.symbol,
+      token: this.props.navigation.state.params.token,
       address: this.props.navigation.state.params.address,
-      balance: this.props.navigation.state.params.balance,
       sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
       password: null,
@@ -81,6 +80,7 @@ class WalletDetailView extends Component {
   }
 
   render() {
+
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
         <Modal
@@ -93,17 +93,22 @@ class WalletDetailView extends Component {
             <Card title="SEND">
               <FormLabel>To</FormLabel>
               <FormInput
+                multiline
+                inputStyle={{width: '100%'}}
                 placeholder="0x0abc..."
-                onChangeText={(text) => this.state.sendAddress = text}
+                // onChangeText={(text) => this.state.sendAddress = text}
+                value={this.state.sendAddress}
               />
               <FormLabel>Amount</FormLabel>
               <FormInput
+                inputStyle={{width: '100%'}}
                 placeholder="0"
                 keyboardType={"numeric"}
                 onChangeText={(text) => this.state.sendAmount = Number(text)}
               />
               <FormLabel>Password</FormLabel>
               <FormInput
+                inputStyle={{width: '100%'}}
                 placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
@@ -125,19 +130,33 @@ class WalletDetailView extends Component {
                     console.log("validate end");
                     if (isValidate) {
                       // generate tx
-                      console.log("generate tx");
                       const privateKey = await WalletService.getInstance().getSeed(this.state.password);
-                      const tx = await EthereumService.getInstance().generateTx(this.state.sendAddress, this.state.sendAmount, "21000");
+                      const token = this.state.token;
+                      var tx = null;
+                      if (token.symbol != "ETH") {
+                        // token from, to, value, decimals, contractAddress, gasLimit
+                        tx = await EthereumService.getInstance().generateTokenTx(
+                          this.state.address,
+                          this.state.sendAddress,
+                          this.state.sendAmount,
+                          token.decimals,
+                          token.address,
+                          "40000"
+                        );
+                      } else {
+                        tx = await EthereumService.getInstance().generateTx(
+                          this.state.address,
+                          this.state.sendAddress,
+                          this.state.sendAmount,
+                          "40000"
+                        );
+                      }
 
-                      console.log("prvKey: " + privateKey);
 
                       // sign tx
-                      console.log("sign tx");
                       tx.sign(privateKey);
-                      console.log("signed tx: " + tx.serialize().toString('hex'));
 
                       // send tx
-                      console.log("send tx");
                       await EthereumService.getInstance().sendTx(tx);
 
                       this.setState({sendModalVisible: false});
@@ -153,7 +172,7 @@ class WalletDetailView extends Component {
             </Card>
           </View>
         </Modal>
-        
+
         <Modal
           animationType={"fade"}
           transparent={true}
@@ -196,8 +215,8 @@ class WalletDetailView extends Component {
         </Modal>
 
         <Card style={{backgroundColor: 'transparent'}}>
-          <Text style={styles.name}>{this.state.assetSymbol.toUpperCase()}</Text>
-          <Text style={styles.balance}>{this.state.balance}</Text>
+          <Text style={styles.name}>{this.state.token.symbol}</Text>
+          <Text style={styles.balance}>{this.state.token.balance}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup

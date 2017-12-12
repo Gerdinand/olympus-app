@@ -10,6 +10,8 @@ import EthJs from 'ethereumjs-wallet-react-native';
 
 import { addressFromJSONString, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
+import SupportedTokens from './SupportedTokens';
+import Token from './Token';
 
 class WalletService {
 
@@ -32,12 +34,26 @@ class WalletService {
 
     if (infoString) {
       const info = JSON.parse(infoString);
-      const result = { address: info[0].address, name: info[0].name };
-      console.log(result);
 
-      this.wallet = result;
+      // TODO: select different wallet
+      // 1. build basic wallet
+      var wallet = {
+        address: info[0].address,
+        name: info[0].name,
+        balance: 0,
+        tokens: [],
+      };
 
-      return result;
+      // 2. add tokens
+      for (var i = 0; i < SupportedTokens.length; i++) {
+        const t = SupportedTokens[i];
+        const token = new Token(t.name, t.icon, t.symbol, t.address, wallet.address, t.decimals);
+        wallet.tokens.push(token);
+      }
+
+      this.wallet = wallet;
+
+      return wallet;
     } else {
       return null;
     }
