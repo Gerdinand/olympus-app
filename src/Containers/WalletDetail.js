@@ -130,19 +130,33 @@ class WalletDetailView extends Component {
                     console.log("validate end");
                     if (isValidate) {
                       // generate tx
-                      console.log("generate tx");
                       const privateKey = await WalletService.getInstance().getSeed(this.state.password);
-                      const tx = await EthereumService.getInstance().generateTx(this.state.address, this.state.sendAddress, this.state.sendAmount, "21000");
+                      const token = this.state.token;
+                      var tx = null;
+                      if (token.symbol != "ETH") {
+                        // token from, to, value, decimals, contractAddress, gasLimit
+                        tx = await EthereumService.getInstance().generateTokenTx(
+                          this.state.address,
+                          this.state.sendAddress,
+                          this.state.sendAmount,
+                          token.decimals,
+                          token.address,
+                          "40000"
+                        );
+                      } else {
+                        tx = await EthereumService.getInstance().generateTx(
+                          this.state.address,
+                          this.state.sendAddress,
+                          this.state.sendAmount,
+                          "40000"
+                        );
+                      }
 
-                      console.log("prvKey: " + privateKey);
 
                       // sign tx
-                      console.log("sign tx");
                       tx.sign(privateKey);
-                      console.log("signed tx: " + tx.serialize().toString('hex'));
 
                       // send tx
-                      console.log("send tx");
                       await EthereumService.getInstance().sendTx(tx);
 
                       this.setState({sendModalVisible: false});
