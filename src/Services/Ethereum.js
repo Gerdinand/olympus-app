@@ -49,19 +49,40 @@ class EthereumService {
     return gasPrice;
   }
 
-  async generateTx(from, to, value, gasLimit) {
+  async generateTx(from, to, value, gasLimit, txData="") {
     let rawTx = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
-      gasPrice: this.rpc.toHex(await this.getGasPrice()),
+      gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
       gasLimit: this.rpc.toHex(gasLimit),
       to: to,
       value: this.rpc.toHex(this.rpc.toWei(value, "ether")),
-      data: "",
+      data: txData,
       chainId: 42,
     };
 
     const tx = new EthereumTx(rawTx);
+    return tx;
+  }
 
+  async generateTokenTx(source, dest, value, decimals, contractAddress, gasLimit) {
+    console.log(dest);
+    const bigValue = new BigNumber(value);
+    var base = new BigNumber(10);
+    const amount = bigValue.times(base.pow(decimals));
+    const contract = this.erc20Contract.at(contractAddress);
+
+    let rawTx = {
+      from: source,
+      nonce: this.rpc.toHex(await this.getNonce(source)),
+      gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
+      gasLimit: this.rpc.toHex(gasLimit * 2),
+      to: contractAddress,
+      value: "0x0",
+      data: contract.transfer.getData(dest, amount),
+      chainId: 42,
+    };
+
+    const tx = new EthereumTx(rawTx);
     return tx;
   }
 
