@@ -54,9 +54,8 @@ class WalletDetailView extends Component {
       sendModalVisible: false,
       receiveModalVisible: false,
       txs: txs,
-      assetSymbol: this.props.navigation.state.params.symbol,
+      token: this.props.navigation.state.params.token,
       address: this.props.navigation.state.params.address,
-      balance: this.props.navigation.state.params.balance,
       sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
       password: null,
@@ -196,8 +195,8 @@ class WalletDetailView extends Component {
         </Modal>
 
         <Card style={{backgroundColor: 'transparent'}}>
-          <Text style={styles.name}>{this.state.assetSymbol.toUpperCase()}</Text>
-          <Text style={styles.balance}>{this.state.balance}</Text>
+          <Text style={styles.name}>{this.state.token.symbol}</Text>
+          <Text style={styles.balance}>{this.state.token.balance}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup
