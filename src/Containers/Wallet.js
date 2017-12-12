@@ -29,6 +29,7 @@ class WalletView extends Component {
     const wallet = WalletService.getInstance().wallet;
     const eth = EthereumService.getInstance();
 
+    eth.sync(wallet);
     this.setState({ wallet: wallet });
 
     eth.watch(wallet.address);
@@ -58,7 +59,7 @@ class WalletView extends Component {
               key={i}
               title={t.symbol}
               subtitle={t.name}
-              // rightTitle={l.balance.toString()}
+              rightTitle={t.balance.toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
               onPress={() => {
                 console.log("navigate to : " + t.symbol);
