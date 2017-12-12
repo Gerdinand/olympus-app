@@ -17,6 +17,7 @@ class EthereumService {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
 
+    // method bind
     this.getBalance = this.getBalance.bind(this);
   }
 
@@ -82,10 +83,10 @@ class EthereumService {
     }
   }
 
-  async getTokenBalance(address, ownerAddr) {
+  async getTokenBalance(address, ownerAddress) {
     var instance = this.erc20Contract.at(address)
     try {
-      const balance = await Promisify(cb => instance.balanceOf(ownerAddr, cb));
+      const balance = await Promisify(cb => instance.balanceOf(ownerAddress, cb));
       console.log("token balance: " + balance);
 
       return balance;

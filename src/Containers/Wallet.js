@@ -13,42 +13,7 @@ import {
 } from 'react-native-elements';
 
 import { WalletHeader } from '../Components';
-import { WalletService, EthereumService } from '../Services';
-
-var styles = StyleSheet.create({
-  description: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: '#FFFFFF'
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  }
-});
-
-const list = [
-  {
-    symbol: 'eth',
-    name: 'Ethereum',
-    avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/ethereum.png',
-    balance: 2.34
-  },
-  {
-    symbol: 'knc',
-    name: 'Kyber Network',
-    avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/kyber-network.png',
-    balance: 3201
-  },
-  {
-    symbol: 'snt',
-    name: 'Status',
-    avatar: 'https://files.coinmarketcap.com/static/img/coins/32x32/status.png',
-    balance: 3431
-  },
-];
+import { WalletService, EthereumService, SupportedTokens } from '../Services';
 
 class WalletView extends Component {
 
@@ -58,6 +23,7 @@ class WalletView extends Component {
     this.state = {
       name: "",
       address: "",
+      tokens: [],
     };
   }
 
@@ -65,7 +31,7 @@ class WalletView extends Component {
     const wallet = WalletService.getInstance().wallet;
     const eth = EthereumService.getInstance();
 
-    this.setState({ name: wallet.name, address: wallet.address });
+    this.setState({ name: wallet.name, address: wallet.address, tokens: SupportedTokens });
 
     eth.watch(wallet.address);
   }
@@ -86,15 +52,15 @@ class WalletView extends Component {
         />
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
         {
-          list.map((l, i) => (
+          this.state.tokens.map((l, i) => (
             <ListItem
               roundAvatar
               hideChevron={true}
-              avatar={{uri: l.avatar}}
+              avatar={{uri: l.icon}}
               key={i}
-              title={l.symbol.toUpperCase()}
+              title={l.symbol}
               subtitle={l.name}
-              rightTitle={l.balance.toString()}
+              // rightTitle={l.balance.toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
               onPress={() => {
                 console.log(l.symbol);
@@ -112,5 +78,19 @@ class WalletView extends Component {
     );
   }
 }
+
+var styles = StyleSheet.create({
+  description: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: '#FFFFFF'
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  }
+});
 
 export default WalletView;
