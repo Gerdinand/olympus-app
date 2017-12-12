@@ -21,9 +21,7 @@ class WalletView extends Component {
     super(props);
 
     this.state = {
-      name: "",
-      address: "",
-      tokens: [],
+      wallet: null,
     };
   }
 
@@ -31,7 +29,7 @@ class WalletView extends Component {
     const wallet = WalletService.getInstance().wallet;
     const eth = EthereumService.getInstance();
 
-    this.setState({ name: wallet.name, address: wallet.address, tokens: SupportedTokens });
+    this.setState({ wallet: wallet });
 
     eth.watch(wallet.address);
   }
@@ -46,28 +44,28 @@ class WalletView extends Component {
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
         <WalletHeader
-          name={this.state.name}
-          address={this.state.address}
-          balance={"$ " + 0}
+          name={this.state.wallet.name}
+          address={this.state.wallet.address}
+          balance={"$ --"}
         />
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
         {
-          this.state.tokens.map((l, i) => (
+          this.state.wallet.tokens.map((t, i) => (
             <ListItem
               roundAvatar
               hideChevron={true}
-              avatar={{uri: l.icon}}
+              avatar={{uri: t.icon}}
               key={i}
-              title={l.symbol}
-              subtitle={l.name}
+              title={t.symbol}
+              subtitle={t.name}
               // rightTitle={l.balance.toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
               onPress={() => {
-                console.log(l.symbol);
+                console.log("navigate to : " + t.symbol);
+
                 navigation.navigate('WalletDetail', {
-                  symbol: l.symbol,
                   address: WalletService.getInstance().wallet.address,
-                  balance: l.balance,
+                  token: t,
                 })
               }}
             />
