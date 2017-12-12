@@ -11,6 +11,7 @@ import Constants from './Constants';
 import { numberToHex, hexToNumber, toTWei, toT } from '../Utils/Converter';
 import EthereumTx from 'ethereumjs-tx';
 import BigNumber from "bignumber.js";
+import { EventRegister } from 'react-native-event-listeners';
 
 class EthereumService {
 
@@ -97,6 +98,7 @@ class EthereumService {
     const balance = await this.getBalance(wallet.address);
     if (wallet.balance != balance) {
       wallet.balance = balance;
+      wallet.tokens[0].balance = balance;
       hasChanged = true;
     }
     console.log("ETH balance: ", wallet.balance);
@@ -111,12 +113,16 @@ class EthereumService {
       console.log(token.symbol + " balance: " + token.balance);
     }
 
+    if (hasChanged) {
+      EventRegister.emit("wallet.updated", wallet);
+    }
+
     return wallet;
   }
 
   watch(wallet) {
     var _ = this;
-    this.rpc.eth.filter({ address: wallet.address }, async function(error, result) {
+    this.rpc.eth.filter("lastest", async function(error, result) {
       if (error) {
         console.error(error);
         _.rpc.eth.filter.stopWatching();

@@ -12,6 +12,7 @@ import {
   ListItem
 } from 'react-native-elements';
 
+import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
 import { WalletService, EthereumService, SupportedTokens } from '../Services';
 
@@ -20,23 +21,31 @@ class WalletView extends Component {
   constructor(props) {
     super(props);
 
+    this.walletListener = null;
+
     this.state = {
       wallet: null,
     };
   }
 
   componentWillMount() {
+    var _ = this;
+    this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
+      console.log("event wallet.updated " + JSON.stringify(wallet));
+      _.setState({ wallet: wallet });
+    });
+
     const wallet = WalletService.getInstance().wallet;
     const eth = EthereumService.getInstance();
 
-    eth.sync(wallet);
     this.setState({ wallet: wallet });
 
-    eth.watch(wallet);
+    eth.sync(wallet);
+    // eth.watch(wallet);
   }
 
   componentWillUnmount() {
-
+    EventRegister.removeEventListener(this.walletListener);
   }
 
   render() {
