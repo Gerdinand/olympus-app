@@ -23,27 +23,27 @@ import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
 
 const txs = [
-  {
-    from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-    to: '0x277A304D7C69e03898120567937245d1406D5F36',
-    when: '2017/12/04 12:08',
-    amount: 21.2,
-    operation: 'send'
-  },
-  {
-    from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-    to: '0x5185129f2872C6ef729a3B5C89CC41e997036115',
-    when: '2017/12/03 3:32',
-    amount: 4.79,
-    operation: 'send'
-  },
-  {
-    from: '0xC07cAACC6414A676a1929916Ad1AbDa5E9D3d0eD',
-    to: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-    when: '2017/11/27 20:41',
-    amount: 174,
-    operation: 'receive'
-  }
+  // {
+  //   from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
+  //   to: '0x277A304D7C69e03898120567937245d1406D5F36',
+  //   when: '2017/12/04 12:08',
+  //   amount: 21.2,
+  //   operation: 'send'
+  // },
+  // {
+  //   from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
+  //   to: '0x5185129f2872C6ef729a3B5C89CC41e997036115',
+  //   when: '2017/12/03 3:32',
+  //   amount: 4.79,
+  //   operation: 'send'
+  // },
+  // {
+  //   from: '0xC07cAACC6414A676a1929916Ad1AbDa5E9D3d0eD',
+  //   to: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
+  //   when: '2017/11/27 20:41',
+  //   amount: 174,
+  //   operation: 'receive'
+  // }
 ];
 
 class WalletDetailView extends Component {
