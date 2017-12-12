@@ -102,14 +102,14 @@ class EthereumService {
   // }
 
   getTokenBalance(address, ownerAddress, callback) {
-    var instance = this.rpc.eth.contract(Constants.ERC20).at(address);
-    var data = instance.functionName.balanceOf(ownerAddress);
-    // this.rpc.eth.call({
-    //   to: address,
-    //   data: data
-    // }).then(balance => {
-    //   console.log(balance);
-    // });
+    var instance = this.erc20Contract.at(address)
+    instance.balanceOf(ownerAddress, (error, result) => {
+      if (error != null) {
+        console.log(error)
+      } else {
+        callback(result)
+      }
+    })
   }
 
   async sync(wallet) {
