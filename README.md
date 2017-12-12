@@ -1,6 +1,8 @@
 # Hora
 Hora, Olympus Wallet.
 
+This repository is for testing purposes only, do not use it for real deployment.
+
 🔨🔨🔨UNDER CONSTRUCTION!⚡️⚡️⚡️
 
 ## MVP
