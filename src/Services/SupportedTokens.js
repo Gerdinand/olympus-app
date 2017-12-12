@@ -8,32 +8,25 @@ var TOKENS = [
     decimals: 18
   },
   {
-    name: "KyberNetwork",
-    symbol: "KNC",
-    icon: "https://files.coinmarketcap.com/static/img/coins/32x32/kyber-network.png",
-    address: "0x8ac48aa26a7e25be12a9ddc83f6bbde1594414bb",
-    decimals: 18
-  },
-  {
-    name: "OmiseGO",
-    symbol: "OMG",
-    icon: "https://files.coinmarketcap.com/static/img/coins/32x32/omisego.png",
-    address: "0x1795b4560491c941c0635451f07332effe3ee7b3",
-    decimals: 18
-  },
-  {
     name: "Golem",
     symbol: "GNT",
     icon: "https://files.coinmarketcap.com/static/img/coins/32x32/golem-network-tokens.png",
-    address: "0x3876980df96a717151cd99d8396f7cb0f4c43616",
+    address: "0xbb9c28a16654a0cd510f5b0a250255c4a07211f2",
     decimals: 18
   },
   {
-    name: "AdEx",
-    symbol: "ADX",
-    icon: "https://files.coinmarketcap.com/static/img/coins/32x32/adx-net.png",
-    address: "0xe3a1b5e644db09ab25d8292a1a23d4a052ff447e",
-    decimals: 4
+    name: "Digix",
+    symbol: "DGD",
+    icon: "https://files.coinmarketcap.com/static/img/coins/32x32/digixdao.png",
+    address: "0x950b87923d52b09b1050abda589f91521e17e606",
+    decimals: 9
+  },
+  {
+    name: "Gnosis",
+    symbol: "GNO",
+    icon: "https://files.coinmarketcap.com/static/img/coins/32x32/gnosis-gno.png",
+    address: "0x2c018fc6c9bb2b7653136dc7c5b7b588f2d11986",
+    decimals: 9
   },
   // tokens for test
   {
