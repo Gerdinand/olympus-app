@@ -84,7 +84,9 @@ class EthereumService {
   }
 
   async getTokenBalance(address, ownerAddress) {
-    var instance = this.erc20Contract.at(address)
+    console.log(this);
+    var instance = this.erc20Contract.at(address);
+    console.log("token instance: " + instance);
     try {
       const balance = await Promisify(cb => instance.balanceOf(ownerAddress, cb));
       console.log("token balance: " + balance);
@@ -96,11 +98,23 @@ class EthereumService {
     }
   }
 
+  async sync(wallet) {
+    wallet.balance = await this.getBalance(wallet.address);
+    console.log("eth balance: ", wallet.balance);
+
+    for (var i = 1; i < wallet.tokens.length; i++) {
+      wallet.tokens[i].balance = await this.getTokenBalance(wallet.tokens[i].address, wallet.ownerAddress);
+      console.log("token " + wallet.tokens[i].symbol + " balance: " + wallet.tokens[i].balance);
+    }
+
+    return wallet;
+  }
+
   watch(address) {
-    var self = this;
-    this.rpc.eth.filter("latest").watch(async function() {
-      const currentBalance = await self.getBalance(address) ;
-    });
+    // var self = this;
+    // this.rpc.eth.filter("latest").watch(async function() {
+    //   const currentBalance = await self.getBalance(address) ;
+    // });
   }
 
   actAndWatch(error, result) {
