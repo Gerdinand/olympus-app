@@ -16,6 +16,7 @@ class EthereumService {
   constructor() {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
+    console.log(this.erc20Contract);
 
     // method bind
     this.getBalance = this.getBalance.bind(this);
@@ -83,19 +84,32 @@ class EthereumService {
     }
   }
 
-  async getTokenBalance(address, ownerAddress) {
-    console.log(this);
-    var instance = this.erc20Contract.at(address);
-    console.log("token instance: " + instance);
-    try {
-      const balance = await Promisify(cb => instance.balanceOf(ownerAddress, cb));
-      console.log("token balance: " + balance);
+  // export function getTokenBalance(walletAddress: string, contractAddress: string): Promise<string> {
+  //   return new Promise((resolve, reject) => {
+  //     const data = `0x${HEX_OF_BALANCE_OF}${padLeft(addressWithout0x(walletAddress), 64)}`
+  //     const params = { to: contractAddress, data }
+  //     console.log(`[web3 req] call params: ${JSON.stringify(params)}`)
+  //     web3.eth.call(params, (err, value) => {
+  //       if (!err) {
+  //         const balance = value === '0x' ? '0' : (math.toBN(value, 10)).toString(10)
+  //         console.log(`[web3 res] getTokenBalance: ${balance}`)
+  //         resolve(balance)
+  //       } else {
+  //         reject(err)
+  //       }
+  //     })
+  //   })
+  // }
 
-      return balance;
-    } catch (e) {
-      console.error(e);
-      return e;
-    }
+  getTokenBalance(address, ownerAddress, callback) {
+    var instance = this.rpc.eth.contract(Constants.ERC20).at(address);
+    var data = instance.methods.balanceOf(ownerAddress);
+    this.rpc.eth.call({
+      to: address,
+      data: data
+    }).then(balance => {
+      console.log(balance);
+    });
   }
 
   async sync(wallet) {
@@ -103,7 +117,7 @@ class EthereumService {
     console.log("eth balance: ", wallet.balance);
 
     for (var i = 1; i < wallet.tokens.length; i++) {
-      wallet.tokens[i].balance = await this.getTokenBalance(wallet.tokens[i].address, wallet.ownerAddress);
+      wallet.tokens[i].balance = await Promisify(cb => this.getTokenBalance(wallet.tokens[i].address, wallet.ownerAddress, cb)) ;
       console.log("token " + wallet.tokens[i].symbol + " balance: " + wallet.tokens[i].balance);
     }
 
