@@ -10,13 +10,15 @@ import Promisify from '../Utils/Promisify';
 import Constants from './Constants';
 import { numberToHex, hexToNumber, toTWei, toT } from '../Utils/Converter';
 import EthereumTx from 'ethereumjs-tx';
+import BigNumber from "bignumber.js";
 
 class EthereumService {
 
   constructor() {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
-    console.log(this.erc20Contract);
+    this.intervalID = null;
+    this.filter = null;
 
     // method bind
     this.getBalance = this.getBalance.bind(this);
@@ -37,15 +39,12 @@ class EthereumService {
   }
 
   async getNonce(address) {
-    console.log("address: " + address);
     const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb));
-    console.log("nonce: " + nonce);
     return nonce
   }
 
   async getGasPrice() {
     const gasPrice = await Promisify(cb => this.rpc.eth.getGasPrice(cb));
-    console.log("gapPrice: " + gasPrice);
     return gasPrice;
   }
 
@@ -59,7 +58,7 @@ class EthereumService {
       data: "",
       chainId: 42,
     };
-    console.log("raw tx: " + JSON.stringify(rawTx));
+
     const tx = new EthereumTx(rawTx);
 
     return tx;
@@ -67,76 +66,65 @@ class EthereumService {
 
   async sendTx(tx) {
     let serializedTx = tx.serialize();
-    const result = await Promisify(cb => this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb));
-    console.log(result);
+    const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb));
+    console.log("tx hash: " + hash);
   }
 
   async getBalance(address) {
     try {
       const balanceInWei = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
-      const balance = this.rpc.fromWei(balanceInWei);
-      console.log("balance: " + address + ", " + balance);
+      const balance = this.rpc.fromWei(balanceInWei, "ether");
 
-      return balance;
+      return balance.toNumber();
     } catch (e) {
-      console.error(e);
       return e;
     }
   }
 
-  // export function getTokenBalance(walletAddress: string, contractAddress: string): Promise<string> {
-  //   return new Promise((resolve, reject) => {
-  //     const data = `0x${HEX_OF_BALANCE_OF}${padLeft(addressWithout0x(walletAddress), 64)}`
-  //     const params = { to: contractAddress, data }
-  //     console.log(`[web3 req] call params: ${JSON.stringify(params)}`)
-  //     web3.eth.call(params, (err, value) => {
-  //       if (!err) {
-  //         const balance = value === '0x' ? '0' : (math.toBN(value, 10)).toString(10)
-  //         console.log(`[web3 res] getTokenBalance: ${balance}`)
-  //         resolve(balance)
-  //       } else {
-  //         reject(err)
-  //       }
-  //     })
-  //   })
-  // }
+  async getTokenBalance(address, ownerAddress, decimals) {
+    var instance = this.erc20Contract.at(address);
+    const balance = await Promisify(cb => instance.balanceOf(ownerAddress, cb));
 
-  getTokenBalance(address, ownerAddress, callback) {
-    var instance = this.erc20Contract.at(address)
-    instance.balanceOf(ownerAddress, (error, result) => {
-      if (error != null) {
-        console.log(error)
-      } else {
-        callback(result)
-      }
-    })
+    const bigBalance = new BigNumber(balance);
+    var base = new BigNumber(10);
+    const readableBalance = bigBalance.div(base.pow(decimals)).toNumber();
+
+    return readableBalance;
   }
 
   async sync(wallet) {
-    wallet.balance = await this.getBalance(wallet.address);
-    console.log("eth balance: ", wallet.balance);
+    var hasChanged = false;
+    const balance = await this.getBalance(wallet.address);
+    if (wallet.balance != balance) {
+      wallet.balance = balance;
+      hasChanged = true;
+    }
+    console.log("ETH balance: ", wallet.balance);
 
     for (var i = 1; i < wallet.tokens.length; i++) {
-      wallet.tokens[i].balance = await Promisify(cb => this.getTokenBalance(wallet.tokens[i].address, wallet.ownerAddress, cb)) ;
-      console.log("token " + wallet.tokens[i].symbol + " balance: " + wallet.tokens[i].balance);
+      var token = wallet.tokens[i];
+      var tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
+      if (token.balance != tokenBalance) {
+          token.balance = tokenBalance;
+          hasChanged = true;
+      }
+      console.log(token.symbol + " balance: " + token.balance);
     }
 
     return wallet;
   }
 
-  watch(address) {
-    // var self = this;
-    // this.rpc.eth.filter("latest").watch(async function() {
-    //   const currentBalance = await self.getBalance(address) ;
-    // });
-  }
-
-  actAndWatch(error, result) {
-    if (error != null) {
-      console.error(error);
-    } else {
-      console.log(result);
-    }
+  watch(wallet) {
+    var _ = this;
+    this.rpc.eth.filter({ address: wallet.address }, async function(error, result) {
+      if (error) {
+        console.error(error);
+        _.rpc.eth.filter.stopWatching();
+      } else {
+        console.log("filter called");
+        const syncedWallet = await _.sync(wallet);
+      }
+    });
   }
 }
 
