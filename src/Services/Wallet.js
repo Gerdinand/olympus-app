@@ -47,11 +47,9 @@ class WalletService {
       // 2. add tokens
       for (var i = 0; i < SupportedTokens.length; i++) {
         const t = SupportedTokens[i];
-        const token = new Token(t.name, t.icon, t.symbol, t.address, wallet.address);
+        const token = new Token(t.name, t.icon, t.symbol, t.address, wallet.address, t.decimals);
         wallet.tokens.push(token);
       }
-
-      console.log("wallet: " + JSON.stringify(wallet));
 
       this.wallet = wallet;
 

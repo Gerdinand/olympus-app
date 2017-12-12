@@ -32,7 +32,7 @@ class WalletView extends Component {
     eth.sync(wallet);
     this.setState({ wallet: wallet });
 
-    eth.watch(wallet.address);
+    eth.watch(wallet);
   }
 
   componentWillUnmount() {
