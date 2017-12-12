@@ -80,6 +80,7 @@ class WalletDetailView extends Component {
   }
 
   render() {
+
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
         <Modal
@@ -92,17 +93,22 @@ class WalletDetailView extends Component {
             <Card title="SEND">
               <FormLabel>To</FormLabel>
               <FormInput
+                multiline
+                inputStyle={{width: '100%'}}
                 placeholder="0x0abc..."
-                onChangeText={(text) => this.state.sendAddress = text}
+                // onChangeText={(text) => this.state.sendAddress = text}
+                value={this.state.sendAddress}
               />
               <FormLabel>Amount</FormLabel>
               <FormInput
+                inputStyle={{width: '100%'}}
                 placeholder="0"
                 keyboardType={"numeric"}
                 onChangeText={(text) => this.state.sendAmount = Number(text)}
               />
               <FormLabel>Password</FormLabel>
               <FormInput
+                inputStyle={{width: '100%'}}
                 placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
