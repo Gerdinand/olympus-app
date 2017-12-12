@@ -54,7 +54,7 @@ class EthereumService {
       to: address,
       value: this.rpc.toHex(this.rpc.toWei(value, "ether")),
       data: "",
-      chainId: 3,
+      chainId: 42,
     };
     console.log("raw tx: " + JSON.stringify(rawTx));
     const tx = new EthereumTx(rawTx);
