@@ -68,8 +68,9 @@ class WalletView extends Component {
               key={i}
               title={t.symbol}
               subtitle={t.name}
-              rightTitle={t.balance.toString()}
-              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
+              rightTitle={(0 == i || t.price == 0) ? t.balance.toString() : t.balance.toString() + "\n1 ETH = " + t.price + " " + t.symbol}
+              rightTitleNumberOfLines={2}
+              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A', textAlign:'right'}}
               onPress={() => {
                 console.log("navigate to : " + t.symbol);
 
