@@ -18,8 +18,8 @@ class EthereumService {
   constructor() {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
-    this.kyberAddress = Constants.NETWORK_ADDRESS;
-    this.kyberContract = this.rpc.eth.contract(Constants.KYBER_NETWORK).at(this.kyberAddress);
+    this.kyberAddress = Constants.KYBER_NETWORK_ADDRESS;
+    this.kyberContract = this.rpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
     this.intervalID = null;
     this.filter = null;
 
@@ -133,6 +133,10 @@ class EthereumService {
           token.balance = tokenBalance;
           hasChanged = true;
       }
+      const price = await this.getPrice(token.address, Constants.ETHER_ADDRESS);
+      token.price = this.rpc.fromWei(price, "ether");
+
+      console.log(token.symbol + " price: " + token.price);
       console.log(token.symbol + " balance: " + token.balance);
     }
 
@@ -143,8 +147,8 @@ class EthereumService {
     return wallet;
   }
 
-  async getKyberRate(source, dest, reserve) {
-    const result = await Promisify(cb => this.kyberContract.getRate(source, dest, reserve, cb));
+  async getPrice(source, dest) {
+    const result = await Promisify(cb => this.kyberContract.getPrice(source, dest, cb));
     return result;
   }
 
