@@ -144,7 +144,8 @@ class EthereumService {
   }
 
   async getKyberRate(source, dest, reserve) {
-
+    const result = await Promisify(cb => this.kyberContract.getRate(source, dest, reserve, cb));
+    return result;
   }
 
   watch(wallet) {
