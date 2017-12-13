@@ -18,6 +18,8 @@ class EthereumService {
   constructor() {
     this.rpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
+    this.kyberAddress = Constants.NETWORK_ADDRESS;
+    this.kyberContract = this.rpc.eth.contract(Constants.KYBER_NETWORK).at(this.kyberAddress);
     this.intervalID = null;
     this.filter = null;
 
@@ -139,6 +141,10 @@ class EthereumService {
     }
 
     return wallet;
+  }
+
+  async getKyberRate(source, dest, reserve) {
+
   }
 
   watch(wallet) {
