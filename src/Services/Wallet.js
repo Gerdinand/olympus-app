@@ -41,6 +41,8 @@ class WalletService {
         address: info[0].address,
         name: info[0].name,
         balance: 0,
+        balanceInUSD: 0,
+        ethPrice: 0,
         tokens: [],
       };
 

@@ -56,7 +56,7 @@ class WalletView extends Component {
         <WalletHeader
           name={this.state.wallet.name}
           address={this.state.wallet.address}
-          balance={"$ --"}
+          balance={this.state.wallet.ethPrice != 0 ? "$ " + this.state.wallet.balanceInUSD : "$ --"}
         />
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
         {

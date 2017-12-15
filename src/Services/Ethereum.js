@@ -12,6 +12,7 @@ import { numberToHex, hexToNumber, toTWei, toT } from '../Utils/Converter';
 import EthereumTx from 'ethereumjs-tx';
 import BigNumber from "bignumber.js";
 import { EventRegister } from 'react-native-event-listeners';
+import { getETHPrice } from './Currency';
 
 class EthereumService {
 
@@ -126,6 +127,16 @@ class EthereumService {
     }
     console.log("ETH balance: ", wallet.balance);
 
+    const ethPrice = await getETHPrice();
+    if (wallet.ethPrice != ethPrice) {
+      wallet.ethPrice = ethPrice;
+      hasChanged = true;
+    }
+    console.log("ETH price: ", ethPrice);
+
+    var balanceInUSD = ethPrice * balance;
+    console.log("USD: ", balanceInUSD);
+
     for (var i = 1; i < wallet.tokens.length; i++) {
       var token = wallet.tokens[i];
       var tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
@@ -135,6 +146,8 @@ class EthereumService {
       }
       const priceInWei = await this.getPrice(Constants.ETHER_ADDRESS, token.address);
       const tokenPrice = this.rpc.fromWei(priceInWei, "ether").toFixed(2);
+      balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
+      console.log("USD: ", balanceInUSD);
       if (token.price != tokenPrice) {
         token.price = tokenPrice;
         hasChanged = true;
@@ -144,16 +157,13 @@ class EthereumService {
       console.log(token.symbol + " balance: " + token.balance);
     }
 
+    wallet.balanceInUSD = balanceInUSD.toFixed(2);
+
     if (hasChanged) {
       EventRegister.emit("wallet.updated", wallet);
     }
 
     return wallet;
-  }
-
-  async getPrice(source, dest) {
-    const result = await Promisify(cb => this.kyberContract.getPrice(source, dest, cb));
-    return result;
   }
 
   watch(wallet) {
@@ -167,6 +177,57 @@ class EthereumService {
         const syncedWallet = await _.sync(wallet);
       }
     });
+  }
+
+  // Kyber Integraiton
+  async getPrice(source, dest) {
+    const result = await Promisify(cb => this.kyberContract.getPrice(source, dest, cb));
+    return result;
+  }
+
+  async generateTradeTx(
+    sourceToken,
+    sourceAmount,
+    destToken,
+    destAddress,
+    maxDestAmount,
+    minConversionRate,
+    throwOnFailure,
+    gasLimit) {
+    const exchangeData = this.kyberContract.walletTrade.getData(
+      sourceToken,
+      sourceAmount,
+      destToken,
+      destAddress,
+      maxDestAmount,
+      minConversionRate,
+      throwOnFailure,
+    );
+
+    let rawTx = {
+      from: source,
+      nonce: this.rpc.toHex(await this.getNonce(source)),
+      gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
+      gasLimit: this.rpc.toHex(gasLimit * 2),
+      to: this.kyberAddress,
+      value: exchangeData,
+      data: contract.transfer.getData(dest, amount),
+      chainId: 42,
+    };
+
+    const tx = new EthereumTx(rawTx);
+    return tx;
+  }
+
+  async tradeFromTokenToEther(sourceToken, sourceAmount, destToken, destAddress,
+    maxDestAmount, minConversionRate, throwOnFailure) {
+
+  }
+
+  async tradeFromEtherToToken(sourceToken, sourceAmount, destToken, destAddress,
+    maxDestAmount, minConversionRate, throwOnFailure) {
+    const exchangeData = this.kyberContract.walletTrade.getData(sourceToken, sourceAmount, destToken, destAddress,
+    maxDestAmount, minConversionRate, throwOnFailure);
   }
 }
 
