@@ -180,38 +180,44 @@ class EthereumService {
     minConversionRate,
     throwOnFailure,
     gasLimit) {
+
+    const amount = this.rpc.toWei(sourceAmount, "ether");
+
     const exchangeData = this.kyberContract.walletTrade.getData(
       sourceToken,
-      sourceAmount,
+      amount,
       destToken,
       destAddress,
       maxDestAmount,
       minConversionRate,
       throwOnFailure,
+      0
     );
 
     let rawTx = {
       nonce: this.rpc.toHex(await this.getNonce(destAddress)),
-      gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
+      gasPrice: this.rpc.toHex(await this.getGasPrice()),
       gasLimit: this.rpc.toHex(gasLimit),
       to: this.kyberAddress,
-      value: sourceToken == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ? this.rpc.toHex(this.rpc.toWei(sourceAmount, "ether")) : 0,
+      value: sourceToken == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
       chainId: 42,
     };
+
+    console.log(JSON.stringify(rawTx));
 
     const tx = new EthereumTx(rawTx);
     return tx;
   }
 
   async generateTradeFromTokenToEtherTx(sourceToken, sourceAmount, destAddress) {
-      const tx = await generateTradeTx(
+      const tx = await this.generateTradeTx(
         sourceToken,
         sourceAmount,
         "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
         destAddress,
-        MAX_UINT,
-        1,
+        (new BigNumber(2)).pow(255),
+        await this.getPrice(sourceToken, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"),
         true,
         1000000
       );
@@ -220,13 +226,13 @@ class EthereumService {
   }
 
   async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress) {
-    const tx = await generateTradeTx(
+    const tx = await this.generateTradeTx(
       "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       sourceAmount,
       destToken,
       destAddress,
-      MAX_UINT,
-      1,
+      (new BigNumber(2)).pow(255),
+      await this.getPrice("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", destToken),
       true,
       1000000
     );
