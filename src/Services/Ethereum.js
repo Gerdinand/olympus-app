@@ -12,6 +12,7 @@ import { numberToHex, hexToNumber, toTWei, toT } from '../Utils/Converter';
 import EthereumTx from 'ethereumjs-tx';
 import BigNumber from "bignumber.js";
 import { EventRegister } from 'react-native-event-listeners';
+import { getETHPrice } from './Currency';
 
 class EthereumService {
 
@@ -117,43 +118,38 @@ class EthereumService {
   }
 
   async sync(wallet) {
-    var hasChanged = false;
     const balance = await this.getBalance(wallet.address);
-    if (wallet.balance != balance) {
-      wallet.balance = balance;
-      wallet.tokens[0].balance = balance;
-      hasChanged = true;
-    }
+    wallet.balance = balance;
+    wallet.tokens[0].balance = balance;
     console.log("ETH balance: ", wallet.balance);
+
+    const ethPrice = await getETHPrice();
+    wallet.ethPrice = ethPrice;
+    console.log("ETH price: ", ethPrice);
+
+    var balanceInUSD = ethPrice * balance;
+    console.log("USD: ", balanceInUSD);
 
     for (var i = 1; i < wallet.tokens.length; i++) {
       var token = wallet.tokens[i];
       var tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
-      if (token.balance != tokenBalance) {
-          token.balance = tokenBalance;
-          hasChanged = true;
-      }
+      token.balance = tokenBalance;
+
       const priceInWei = await this.getPrice(Constants.ETHER_ADDRESS, token.address);
       const tokenPrice = this.rpc.fromWei(priceInWei, "ether").toFixed(2);
-      if (token.price != tokenPrice) {
-        token.price = tokenPrice;
-        hasChanged = true;
-      }
+      token.price = tokenPrice;
+
+      balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
 
       console.log(token.symbol + " price: " + token.price);
       console.log(token.symbol + " balance: " + token.balance);
     }
 
-    if (hasChanged) {
-      EventRegister.emit("wallet.updated", wallet);
-    }
+    wallet.balanceInUSD = balanceInUSD.toFixed(2);
+
+    EventRegister.emit("wallet.updated", wallet);
 
     return wallet;
-  }
-
-  async getPrice(source, dest) {
-    const result = await Promisify(cb => this.kyberContract.getPrice(source, dest, cb));
-    return result;
   }
 
   watch(wallet) {
@@ -167,6 +163,81 @@ class EthereumService {
         const syncedWallet = await _.sync(wallet);
       }
     });
+  }
+
+  // Kyber Integraiton
+  async getPrice(source, dest) {
+    const result = await Promisify(cb => this.kyberContract.getPrice(source, dest, cb));
+    return result;
+  }
+
+  async generateTradeTx(
+    sourceToken,
+    sourceAmount,
+    destToken,
+    destAddress,
+    maxDestAmount,
+    minConversionRate,
+    throwOnFailure,
+    gasLimit) {
+
+    const amount = this.rpc.toWei(sourceAmount, "ether");
+
+    const exchangeData = this.kyberContract.walletTrade.getData(
+      sourceToken,
+      amount,
+      destToken,
+      destAddress,
+      maxDestAmount,
+      minConversionRate,
+      throwOnFailure,
+      0
+    );
+
+    let rawTx = {
+      nonce: this.rpc.toHex(await this.getNonce(destAddress)),
+      gasPrice: this.rpc.toHex(await this.getGasPrice()),
+      gasLimit: this.rpc.toHex(gasLimit),
+      to: this.kyberAddress,
+      value: sourceToken == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ? this.rpc.toHex(amount) : 0,
+      data: exchangeData,
+      chainId: 42,
+    };
+
+    console.log(JSON.stringify(rawTx));
+
+    const tx = new EthereumTx(rawTx);
+    return tx;
+  }
+
+  async generateTradeFromTokenToEtherTx(sourceToken, sourceAmount, destAddress) {
+      const tx = await this.generateTradeTx(
+        sourceToken,
+        sourceAmount,
+        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        destAddress,
+        (new BigNumber(2)).pow(255),
+        await this.getPrice(sourceToken, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"),
+        true,
+        1000000
+      );
+
+      return tx;
+  }
+
+  async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress) {
+    const tx = await this.generateTradeTx(
+      "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      sourceAmount,
+      destToken,
+      destAddress,
+      (new BigNumber(2)).pow(255),
+      await this.getPrice("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", destToken),
+      true,
+      1000000
+    );
+
+    return tx;
   }
 }
 

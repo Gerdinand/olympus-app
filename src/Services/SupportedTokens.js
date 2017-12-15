@@ -36,13 +36,13 @@ var TOKENS = [
     decimals: 4
   },
   // tokens for test
-  {
-    name: "ERC20 Test Token",
-    symbol: "TKN",
-    icon: "",
-    address: "0x5A7f24E34adAC43955dE79C6Be3A050e29D1f93e",
-    decimals: 18
-  },
+  // {
+  //   name: "ERC20 Test Token",
+  //   symbol: "TKN",
+  //   icon: "",
+  //   address: "0x5A7f24E34adAC43955dE79C6Be3A050e29D1f93e",
+  //   decimals: 18
+  // },
 ];
 
 export default TOKENS;
