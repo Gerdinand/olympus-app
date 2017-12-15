@@ -6,7 +6,8 @@ import {
   View,
 } from 'react-native';
 import {
-  Text
+  Text,
+  Button,
 } from 'react-native-elements';
 
 var styles = StyleSheet.create({

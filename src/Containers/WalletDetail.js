@@ -7,7 +7,8 @@ import {
   Text,
   ScrollView,
   Modal,
-  Clipboard
+  Clipboard,
+  ActionSheetIOS
 } from 'react-native';
 import {
   List,
@@ -53,12 +54,14 @@ class WalletDetailView extends Component {
     this.state = {
       sendModalVisible: false,
       receiveModalVisible: false,
+      exchangeModalVisible: false,
       txs: txs,
       token: this.props.navigation.state.params.token,
       address: this.props.navigation.state.params.address,
       sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
       password: null,
+      exchangeAmount: 0.0,
     };
   }
 
@@ -79,8 +82,25 @@ class WalletDetailView extends Component {
     this.setState({receiveModalVisible: true});
   }
 
-  render() {
+  onExchange() {
+    if (this.state.token.symbo == "ETH") {
+      return ;
+    }
 
+    var _ = this;
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: ["ETH -> " + _.state.token.symbol, _.state.token.symbol + " -> ETH", "Cancel"],
+      cancelButtonIndex: 2,
+    }, (buttonIndex) => {
+      if (0 == buttonIndex) {
+        _.setState({ exchangeType: "BID", exchangeModalVisible: true });
+      } else if (1 == buttonIndex) {
+        _.setState({ exchangeType: "ASK", exchangeModalVisible: true });
+      }
+    });
+  }
+
+  render() {
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
         <Modal
@@ -152,20 +172,19 @@ class WalletDetailView extends Component {
                         );
                       }
 
-
                       // sign tx
                       tx.sign(privateKey);
 
                       // send tx
                       await EthereumService.getInstance().sendTx(tx);
 
-                      this.setState({sendModalVisible: false});
+                      this.setState({sendModalVisible: false, sendAmount: 0, password: null});
                     }
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
-                  title="Cancel"
-                  onPress={() => {this.setState({sendModalVisible: false})}}
+                  title={"Cancel"}
+                  onPress={() => {this.setState({sendModalVisible: false, sendAmount: 0, password: null})}}
                   color={'#4A4A4A'}
                 />
               </View>
@@ -205,8 +224,66 @@ class WalletDetailView extends Component {
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
-                  title="Cancel"
+                  title={"Cancel"}
                   onPress={() => {this.setState({receiveModalVisible: false})}}
+                  color={'#4A4A4A'}
+                />
+              </View>
+            </Card>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType={"fade"}
+          transparent={true}
+          visible={this.state.exchangeModalVisible}
+          onRequestClose={() => {this.setState({exchangeModalVisible: false})}}
+          >
+          <View style={styles.modelContainer}>
+            <Card title={this.state.exchangeType=="BID" ? "ETH -> " + this.state.token.symbol : this.state.token.symbol + " -> ETH"}>
+              <FormLabel>Exchange</FormLabel>
+              <FormInput
+                inputStyle={{width: '100%'}}
+                placeholder="Amount to exchange"
+                keyboardType={"numeric"}
+                onChangeText={(text) => {
+                  const askAmount = Number(text);
+                  var bidAmount = 0;
+                  if (this.state.exchangeType == "BID") {
+                    bidAmount = askAmount * this.state.token.price;
+                  } else {
+                    bidAmount = askAmount * (1.0 / this.state.token.price);
+                  }
+
+                  bidAmount = bidAmount.toFixed(4);
+
+                  this.setState({ exchangeAmount : bidAmount });
+                }}
+              />
+              <FormLabel>Expected to receive {this.state.exchangeAmount} {this.state.exchangeType == "BID" ? this.state.token.symbol : "ETH"}</FormLabel>
+              <FormLabel>Password</FormLabel>
+              <FormInput
+                inputStyle={{width: '100%'}}
+                placeholder="To unlock the wallet"
+                onChangeText={(text) => this.state.password = text}
+              />
+              <View style={{
+                padding: 10,
+              }}>
+                <Button
+                  title={"Trade"}
+                  buttonStyle={styles.modalSendButton}
+                  raised
+                  onPress={() => {
+                    //
+                    this.setState({exchangeModalVisible: false, password: null, exchangeAmount: 0.0})
+                  }}
+                />
+                <Button buttonStyle={styles.modalCloseButton}
+                  title="Cancel"
+                  onPress={() => {
+                    this.setState({exchangeModalVisible: false, password: null, exchangeAmount: 0.0})
+                  }}
                   color={'#4A4A4A'}
                 />
               </View>
@@ -224,11 +301,13 @@ class WalletDetailView extends Component {
             onPress= {(selectedIndex) => {
               if (0 == selectedIndex) {
                 this.onSend();
-              } else {
+              } else if (1 == selectedIndex) {
                 this.onReceive();
+              } else if (2 == selectedIndex) {
+                this.onExchange();
               }
             }}
-            buttons={["Send", "Receive"]}
+            buttons={["Send", "Receive", "Exchange"]}
           />
         </View>
         <List>
