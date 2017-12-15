@@ -83,7 +83,7 @@ class WalletDetailView extends Component {
   }
 
   onExchange() {
-    if (this.state.token.symbo == "ETH") {
+    if (this.state.token.address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
       return ;
     }
 
