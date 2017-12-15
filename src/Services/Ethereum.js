@@ -93,6 +93,8 @@ class EthereumService {
   async sendTx(tx) {
     let serializedTx = tx.serialize();
     const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb));
+    WalletService.getInstance().wallet.pendingTxHash = hash;
+    this.sync(WalletService.getInstance().wallet);
     console.log("tx hash: " + hash);
   }
 
@@ -169,9 +171,23 @@ class EthereumService {
     const url = "http://kovan.etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4";
     const response = await fetch(url, {method: "GET"});
     const responseText = await response.text();
-    
+
     if (response.status == 200) {
       wallet.txs = JSON.parse(responseText).result;
+    }
+
+    if (wallet.pendingTxHash) {
+      var hasPacked = false;
+      for (var i = 0; i < wallet.txs.length; i++) {
+        if (wallet.txs[i].hash == wallet.pendingTxHash) {
+          hasPacked = true;
+          break;
+        }
+      }
+
+      if (hasPacked) {
+        wallet.pendingTxHash = null;
+      }
     }
 
     this.isSyncing = false;

@@ -35,6 +35,7 @@ class WalletDetailView extends Component {
       receiveModalVisible: false,
       exchangeModalVisible: false,
       txs: [],
+      pendingTxHash: null,
       token: this.props.navigation.state.params.token,
       sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
@@ -65,7 +66,7 @@ class WalletDetailView extends Component {
           }
         }
         console.log(JSON.stringify(txs));
-        this.setState({ token: token, txs: txs });
+        this.setState({ token: token, txs: txs, pendingTxHash: wallet.pendingTxHash });
         break;
       }
     }
@@ -85,7 +86,7 @@ class WalletDetailView extends Component {
             }
           }
           console.log(JSON.stringify(txs));
-          _.setState({ token: token, txs: txs });
+          _.setState({ token: token, txs: txs, pendingTxHash: wallet.pendingTxHash });
           break;
         }
       }
@@ -370,6 +371,14 @@ class WalletDetailView extends Component {
           />
         </View>
         <List>
+        {this.state.pendingTxHash &&
+          <ListItem
+            hideChevron={true}
+            key={-1}
+            title={"PENDING"}
+            subtitle={"wait for a minute"}
+          />
+        }
         {
           this.state.txs.map((l, i) => (
             <ListItem

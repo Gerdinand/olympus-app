@@ -17,6 +17,7 @@ import {
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
 import { WalletService, EthereumService, SupportedTokens } from '../Services';
+import Toast from '@remobile/react-native-toast';
 
 class WalletView extends Component {
 
@@ -36,7 +37,9 @@ class WalletView extends Component {
   componentWillMount() {
     var _ = this;
     this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
-      console.log("event wallet.updated " + JSON.stringify(wallet));
+      if (wallet.txs.length != _.state.wallet.length) {
+        Toast.showShortTop.bind(null, "New transaction confirmed.");
+      }
       _.setState({ wallet: wallet, refreshing: false });
     });
 
