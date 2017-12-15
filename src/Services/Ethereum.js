@@ -191,13 +191,12 @@ class EthereumService {
     );
 
     let rawTx = {
-      from: source,
-      nonce: this.rpc.toHex(await this.getNonce(source)),
+      nonce: this.rpc.toHex(await this.getNonce(destAddress)),
       gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
-      gasLimit: this.rpc.toHex(gasLimit * 2),
+      gasLimit: this.rpc.toHex(gasLimit),
       to: this.kyberAddress,
-      value: exchangeData,
-      data: contract.transfer.getData(dest, amount),
+      value: sourceToken == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ? this.rpc.toHex(this.rpc.toWei(sourceAmount, "ether")) : 0,
+      data: exchangeData,
       chainId: 42,
     };
 
@@ -205,15 +204,34 @@ class EthereumService {
     return tx;
   }
 
-  async tradeFromTokenToEther(sourceToken, sourceAmount, destToken, destAddress,
-    maxDestAmount, minConversionRate, throwOnFailure) {
+  async generateTradeFromTokenToEtherTx(sourceToken, sourceAmount, destAddress) {
+      const tx = await generateTradeTx(
+        sourceToken,
+        sourceAmount,
+        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        destAddress,
+        MAX_UINT,
+        1,
+        true,
+        1000000
+      );
 
+      return tx;
   }
 
-  async tradeFromEtherToToken(sourceToken, sourceAmount, destToken, destAddress,
-    maxDestAmount, minConversionRate, throwOnFailure) {
-    const exchangeData = this.kyberContract.walletTrade.getData(sourceToken, sourceAmount, destToken, destAddress,
-    maxDestAmount, minConversionRate, throwOnFailure);
+  async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress) {
+    const tx = await generateTradeTx(
+      "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      sourceAmount,
+      destToken,
+      destAddress,
+      MAX_UINT,
+      1,
+      true,
+      1000000
+    );
+
+    return tx;
   }
 }
 
