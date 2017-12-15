@@ -43,9 +43,11 @@ class WalletView extends Component {
     this.setState({ wallet: WalletService.getInstance().wallet });
 
     this.fetchData();
+    EthereumService.getInstance().fireTimer();
   }
 
   componentWillUnmount() {
+    EthereumService.getInstance().invalidateTimer();
     EventRegister.removeEventListener(this.walletListener);
   }
 
@@ -93,7 +95,6 @@ class WalletView extends Component {
                 console.log("navigate to : " + t.symbol);
 
                 navigation.navigate('WalletDetail', {
-                  address: WalletService.getInstance().wallet.address,
                   token: t,
                 })
               }}

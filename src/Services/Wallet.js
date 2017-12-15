@@ -44,6 +44,7 @@ class WalletService {
         balanceInUSD: 0,
         ethPrice: 0,
         tokens: [],
+        txs: []
       };
 
       // 2. add tokens
