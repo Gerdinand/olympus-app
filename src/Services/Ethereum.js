@@ -13,6 +13,7 @@ import EthereumTx from 'ethereumjs-tx';
 import BigNumber from "bignumber.js";
 import { EventRegister } from 'react-native-event-listeners';
 import { getETHPrice } from './Currency';
+import WalletService from './Wallet';
 
 class EthereumService {
 
@@ -22,7 +23,6 @@ class EthereumService {
     this.kyberAddress = Constants.KYBER_NETWORK_ADDRESS;
     this.kyberContract = this.rpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
     this.intervalID = null;
-    this.filter = null;
     this.isSyncing = false;
 
     // method bind
@@ -118,6 +118,19 @@ class EthereumService {
     return readableBalance;
   }
 
+  runloop() {
+    this.sync(WalletService.getInstance().wallet);
+  }
+
+  fireTimer () {
+    this.runloop();
+    this.intervalID = setInterval(this.runloop.bind(this), 10000);
+  }
+
+  invalidateTimer () {
+    window.clearInterval(this.intervalID);
+  }
+
   async sync(wallet) {
     if (this.isSyncing) {
       return ;
@@ -153,24 +166,17 @@ class EthereumService {
 
     wallet.balanceInUSD = balanceInUSD.toFixed(2);
 
+    const url = "http://kovan.etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4";
+    const response = await fetch(url, {method: "GET"});
+    if (response.status == 1) {
+      wallet.txs = response.result;
+    }
+
     this.isSyncing = false;
 
     EventRegister.emit("wallet.updated", wallet);
 
     return wallet;
-  }
-
-  watch(wallet) {
-    var _ = this;
-    this.rpc.eth.filter("lastest", async function(error, result) {
-      if (error) {
-        console.error(error);
-        _.rpc.eth.filter.stopWatching();
-      } else {
-        console.log("filter called");
-        const syncedWallet = await _.sync(wallet);
-      }
-    });
   }
 
   // Kyber Integraiton
