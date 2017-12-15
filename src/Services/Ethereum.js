@@ -168,8 +168,10 @@ class EthereumService {
 
     const url = "http://kovan.etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4";
     const response = await fetch(url, {method: "GET"});
-    if (response.status == 1) {
-      wallet.txs = response.result;
+    const responseText = await response.text();
+    
+    if (response.status == 200) {
+      wallet.txs = JSON.parse(responseText).result;
     }
 
     this.isSyncing = false;

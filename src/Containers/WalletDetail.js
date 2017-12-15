@@ -20,6 +20,8 @@ import {
   FormInput
 } from 'react-native-elements';
 
+import BigNumber from "bignumber.js";
+import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
@@ -373,9 +375,9 @@ class WalletDetailView extends Component {
             <ListItem
               hideChevron={true}
               key={i}
-              title={(l.operation == "receive") ? l.from : l.to}
-              subtitle={l.when}
-              rightTitle={l.amount.toString()}
+              title={(l.from == this.state.token.ownerAddress) ? "SENT" : "RECEIVED"}
+              subtitle={(l.from == this.state.token.ownerAddress) ? l.to : l.from}
+              rightTitle={(new BigNumber(l.value)).div(1000000000000000000).toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
             />
           ))
