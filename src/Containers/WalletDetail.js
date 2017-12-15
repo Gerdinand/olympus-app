@@ -61,7 +61,8 @@ class WalletDetailView extends Component {
       sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
       password: null,
-      exchangeAmount: 0.0,
+      sourceAmount: 0.0,
+      destAmount: 0.0,
     };
   }
 
@@ -240,27 +241,27 @@ class WalletDetailView extends Component {
           onRequestClose={() => {this.setState({exchangeModalVisible: false})}}
           >
           <View style={styles.modelContainer}>
-            <Card title={this.state.exchangeType=="BID" ? "ETH -> " + this.state.token.symbol : this.state.token.symbol + " -> ETH"}>
+            <Card title={this.state.exchangeType == "BID" ? "ETH -> " + this.state.token.symbol : this.state.token.symbol + " -> ETH"}>
               <FormLabel>Exchange</FormLabel>
               <FormInput
                 inputStyle={{width: '100%'}}
                 placeholder="Amount to exchange"
                 keyboardType={"numeric"}
                 onChangeText={(text) => {
-                  const askAmount = Number(text);
-                  var bidAmount = 0;
+                  const sourceAmount = Number(text);
+                  var destAmount = 0;
                   if (this.state.exchangeType == "BID") {
-                    bidAmount = askAmount * this.state.token.price;
+                    destAmount = sourceAmount * this.state.token.price;
                   } else {
-                    bidAmount = askAmount * (1.0 / this.state.token.price);
+                    destAmount = sourceAmount * (1.0 / this.state.token.price);
                   }
 
-                  bidAmount = bidAmount.toFixed(4);
+                  destAmount = destAmount.toFixed(4);
 
-                  this.setState({ exchangeAmount : bidAmount });
+                  this.setState({ sourceAmount: sourceAmount, destAmount : destAmount });
                 }}
               />
-              <FormLabel>Expected to receive {this.state.exchangeAmount} {this.state.exchangeType == "BID" ? this.state.token.symbol : "ETH"}</FormLabel>
+              <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType == "BID" ? this.state.token.symbol : "ETH"}</FormLabel>
               <FormLabel>Password</FormLabel>
               <FormInput
                 inputStyle={{width: '100%'}}
@@ -274,9 +275,42 @@ class WalletDetailView extends Component {
                   title={"Trade"}
                   buttonStyle={styles.modalSendButton}
                   raised
-                  onPress={() => {
-                    //
-                    this.setState({exchangeModalVisible: false, password: null, exchangeAmount: 0.0})
+                  onPress={async () => {
+                    console.log("trade action");
+                    var isValidate = true;
+
+                    // TODO: address validation
+                    // TODO: amount validation
+                    // TODO: passwrd validation
+
+                    console.log("validate end");
+                    if (isValidate) {
+                      // generate tx
+                      const privateKey = await WalletService.getInstance().getSeed(this.state.password);
+                      const token = this.state.token;
+                      var tx = null;
+                      if (this.state.exchangeType == "BID") {
+                        // token from, to, value, decimals, contractAddress, gasLimit
+                        tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
+                          this.state.sourceAmount,
+                          this.state.token.address,
+                          this.state.address
+                        );
+                      } else {
+                        tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
+                          this.state.token.address,
+                          this.state.sourceAmount,
+                          this.state.address
+                        );
+                      }
+
+                      // sign tx
+                      tx.sign(privateKey);
+
+                      // send tx
+                      await EthereumService.getInstance().sendTx(tx);
+                    }
+                    this.setState({exchangeModalVisible: false, password: null, sourceAmount: 0.0, destAmount: 0.0})
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
