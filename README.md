@@ -8,7 +8,7 @@ This repository is for testing purposes only, do not use it for real deployment.
 ## MVP
 
 - [x] basic ethereum wallet
-- [ ] kyber integration
+- [x] kyber network integration
 
 [MVP Milestone is here.](https://github.com/Olympus-Labs/Hora/milestone/1)
 
