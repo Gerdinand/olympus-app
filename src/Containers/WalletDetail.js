@@ -20,32 +20,11 @@ import {
   FormInput
 } from 'react-native-elements';
 
+import BigNumber from "bignumber.js";
+import Moment from 'moment';
+import { EventRegister } from 'react-native-event-listeners';
 import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
-
-const txs = [
-  // {
-  //   from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-  //   to: '0x277A304D7C69e03898120567937245d1406D5F36',
-  //   when: '2017/12/04 12:08',
-  //   amount: 21.2,
-  //   operation: 'send'
-  // },
-  // {
-  //   from: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-  //   to: '0x5185129f2872C6ef729a3B5C89CC41e997036115',
-  //   when: '2017/12/03 3:32',
-  //   amount: 4.79,
-  //   operation: 'send'
-  // },
-  // {
-  //   from: '0xC07cAACC6414A676a1929916Ad1AbDa5E9D3d0eD',
-  //   to: '0x7d401a85103a43a41e74a8E2314909333C8a4099',
-  //   when: '2017/11/27 20:41',
-  //   amount: 174,
-  //   operation: 'receive'
-  // }
-];
 
 class WalletDetailView extends Component {
   constructor(props) {
@@ -55,15 +34,16 @@ class WalletDetailView extends Component {
       sendModalVisible: false,
       receiveModalVisible: false,
       exchangeModalVisible: false,
-      txs: txs,
+      txs: [],
       token: this.props.navigation.state.params.token,
-      address: this.props.navigation.state.params.address,
       sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
       password: null,
       sourceAmount: 0.0,
       destAmount: 0.0,
     };
+
+    this.reloadTxs = this.reloadTxs.bind(this);
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -72,6 +52,51 @@ class WalletDetailView extends Component {
       visible: false,
     }
   });
+
+  reloadTxs(wallet) {
+    for (var i = 0; i < wallet.tokens.length; i++) {
+      const token = wallet.tokens[i];
+      if (token.address == this.state.token.address) {
+        var txs = [];
+        for (var j = 0; j < wallet.txs.length; j++) {
+          const tx = wallet.txs[j];
+          if (tx.from == token.ownerAddress || tx.to == token.ownerAddress) {
+            txs.push(tx);
+          }
+        }
+        console.log(JSON.stringify(txs));
+        this.setState({ token: token, txs: txs });
+        break;
+      }
+    }
+  }
+
+  componentWillMount() {
+    var _ = this;
+    this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
+      for (var i = 0; i < wallet.tokens.length; i++) {
+        const token = wallet.tokens[i];
+        if (token.address == _.state.token.address) {
+          var txs = [];
+          for (var j = 0; j < wallet.txs.length; j++) {
+            const tx = wallet.txs[j];
+            if (tx.from == token.ownerAddress || tx.to == token.ownerAddress) {
+              txs.push(tx);
+            }
+          }
+          console.log(JSON.stringify(txs));
+          _.setState({ token: token, txs: txs });
+          break;
+        }
+      }
+    });
+
+    this.reloadTxs(WalletService.getInstance().wallet);
+  }
+
+  componentWillUnmount() {
+    EventRegister.removeEventListener(this.walletListener);
+  }
 
   onSend() {
     console.log("send modal");
@@ -157,7 +182,7 @@ class WalletDetailView extends Component {
                       if (token.symbol != "ETH") {
                         // token from, to, value, decimals, contractAddress, gasLimit
                         tx = await EthereumService.getInstance().generateTokenTx(
-                          this.state.address,
+                          token.ownerAddress,
                           this.state.sendAddress,
                           this.state.sendAmount,
                           token.decimals,
@@ -166,7 +191,7 @@ class WalletDetailView extends Component {
                         );
                       } else {
                         tx = await EthereumService.getInstance().generateTx(
-                          this.state.address,
+                          token.ownerAddress,
                           this.state.sendAddress,
                           this.state.sendAmount,
                           "40000"
@@ -204,14 +229,14 @@ class WalletDetailView extends Component {
               <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
                 <View style={{flex:1, maxWidth: 200, flexDirection:'row', justifyContent:'space-between'}}>
                   <QRCode
-                    value={this.state.address}
+                    value={this.state.token.ownerAddress}
                     size={200}
                     bgColor='black'
                     fgColor='white'
                   />
                 </View>
               </View>
-              <Text style={{color: "black", fontSize: 12, textAlign: 'center', marginTop: 15}}>{this.state.address}</Text>
+              <Text style={{color: "black", fontSize: 12, textAlign: 'center', marginTop: 15}}>{this.state.token.ownerAddress}</Text>
               <View style={{
                 padding: 10,
               }}>
@@ -220,7 +245,7 @@ class WalletDetailView extends Component {
                   buttonStyle={styles.modalSendButton}
                   raised
                   onPress={() => {
-                    Clipboard.setString(this.state.address)
+                    Clipboard.setString(this.state.token.ownerAddress)
                     this.setState({receiveModalVisible: false});
                   }}
                 />
@@ -294,13 +319,13 @@ class WalletDetailView extends Component {
                         tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
                           this.state.sourceAmount,
                           this.state.token.address,
-                          this.state.address
+                          this.state.token.ownerAddress
                         );
                       } else {
                         tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
                           this.state.token.address,
                           this.state.sourceAmount,
-                          this.state.address
+                          this.state.token.ownerAddress
                         );
                       }
 
@@ -327,7 +352,7 @@ class WalletDetailView extends Component {
 
         <Card style={{backgroundColor: 'transparent'}}>
           <Text style={styles.name}>{this.state.token.symbol}</Text>
-          <Text style={styles.balance}>{this.state.token.balance}</Text>
+          <Text style={styles.balance}>{this.state.token.balance.toFixed(5)}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup
@@ -346,13 +371,13 @@ class WalletDetailView extends Component {
         </View>
         <List>
         {
-          txs.map((l, i) => (
+          this.state.txs.map((l, i) => (
             <ListItem
               hideChevron={true}
               key={i}
-              title={(l.operation == "receive") ? l.from : l.to}
-              subtitle={l.when}
-              rightTitle={l.amount.toString()}
+              title={(l.from == this.state.token.ownerAddress) ? "SENT" : "RECEIVED"}
+              subtitle={(l.from == this.state.token.ownerAddress) ? l.to : l.from}
+              rightTitle={(new BigNumber(l.value)).div(1000000000000000000).toString()}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
             />
           ))
