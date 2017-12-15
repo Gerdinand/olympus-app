@@ -307,7 +307,7 @@ class WalletDetailView extends Component {
                 this.onExchange();
               }
             }}
-            buttons={["Send", "Receive", "Exchange"]}
+            buttons={this.state.token.address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ? ["Send", "Receive"] : ["Send", "Receive", "Exchange"]}
           />
         </View>
         <List>
