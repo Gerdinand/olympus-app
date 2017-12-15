@@ -118,20 +118,13 @@ class EthereumService {
   }
 
   async sync(wallet) {
-    var hasChanged = false;
     const balance = await this.getBalance(wallet.address);
-    if (wallet.balance != balance) {
-      wallet.balance = balance;
-      wallet.tokens[0].balance = balance;
-      hasChanged = true;
-    }
+    wallet.balance = balance;
+    wallet.tokens[0].balance = balance;
     console.log("ETH balance: ", wallet.balance);
 
     const ethPrice = await getETHPrice();
-    if (wallet.ethPrice != ethPrice) {
-      wallet.ethPrice = ethPrice;
-      hasChanged = true;
-    }
+    wallet.ethPrice = ethPrice;
     console.log("ETH price: ", ethPrice);
 
     var balanceInUSD = ethPrice * balance;
@@ -140,18 +133,13 @@ class EthereumService {
     for (var i = 1; i < wallet.tokens.length; i++) {
       var token = wallet.tokens[i];
       var tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
-      if (token.balance != tokenBalance) {
-          token.balance = tokenBalance;
-          hasChanged = true;
-      }
+      token.balance = tokenBalance;
+
       const priceInWei = await this.getPrice(Constants.ETHER_ADDRESS, token.address);
       const tokenPrice = this.rpc.fromWei(priceInWei, "ether").toFixed(2);
+      token.price = tokenPrice;
+
       balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
-      console.log("USD: ", balanceInUSD);
-      if (token.price != tokenPrice) {
-        token.price = tokenPrice;
-        hasChanged = true;
-      }
 
       console.log(token.symbol + " price: " + token.price);
       console.log(token.symbol + " balance: " + token.balance);
@@ -159,9 +147,7 @@ class EthereumService {
 
     wallet.balanceInUSD = balanceInUSD.toFixed(2);
 
-    if (hasChanged) {
-      EventRegister.emit("wallet.updated", wallet);
-    }
+    EventRegister.emit("wallet.updated", wallet);
 
     return wallet;
   }
