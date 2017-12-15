@@ -43,9 +43,11 @@ class WalletView extends Component {
     this.setState({ wallet: WalletService.getInstance().wallet });
 
     this.fetchData();
+    EthereumService.getInstance().fireTimer();
   }
 
   componentWillUnmount() {
+    EthereumService.getInstance().invalidateTimer();
     EventRegister.removeEventListener(this.walletListener);
   }
 
@@ -86,14 +88,13 @@ class WalletView extends Component {
               key={i}
               title={t.symbol}
               subtitle={t.name}
-              rightTitle={(0 == i || t.price == 0) ? t.balance.toString() : t.balance.toString() + "\n1 ETH = " + t.price + " " + t.symbol}
+              rightTitle={(0 == i || t.price == 0) ? t.balance.toFixed(5).toString() : t.balance.toFixed(5).toString() + "\n1 ETH = " + t.price + " " + t.symbol}
               rightTitleNumberOfLines={2}
               rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A', textAlign:'right'}}
               onPress={() => {
                 console.log("navigate to : " + t.symbol);
 
                 navigation.navigate('WalletDetail', {
-                  address: WalletService.getInstance().wallet.address,
                   token: t,
                 })
               }}
