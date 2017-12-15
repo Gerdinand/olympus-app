@@ -5,7 +5,9 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView
+  ScrollView,
+  RefreshControl,
+  Button
 } from 'react-native';
 import {
   List,
@@ -25,38 +27,54 @@ class WalletView extends Component {
 
     this.state = {
       wallet: null,
+      refreshing: false,
     };
+
+    this.fetchData = this.fetchData.bind(this);
   }
 
   componentWillMount() {
     var _ = this;
     this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
       console.log("event wallet.updated " + JSON.stringify(wallet));
-      _.setState({ wallet: wallet });
+      _.setState({ wallet: wallet, refreshing: false });
     });
 
-    const wallet = WalletService.getInstance().wallet;
-    const eth = EthereumService.getInstance();
+    this.setState({ wallet: WalletService.getInstance().wallet });
 
-    this.setState({ wallet: wallet });
-
-    eth.sync(wallet);
-    // eth.watch(wallet);
+    this.fetchData();
   }
 
   componentWillUnmount() {
     EventRegister.removeEventListener(this.walletListener);
   }
 
+  fetchData() {
+    EthereumService.getInstance().sync(WalletService.getInstance().wallet);
+  }
+
+  _onRefresh() {
+    this.setState({refreshing: true});
+    this.fetchData();
+  }
+
   render() {
     const { navigation } = this.props;
 
     return (
-      <ScrollView style={{backgroundColor: 'white'}}>
+      <ScrollView
+        style={{backgroundColor: 'white'}}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)}
+          />
+        }
+      >
         <WalletHeader
           name={this.state.wallet.name}
           address={this.state.wallet.address}
-          balance={"$ --"}
+          balance={this.state.wallet.ethPrice != 0 ? "$ " + this.state.wallet.balanceInUSD : "$ --"}
         />
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
         {
