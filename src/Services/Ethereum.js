@@ -23,6 +23,7 @@ class EthereumService {
     this.kyberContract = this.rpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
     this.intervalID = null;
     this.filter = null;
+    this.isSyncing = false;
 
     // method bind
     this.getBalance = this.getBalance.bind(this);
@@ -118,6 +119,11 @@ class EthereumService {
   }
 
   async sync(wallet) {
+    if (this.isSyncing) {
+      return ;
+    }
+    this.isSyncing = true;
+
     const balance = await this.getBalance(wallet.address);
     wallet.balance = balance;
     wallet.tokens[0].balance = balance;
@@ -146,6 +152,8 @@ class EthereumService {
     }
 
     wallet.balanceInUSD = balanceInUSD.toFixed(2);
+
+    this.isSyncing = false;
 
     EventRegister.emit("wallet.updated", wallet);
 

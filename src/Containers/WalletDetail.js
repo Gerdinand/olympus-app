@@ -327,7 +327,7 @@ class WalletDetailView extends Component {
 
         <Card style={{backgroundColor: 'transparent'}}>
           <Text style={styles.name}>{this.state.token.symbol}</Text>
-          <Text style={styles.balance}>{this.state.token.balance}</Text>
+          <Text style={styles.balance}>{this.state.token.balance.toFixed(5)}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup
