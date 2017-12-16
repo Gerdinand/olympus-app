@@ -15,15 +15,17 @@ import {
 
 const list = [
   {
-    icon: require('../../images/index.png'),
-    title: 'Market Index'
+    title: 'Bitcoin Index',
+    value: "18,903"
+  },
+  {
+    title: 'Kyber Index',
+    value: "2,817"
   },
 ];
 
-class MarketView extends Component {
+class MarketIndexView extends Component {
   render() {
-    const { navigation } = this.props;
-    
     return (
       <ScrollView style={{backgroundColor: '#F5F5F5'}}>
         <List>
@@ -31,11 +33,8 @@ class MarketView extends Component {
           list.map((l, i) => (
             <ListItem
               key={i}
-              avatar={l.icon}
               title={l.title}
-              onPress={() => {
-                navigation.navigate('MarketIndex');
-              }}
+              rightTitle={l.value}
             />
           ))
         }
@@ -45,4 +44,4 @@ class MarketView extends Component {
   }
 }
 
-export default MarketView;
+export default MarketIndexView;
