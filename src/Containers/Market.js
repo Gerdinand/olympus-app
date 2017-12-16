@@ -15,7 +15,7 @@ import {
 
 const list = [
   {
-    icon: <Image source={require('../../images/index.png')}/>,
+    icon: require('../../images/index.png'),
     title: 'Market Index'
   },
 ];
@@ -28,9 +28,8 @@ class MarketView extends Component {
         {
           list.map((l, i) => (
             <ListItem
-              height={80}
               key={i}
-              leftIcon={{image: l.icon}}
+              avatar={l.icon}
               title={l.title}
             />
           ))
@@ -41,4 +40,4 @@ class MarketView extends Component {
   }
 }
 
-export default MeView;
+export default MarketView;
