@@ -14,10 +14,14 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 
-import { Market } from '../Containers';
+import { Market, MarketIndex } from '../Containers';
 
 const MarketScreen = ({navigation}) => (
   <Market banner="Market" navigation={navigation}/>
+);
+
+const MarketIndexScreen = ({navigation}) => (
+  <MarketIndex banner="Market Index" navigation={navigation}/>
 );
 
 const MarketTab = StackNavigator({
@@ -26,6 +30,13 @@ const MarketTab = StackNavigator({
     path: '/',
     navigationOptions: () => ({
       title: 'Market',
+    }),
+  },
+  MarketIndex: {
+    screen: MarketIndexScreen,
+    path: '/',
+    navigationOptions: () => ({
+      title: 'Market Index',
     }),
   }
 });
