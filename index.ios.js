@@ -15,7 +15,7 @@ import {
 import { TabNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
-import { WalletTab, MeTab } from './src/Tabs';
+import { WalletTab, MarketTab, MeTab } from './src/Tabs';
 import { Welcome } from './src/Containers';
 import { WalletService } from './src/Services';
 
@@ -28,6 +28,16 @@ const Root = TabNavigator(
         tabBarLabel: "Wallet",
         tabBarIcon: ({ tintColor }) => (
           <Image source={require("./images/wallet.png")} style={{tintColor: tintColor}}/>
+        )
+      }
+    },
+    MarketTab: {
+      screen: MarketTab,
+      path: "/market",
+      navigationOptions: {
+        tabBarLabel: "Market",
+        tabBarIcon: ({ tintColor }) => (
+          <Image source={require("./images/market.png")} style={{tintColor: tintColor}}/>
         )
       }
     },
