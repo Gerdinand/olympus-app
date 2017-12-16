@@ -30,4 +30,4 @@ const MarketTab = StackNavigator({
   }
 });
 
-export default MarketScreen;
+export default MarketTab;
