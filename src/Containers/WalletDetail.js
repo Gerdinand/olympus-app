@@ -65,7 +65,6 @@ class WalletDetailView extends Component {
             txs.push(tx);
           }
         }
-        console.log(JSON.stringify(txs));
         this.setState({ token: token, txs: txs, pendingTxHash: wallet.pendingTxHash });
         break;
       }
@@ -85,7 +84,6 @@ class WalletDetailView extends Component {
               txs.push(tx);
             }
           }
-          console.log(JSON.stringify(txs));
           _.setState({ token: token, txs: txs, pendingTxHash: wallet.pendingTxHash });
           break;
         }
@@ -323,6 +321,15 @@ class WalletDetailView extends Component {
                           this.state.token.ownerAddress
                         );
                       } else {
+                        // send approve tx
+                        var approveTx = await EthereumService.getInstance().generateApproveTokenTx(
+                          this.state.token.address,
+                          this.state.sourceAmount,
+                          this.state.token.ownerAddress
+                        );
+                        approveTx.sign(privateKey);
+                        await EthereumService.getInstance().sendTx(approveTx);
+
                         tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
                           this.state.token.address,
                           this.state.sourceAmount,
