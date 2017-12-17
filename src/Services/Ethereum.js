@@ -211,7 +211,8 @@ class EthereumService {
     maxDestAmount,
     minConversionRate,
     throwOnFailure,
-    gasLimit) {
+    gasLimit,
+    nonce) {
 
     const amount = this.rpc.toWei(sourceAmount, "ether");
 
@@ -227,7 +228,7 @@ class EthereumService {
     );
 
     let rawTx = {
-      nonce: this.rpc.toHex(await this.getNonce(destAddress)),
+      nonce: this.rpc.toHex(nonce),
       gasPrice: this.rpc.toHex(await this.getGasPrice()),
       gasLimit: this.rpc.toHex(gasLimit),
       to: this.kyberAddress,
@@ -235,6 +236,31 @@ class EthereumService {
       data: exchangeData,
       chainId: 42,
     };
+
+    console.log(JSON.stringify(rawTx));
+
+    const tx = new EthereumTx(rawTx);
+    return tx;
+  }
+
+  async newNonce(address) {
+    return await this.getNonce(address);
+  }
+
+  async generateApproveTokenTx(sourceToken, sourceAmount, destAddress) {
+    const amount = this.rpc.toWei(sourceAmount, "ether");
+    const tokenContract = this.erc20Contract.at(sourceToken);
+    const approveData = tokenContract.approve.getData(this.kyberAddress, amount);
+
+    const rawTx = {
+      nonce: this.rpc.toHex(await this.newNonce(destAddress)),
+      gasPrice: this.rpc.toHex(await this.getGasPrice()),
+      gasLimit: this.rpc.toHex(300000),
+      to: sourceToken,
+      value: 0,
+      data: approveData,
+      chainId: 42,
+    }
 
     console.log(JSON.stringify(rawTx));
 
@@ -251,7 +277,8 @@ class EthereumService {
         (new BigNumber(2)).pow(255),
         await this.getPrice(sourceToken, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"),
         true,
-        1000000
+        1000000,
+        await this.newNonce(destAddress) + 1,
       );
 
       return tx;
@@ -266,7 +293,8 @@ class EthereumService {
       (new BigNumber(2)).pow(255),
       await this.getPrice("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", destToken),
       true,
-      1000000
+      1000000,
+      await this.newNonce(destAddress),
     );
 
     return tx;
