@@ -139,9 +139,12 @@ class WalletDetailView extends Component {
           <View style={styles.modelContainer}>
             <Card title="SCAN">
               <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
-                <View style={{flex:1, maxWidth: 200, flexDirection:'row', justifyContent:'space-between'}}>
+                <View style={{flex:1, maxWidth: 300, flexDirection:'row', justifyContent:'space-between'}}>
                   <QRCodeScanner
-                    cameraStyle={{width: 200, height: 200}}
+                    cameraStyle={{width: 300, height: 300}}
+                    onRead={(e) => {
+                      console.log("read: " + e);
+                    }}
                   />
                 </View>
               </View>
