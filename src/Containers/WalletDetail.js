@@ -138,7 +138,13 @@ class WalletDetailView extends Component {
         >
           <View style={styles.modelContainer}>
             <Card title="SCAN">
-              <QRCodeScanner />
+              <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{flex:1, maxWidth: 200, flexDirection:'row', justifyContent:'space-between'}}>
+                  <QRCodeScanner
+                    cameraStyle={{width: 200, height: 200}}
+                  />
+                </View>
+              </View>
               <Button buttonStyle={styles.modalCloseButton}
                 title={"Cancel"}
                 onPress={() => {this.setState({sendModalVisible: true, scanModalVisible: false})}}
