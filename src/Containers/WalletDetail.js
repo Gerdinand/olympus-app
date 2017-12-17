@@ -20,6 +20,7 @@ import {
   FormInput
 } from 'react-native-elements';
 
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from "bignumber.js";
 import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
@@ -32,12 +33,13 @@ class WalletDetailView extends Component {
 
     this.state = {
       sendModalVisible: false,
+      scanModalVisible: false,
       receiveModalVisible: false,
       exchangeModalVisible: false,
       txs: [],
       pendingTxHash: null,
       token: this.props.navigation.state.params.token,
-      sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
+      sendAddress: "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
       password: null,
       sourceAmount: 0.0,
@@ -131,6 +133,23 @@ class WalletDetailView extends Component {
         <Modal
           animationType={"fade"}
           transparent={true}
+          visible={this.state.scanModalVisible}
+          onRequestClose={() => {this.setState({scanModalVisible: false})}}
+        >
+          <View style={styles.modelContainer}>
+            <Card title="SCAN">
+              <QRCodeScanner />
+              <Button buttonStyle={styles.modalCloseButton}
+                title={"Cancel"}
+                onPress={() => {this.setState({sendModalVisible: true, scanModalVisible: false})}}
+                color={'#4A4A4A'}
+              />
+            </Card>
+          </View>
+        </Modal>
+        <Modal
+          animationType={"fade"}
+          transparent={true}
           visible={this.state.sendModalVisible}
           onRequestClose={() => {this.setState({sendModalVisible: false})}}
           >
@@ -206,6 +225,11 @@ class WalletDetailView extends Component {
                       this.setState({sendModalVisible: false, sendAmount: 0, password: null});
                     }
                   }}
+                />
+                <Button buttonStyle={styles.modalCloseButton}
+                  title={"Scan"}
+                  onPress={() => {this.setState({sendModalVisible: false, scanModalVisible: true})}}
+                  color={'#4A4A4A'}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title={"Cancel"}
