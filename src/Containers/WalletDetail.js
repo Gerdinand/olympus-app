@@ -46,6 +46,9 @@ class WalletDetailView extends Component {
       destAmount: 0.0,
     };
 
+    this.scanner = null;
+
+    // bind methods
     this.reloadTxs = this.reloadTxs.bind(this);
   }
 
@@ -141,6 +144,7 @@ class WalletDetailView extends Component {
               <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
                 <View style={{flex:1, maxWidth: 300, flexDirection:'row', justifyContent:'space-between'}}>
                   <QRCodeScanner
+                    ref={(node) => { this.scanner = node }}
                     cameraStyle={{width: 300, height: 300}}
                     onRead={(e) => {
                       console.log("read: " + e);
@@ -237,7 +241,10 @@ class WalletDetailView extends Component {
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title={"Scan"}
-                  onPress={() => {this.setState({sendModalVisible: false, scanModalVisible: true})}}
+                  onPress={() => {
+                    this.setState({sendModalVisible: false, scanModalVisible: true})
+                    this.scanner.reactivate();
+                  }}
                   color={'#4A4A4A'}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
