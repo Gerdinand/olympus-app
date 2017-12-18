@@ -20,6 +20,7 @@ import {
   FormInput
 } from 'react-native-elements';
 
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from "bignumber.js";
 import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
@@ -32,18 +33,23 @@ class WalletDetailView extends Component {
 
     this.state = {
       sendModalVisible: false,
+      scanModalVisible: false,
       receiveModalVisible: false,
       exchangeModalVisible: false,
       txs: [],
       pendingTxHash: null,
       token: this.props.navigation.state.params.token,
-      sendAddress: "0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
+      sendAddress: null, // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
       password: null,
       sourceAmount: 0.0,
       destAmount: 0.0,
     };
 
+    this.sendAddressInput = null;
+    this.scanner = null;
+
+    // bind methods
     this.reloadTxs = this.reloadTxs.bind(this);
   }
 
@@ -131,6 +137,42 @@ class WalletDetailView extends Component {
         <Modal
           animationType={"fade"}
           transparent={true}
+          visible={this.state.scanModalVisible}
+          onRequestClose={() => {this.setState({scanModalVisible: false})}}
+        >
+          <View style={styles.modelContainer}>
+            <Card title="SCAN">
+              <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{flex:1, maxWidth: 300, flexDirection:'row', justifyContent:'space-between'}}>
+                  <QRCodeScanner
+                    ref={(node) => { this.scanner = node }}
+                    cameraStyle={{width: 300, height: 300}}
+                    onRead={(e) => {
+                      const data = e.data;
+                      console.log("read: ", data);
+                      if (EthereumService.getInstance().isValidateAddress(data)) {
+                        console.log("is an address");
+                        this.sendAddressInput.text = data;
+                        this.setState({sendModalVisible: true, scanModalVisible: false, sendAddress: data})
+                      } else {
+                        console.log("is not an address");
+                        this.scanner.reactivate();
+                      }
+                    }}
+                  />
+                </View>
+              </View>
+              <Button buttonStyle={styles.modalCloseButton}
+                title={"Cancel"}
+                onPress={() => {this.setState({sendModalVisible: true, scanModalVisible: false})}}
+                color={'#4A4A4A'}
+              />
+            </Card>
+          </View>
+        </Modal>
+        <Modal
+          animationType={"fade"}
+          transparent={true}
           visible={this.state.sendModalVisible}
           onRequestClose={() => {this.setState({sendModalVisible: false})}}
           >
@@ -138,11 +180,11 @@ class WalletDetailView extends Component {
             <Card title="SEND">
               <FormLabel>To</FormLabel>
               <FormInput
+                ref={(ref) => this.sendAddressInput = ref}
                 multiline
                 inputStyle={{width: '100%'}}
                 placeholder="0x0abc..."
-                // onChangeText={(text) => this.state.sendAddress = text}
-                value={this.state.sendAddress}
+                onChangeText={(text) => this.state.sendAddress = text}
               />
               <FormLabel>Amount</FormLabel>
               <FormInput
@@ -203,13 +245,23 @@ class WalletDetailView extends Component {
                       // send tx
                       await EthereumService.getInstance().sendTx(tx);
 
-                      this.setState({sendModalVisible: false, sendAmount: 0, password: null});
+                      this.setState({sendModalVisible: false, sendAmount: 0, password: null, sendAddres: null });
                     }
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
+                  title={"Scan"}
+                  onPress={() => {
+                    this.setState({sendModalVisible: false, scanModalVisible: true, sendAddress: null})
+                    if (this.scanner) {
+                        this.scanner.reactivate();
+                    }
+                  }}
+                  color={'#4A4A4A'}
+                />
+                <Button buttonStyle={styles.modalCloseButton}
                   title={"Cancel"}
-                  onPress={() => {this.setState({sendModalVisible: false, sendAmount: 0, password: null})}}
+                  onPress={() => {this.setState({sendModalVisible: false, sendAmount: 0, password: null, sendAddress: null})}}
                   color={'#4A4A4A'}
                 />
               </View>

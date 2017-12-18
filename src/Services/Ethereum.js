@@ -43,6 +43,10 @@ class EthereumService {
     return this.rpc.version.api
   }
 
+  isValidateAddress(address) {
+    return this.rpc.isAddress(address);
+  }
+
   async getNonce(address) {
     const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb));
     return nonce
@@ -54,9 +58,13 @@ class EthereumService {
   }
 
   async generateTx(from, to, value, gasLimit, txData="") {
+    const gasPrice = await this.getGasPrice();
+    console.log("gas price: " + gasPrice + " x 3");
+    console.log("limit: ", gasLimit);
+
     let rawTx = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
-      gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
+      gasPrice: this.rpc.toHex(gasPrice * 3),
       gasLimit: this.rpc.toHex(gasLimit),
       to: to,
       value: this.rpc.toHex(this.rpc.toWei(value, "ether")),
