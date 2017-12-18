@@ -43,6 +43,10 @@ class EthereumService {
     return this.rpc.version.api
   }
 
+  isValidateAddress(address) {
+    return this.rpc.isAddress(address);
+  }
+
   async getNonce(address) {
     const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb));
     return nonce

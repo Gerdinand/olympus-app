@@ -39,13 +39,14 @@ class WalletDetailView extends Component {
       txs: [],
       pendingTxHash: null,
       token: this.props.navigation.state.params.token,
-      sendAddress: "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
+      sendAddress: null, // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.1,
       password: null,
       sourceAmount: 0.0,
       destAmount: 0.0,
     };
 
+    this.sendAddressInput = null;
     this.scanner = null;
 
     // bind methods
@@ -147,7 +148,16 @@ class WalletDetailView extends Component {
                     ref={(node) => { this.scanner = node }}
                     cameraStyle={{width: 300, height: 300}}
                     onRead={(e) => {
-                      console.log("read: " + e);
+                      const data = e.data;
+                      console.log("read: ", data);
+                      if (EthereumService.getInstance().isValidateAddress(data)) {
+                        console.log("is an address");
+                        this.sendAddressInput.text = data;
+                        this.setState({sendModalVisible: true, scanModalVisible: false, sendAddress: data})
+                      } else {
+                        console.log("is not an address");
+                        this.scanner.reactivate();
+                      }
                     }}
                   />
                 </View>
@@ -170,11 +180,11 @@ class WalletDetailView extends Component {
             <Card title="SEND">
               <FormLabel>To</FormLabel>
               <FormInput
+                ref={(ref) => this.sendAddressInput = ref}
                 multiline
                 inputStyle={{width: '100%'}}
                 placeholder="0x0abc..."
-                // onChangeText={(text) => this.state.sendAddress = text}
-                value={this.state.sendAddress}
+                onChangeText={(text) => this.state.sendAddress = text}
               />
               <FormLabel>Amount</FormLabel>
               <FormInput
@@ -235,14 +245,14 @@ class WalletDetailView extends Component {
                       // send tx
                       await EthereumService.getInstance().sendTx(tx);
 
-                      this.setState({sendModalVisible: false, sendAmount: 0, password: null});
+                      this.setState({sendModalVisible: false, sendAmount: 0, password: null, sendAddres: null });
                     }
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title={"Scan"}
                   onPress={() => {
-                    this.setState({sendModalVisible: false, scanModalVisible: true})
+                    this.setState({sendModalVisible: false, scanModalVisible: true, sendAddress: null})
                     if (this.scanner) {
                         this.scanner.reactivate();
                     }
@@ -251,7 +261,7 @@ class WalletDetailView extends Component {
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title={"Cancel"}
-                  onPress={() => {this.setState({sendModalVisible: false, sendAmount: 0, password: null})}}
+                  onPress={() => {this.setState({sendModalVisible: false, sendAmount: 0, password: null, sendAddress: null})}}
                   color={'#4A4A4A'}
                 />
               </View>
