@@ -17,7 +17,8 @@ import {
   ButtonGroup,
   Button,
   FormLabel,
-  FormInput
+  FormInput,
+  FormValidationMessage,
 } from 'react-native-elements';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -40,10 +41,13 @@ class WalletDetailView extends Component {
       pendingTxHash: null,
       token: this.props.navigation.state.params.token,
       sendAddress: null, // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
-      sendAmount: 0.1,
+      sendAmount: 0.0,
       password: null,
       sourceAmount: 0.0,
       destAmount: 0.0,
+      sendAddressErrorMessage: null,
+      sendAmountErrorMessage: null,
+      sendPasswordErrorMessage: null,
     };
 
     this.sendAddressInput = null;
@@ -183,9 +187,14 @@ class WalletDetailView extends Component {
                 ref={(ref) => this.sendAddressInput = ref}
                 multiline
                 inputStyle={{width: '100%'}}
-                placeholder="0x0abc..."
                 onChangeText={(text) => this.state.sendAddress = text}
               />
+              {
+                this.state.sendAddressErrorMessage &&
+                <FormValidationMessage>
+                  {this.state.sendAddressErrorMessage}
+                </FormValidationMessage>
+              }
               <FormLabel>Amount</FormLabel>
               <FormInput
                 inputStyle={{width: '100%'}}
@@ -193,12 +202,24 @@ class WalletDetailView extends Component {
                 keyboardType={"numeric"}
                 onChangeText={(text) => this.state.sendAmount = Number(text)}
               />
+              {
+                this.state.sendAmountErrorMessage &&
+                <FormValidationMessage>
+                  {this.state.sendAmountErrorMessage}
+                </FormValidationMessage>
+              }
               <FormLabel>Password</FormLabel>
               <FormInput
                 inputStyle={{width: '100%'}}
                 placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
+              {
+                this.state.sendPasswordErrorMessage &&
+                <FormValidationMessage>
+                  {this.state.sendPasswordErrorMessage}
+                </FormValidationMessage>
+              }
               <View style={{
                 padding: 10,
               }}>
@@ -210,14 +231,33 @@ class WalletDetailView extends Component {
                     console.log("send action");
                     var isValidate = true;
 
-                    // TODO: address validation
-                    // TODO: amount validation
-                    // TODO: passwrd validation
+                    // address validation
+                    if (!EthereumService.getInstance().isValidateAddress(this.state.sendAddress)) {
+                      isValidate = false;
+                      this.setState({sendAddressErrorMessage: "Invalidate address"});
+                    } else {
+                      this.setState({sendAddressErrorMessage: null});
+                    }
+
+                    // amount validation
+                    if (this.state.token.balance < this.state.sendAmount || this.state.sendAmount == 0) {
+                      isValidate = false;
+                      this.setState({sendAmountErrorMessage: "Wrong amount"});
+                    } else {
+                      this.setState({sendAmountErrorMessage: null});
+                    }
+
+                    // password validation
+                    const privateKey = await WalletService.getInstance().getSeed(this.state.password);
+                    if (!privateKey) {
+                      isValidate = false;
+                      this.setState({sendPasswordErrorMessage: "Wrong password"});
+                    } else {
+                      this.setState({sendPasswordErrorMessage: null});
+                    }
 
                     console.log("validate end");
                     if (isValidate) {
-                      // generate tx
-                      const privateKey = await WalletService.getInstance().getSeed(this.state.password);
                       const token = this.state.token;
                       var tx = null;
                       if (token.symbol != "ETH") {
@@ -245,7 +285,14 @@ class WalletDetailView extends Component {
                       // send tx
                       await EthereumService.getInstance().sendTx(tx);
 
-                      this.setState({sendModalVisible: false, sendAmount: 0, password: null, sendAddres: null });
+                      this.setState({sendModalVisible: false,
+                        sendAmount: 0,
+                        password: null,
+                        sendAddress: null,
+                        sendAddressErrorMessage: null,
+                        sendAmountErrorMessage: null,
+                        sendPasswordErrorMessage: null,
+                      });
                     }
                   }}
                 />
@@ -357,7 +404,7 @@ class WalletDetailView extends Component {
 
                     // TODO: address validation
                     // TODO: amount validation
-                    // TODO: passwrd validation
+                    // TODO: password validation
 
                     console.log("validate end");
                     if (isValidate) {

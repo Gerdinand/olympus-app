@@ -70,10 +70,14 @@ class WalletService {
       const info = JSON.parse(infoString);
       console.log(info[0]);
 
-      const seed = unlock(info[0].v3, password, true);
-      console.log(seed);
+      try {
+        const seed = unlock(info[0].v3, password, true);
+        console.log("seed: ", seed);
 
-      return seed;
+        return seed;
+      } catch (e) {
+        return null;
+      }
     } else {
       return null;
     }
