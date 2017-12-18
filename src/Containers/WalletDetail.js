@@ -243,7 +243,9 @@ class WalletDetailView extends Component {
                   title={"Scan"}
                   onPress={() => {
                     this.setState({sendModalVisible: false, scanModalVisible: true})
-                    this.scanner.reactivate();
+                    if (this.scanner) {
+                        this.scanner.reactivate();
+                    }
                   }}
                   color={'#4A4A4A'}
                 />
