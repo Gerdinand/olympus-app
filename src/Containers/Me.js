@@ -7,12 +7,17 @@ import {
   Text,
   ScrollView,
   Image,
-  Linking
+  Linking,
+  ActionSheetIOS,
 } from 'react-native';
 import {
   List,
   ListItem
 } from 'react-native-elements';
+
+import { removeItem } from '../Utils/KeyStore';
+import { EventRegister } from 'react-native-event-listeners';
+import { WalletService, EthereumService } from '../Services';
 
 var styles = StyleSheet.create({
   description: {
@@ -46,6 +51,13 @@ const list2 = [
   }
 ];
 
+const list3 = [
+  {
+    icon: <Image source={require('../../images/wallet.png')}/>,
+    title: "Sign out"
+  }
+]
+
 class MeView extends Component {
 
   onPress(list, index) {
@@ -61,6 +73,23 @@ class MeView extends Component {
       } else if (index == 1) {
         // homepage#team
         Linking.openURL("https://olympuslabs.io/web/team");
+      }
+    } else if (list == list3) {
+      if (index == 0) {
+        // sign out
+        var _ = this;
+        ActionSheetIOS.showActionSheetWithOptions({
+          options: ["Sign out", "Cancel"],
+          destructiveButtonIndex: 0,
+          cancelButtonIndex: 1,
+        }, (buttonIndex) => {
+          if (0 == buttonIndex) {
+            EthereumService.getInstance().invalidateTimer();
+            WalletService.getInstance().resetActiveWallet();
+            removeItem("wallets");
+            EventRegister.emit("hasWallet", false);
+          }
+        });
       }
     }
   }
@@ -91,6 +120,20 @@ class MeView extends Component {
               title={l.title}
               onPress={() => {
                 this.onPress(list2, i);
+              }}
+            />
+          ))
+        }
+        </List>
+        <List>
+        {
+          list3.map((l, i) => (
+            <ListItem
+              key={i}
+              leftIcon={{image: l.icon}}
+              title={l.title}
+              onPress={() => {
+                this.onPress(list3, i);
               }}
             />
           ))
