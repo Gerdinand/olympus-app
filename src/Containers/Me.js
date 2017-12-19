@@ -6,7 +6,8 @@ import {
   View,
   Text,
   ScrollView,
-  Image
+  Image,
+  Linking
 } from 'react-native';
 import {
   List,
@@ -30,14 +31,14 @@ var styles = StyleSheet.create({
 const list1 = [
   {
     icon: <Image source={require('../../images/wallet.png')}/>,
-    title: 'Wallet Management'
+    title: 'Wallet Backup',
   },
 ];
 
 const list2 = [
   {
     icon: <Image source={require('../../images/wallet.png')}/>,
-    title: 'Olympus Project'
+    title: 'Olympus Project',
   },
   {
     icon: <Image source={require('../../images/wallet.png')}/>,
@@ -46,6 +47,24 @@ const list2 = [
 ];
 
 class MeView extends Component {
+
+  onPress(list, index) {
+    if (list == list1) {
+      if (index == 0) {
+        // backup
+        this.props.navigation.navigate("Backup");
+      }
+    } else if (list  == list2) {
+      if (index == 0) {
+        // homepage
+        Linking.openURL("https://olympuslabs.io");
+      } else if (index == 1) {
+        // homepage#team
+        Linking.openURL("https://olympuslabs.io/web/team");
+      }
+    }
+  }
+
   render() {
     return (
       <ScrollView style={{backgroundColor: '#F5F5F5'}}>
@@ -56,6 +75,9 @@ class MeView extends Component {
               key={i}
               leftIcon={{image: l.icon}}
               title={l.title}
+              onPress={() => {
+                this.onPress(list1, i);
+              }}
             />
           ))
         }
@@ -67,6 +89,9 @@ class MeView extends Component {
               key={i}
               leftIcon={{image: l.icon}}
               title={l.title}
+              onPress={() => {
+                this.onPress(list2, i);
+              }}
             />
           ))
         }
