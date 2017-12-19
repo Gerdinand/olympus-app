@@ -102,6 +102,7 @@ class CreateWalletView extends Component {
                 try {
                   const json = await this.eth.generateV3Wallet(name, password, { persistence: true });
                   await AsyncStorage.setItem("used", "true");
+                  await WalletService.getInstance().getActiveWallet();
                   EventRegister.emit("hasWallet", true);
                 } catch (e) {
                   console.error(e);

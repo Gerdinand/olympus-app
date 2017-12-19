@@ -44,6 +44,7 @@ class WalletView extends Component {
     });
 
     this.setState({ wallet: WalletService.getInstance().wallet });
+    console.log(JSON.stringify(WalletService.getInstance().wallet));
 
     this.fetchData();
     EthereumService.getInstance().fireTimer();
