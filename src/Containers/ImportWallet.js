@@ -48,6 +48,7 @@ class ImportWalletView extends Component {
         <FormLabel>Paste wallet json</FormLabel>
         <FormInput
           multiline
+          inputStyle={{width: '100%'}}
           onChangeText={(text) => this.state.json = text}
         />
         <View style={{
