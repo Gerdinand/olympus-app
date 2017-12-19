@@ -103,6 +103,25 @@ class WalletService {
     }
   }
 
+  async importV3Wallet(name, json, password) {
+    const wallet = await EthJs.fromV3(json, password);
+    if (wallet) {
+      const keyString = JSON.stringify(json);
+      const address = addressFromJSONString(keyString);
+      const info = [
+        { address: address, name: name, v3: keyString }
+      ];
+      const infoString = JSON.stringify(info);
+
+      this.wallet = { address: address, name: name };
+
+      await saveItem("wallets", infoString);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   async generateV3Wallet(name, passphrase, options) {
     const wallet = await EthJs.generate();
     const json = await wallet.toV3(passphrase, {kdf: "pbkdf2", c: 10240});
