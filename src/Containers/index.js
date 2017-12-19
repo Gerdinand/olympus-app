@@ -9,3 +9,4 @@ export { default as Wallet } from './Wallet';
 export { default as WalletDetail } from './WalletDetail';
 export { default as Welcome } from './Welcome';
 export { default as MarketIndex } from './MarketIndex';
+export { default as Backup } from './Backup';
