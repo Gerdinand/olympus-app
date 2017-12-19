@@ -83,6 +83,26 @@ class WalletService {
     }
   }
 
+  async getWalletJson(password) {
+    const infoString = await readItem("wallets");
+
+    if (infoString) {
+      const info = JSON.parse(infoString);
+      console.log(info[0]);
+
+      try {
+        const seed = unlock(info[0].v3, password, true);
+        console.log("seed: ", seed);
+
+        return info[0].v3;
+      } catch (e) {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
   async generateV3Wallet(name, passphrase, options) {
     const wallet = await EthJs.generate();
     const json = await wallet.toV3(passphrase, {kdf: "pbkdf2", c: 10240});
