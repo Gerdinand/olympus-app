@@ -29,6 +29,10 @@ class WalletService {
     return this.myInstance;
   }
 
+  resetActiveWallet() {
+    this.wallet = null;
+  }
+
   async getActiveWallet() {
     const infoString = await readItem("wallets");
 
@@ -141,6 +145,8 @@ class WalletService {
 
     return json;
   }
+
+
 }
 
 export default WalletService;

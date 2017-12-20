@@ -48,6 +48,11 @@ class WalletDetailView extends Component {
       sendAddressErrorMessage: null,
       sendAmountErrorMessage: null,
       sendPasswordErrorMessage: null,
+      scanButtonDisable: false,
+      sendButtonDisable: false,
+      sendCancelButtonDisable: false,
+      tradeButtonDisable: false,
+      tradeCancelButtonDisable: false,
     };
 
     this.sendAddressInput = null;
@@ -136,6 +141,8 @@ class WalletDetailView extends Component {
   }
 
   render() {
+    var _ = this;
+
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
         <Modal
@@ -227,45 +234,52 @@ class WalletDetailView extends Component {
                   title={"Send"}
                   buttonStyle={styles.modalSendButton}
                   raised
+                  disabled={this.state.sendButtonDisable}
                   onPress={async () => {
                     console.log("send action");
+                    _.setState({
+                      scanButtonDisable: true,
+                      sendButtonDisable: true,
+                      sendCancelButtonDisable: true,
+                    });
+
                     var isValidate = true;
 
                     // address validation
-                    if (!EthereumService.getInstance().isValidateAddress(this.state.sendAddress)) {
+                    if (!EthereumService.getInstance().isValidateAddress(_.state.sendAddress)) {
                       isValidate = false;
-                      this.setState({sendAddressErrorMessage: "Invalidate address"});
+                      _.setState({sendAddressErrorMessage: "Invalidate address"});
                     } else {
-                      this.setState({sendAddressErrorMessage: null});
+                      _.setState({sendAddressErrorMessage: null});
                     }
 
                     // amount validation
-                    if (this.state.token.balance < this.state.sendAmount || this.state.sendAmount == 0) {
+                    if (_.state.token.balance < _.state.sendAmount || _.state.sendAmount == 0) {
                       isValidate = false;
-                      this.setState({sendAmountErrorMessage: "Wrong amount"});
+                      _.setState({sendAmountErrorMessage: "Wrong amount"});
                     } else {
-                      this.setState({sendAmountErrorMessage: null});
+                      _.setState({sendAmountErrorMessage: null});
                     }
 
                     // password validation
-                    const privateKey = await WalletService.getInstance().getSeed(this.state.password);
+                    const privateKey = await WalletService.getInstance().getSeed(_.state.password);
                     if (!privateKey) {
                       isValidate = false;
-                      this.setState({sendPasswordErrorMessage: "Wrong password"});
+                      _.setState({sendPasswordErrorMessage: "Wrong password"});
                     } else {
-                      this.setState({sendPasswordErrorMessage: null});
+                      _.setState({sendPasswordErrorMessage: null});
                     }
 
                     console.log("validate end");
                     if (isValidate) {
-                      const token = this.state.token;
+                      const token = _s.state.token;
                       var tx = null;
                       if (token.symbol != "ETH") {
                         // token from, to, value, decimals, contractAddress, gasLimit
                         tx = await EthereumService.getInstance().generateTokenTx(
                           token.ownerAddress,
-                          this.state.sendAddress,
-                          this.state.sendAmount,
+                          _.state.sendAddress,
+                          _.state.sendAmount,
                           token.decimals,
                           token.address,
                           "40000"
@@ -273,8 +287,8 @@ class WalletDetailView extends Component {
                       } else {
                         tx = await EthereumService.getInstance().generateTx(
                           token.ownerAddress,
-                          this.state.sendAddress,
-                          this.state.sendAmount,
+                          _.state.sendAddress,
+                          _.state.sendAmount,
                           "40000"
                         );
                       }
@@ -285,7 +299,7 @@ class WalletDetailView extends Component {
                       // send tx
                       await EthereumService.getInstance().sendTx(tx);
 
-                      this.setState({sendModalVisible: false,
+                      _.setState({sendModalVisible: false,
                         sendAmount: 0,
                         password: null,
                         sendAddress: null,
@@ -294,10 +308,17 @@ class WalletDetailView extends Component {
                         sendPasswordErrorMessage: null,
                       });
                     }
+
+                    _.setState({
+                      scanButtonDisable: false,
+                      sendButtonDisable: false,
+                      sendCancelButtonDisable: false,
+                    });
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title={"Scan"}
+                  disabled={this.state.scanButtonDisable}
                   onPress={() => {
                     this.setState({sendModalVisible: false, scanModalVisible: true, sendAddress: null})
                     if (this.scanner) {
@@ -308,6 +329,7 @@ class WalletDetailView extends Component {
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title={"Cancel"}
+                  disabled={this.state.sendCancelButtonDisable}
                   onPress={() => {this.setState({sendModalVisible: false, sendAmount: 0, password: null, sendAddress: null})}}
                   color={'#4A4A4A'}
                 />
@@ -398,41 +420,49 @@ class WalletDetailView extends Component {
                   title={"Trade"}
                   buttonStyle={styles.modalSendButton}
                   raised
+                  disabled={this.state.tradeButtonDisable}
                   onPress={async () => {
                     console.log("trade action");
+                    _.setState({
+                      tradeButtonDisable: true,
+                      tradeCancelButtonDisable: true
+                    });
+
                     var isValidate = true;
 
-                    // TODO: address validation
-                    // TODO: amount validation
-                    // TODO: password validation
+                    // amount validation
+                    isValidate = isValidate & (_.state.sourceAmount <= _.state.token.balance);
+
+                    // password validation
+                    const privateKey = await WalletService.getInstance().getSeed(_.state.password);
+                    isValidate = isValidate & (privateKey != null);
 
                     console.log("validate end");
                     if (isValidate) {
                       // generate tx
-                      const privateKey = await WalletService.getInstance().getSeed(this.state.password);
-                      const token = this.state.token;
+                      const token = _.state.token;
                       var tx = null;
-                      if (this.state.exchangeType == "BID") {
+                      if (_.state.exchangeType == "BID") {
                         // token from, to, value, decimals, contractAddress, gasLimit
                         tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
-                          this.state.sourceAmount,
-                          this.state.token.address,
-                          this.state.token.ownerAddress
+                          _.state.sourceAmount,
+                          _.state.token.address,
+                          _.state.token.ownerAddress
                         );
                       } else {
                         // send approve tx
                         var approveTx = await EthereumService.getInstance().generateApproveTokenTx(
-                          this.state.token.address,
-                          this.state.sourceAmount,
-                          this.state.token.ownerAddress
+                          _.state.token.address,
+                          _.state.sourceAmount,
+                          _.state.token.ownerAddress
                         );
                         approveTx.sign(privateKey);
                         await EthereumService.getInstance().sendTx(approveTx);
 
                         tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
-                          this.state.token.address,
-                          this.state.sourceAmount,
-                          this.state.token.ownerAddress
+                          _.state.token.address,
+                          _.state.sourceAmount,
+                          _.state.token.ownerAddress
                         );
                       }
 
@@ -441,12 +471,19 @@ class WalletDetailView extends Component {
 
                       // send tx
                       await EthereumService.getInstance().sendTx(tx);
+
+                      _.setState({exchangeModalVisible: false, password: null, sourceAmount: 0.0, destAmount: 0.0})
                     }
-                    this.setState({exchangeModalVisible: false, password: null, sourceAmount: 0.0, destAmount: 0.0})
+
+                    _.setState({
+                      tradeButtonDisable: false,
+                      tradeCancelButtonDisable: false
+                    });
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
                   title="Cancel"
+                  disabled={this.state.tradeCancelButtonDisable}
                   onPress={() => {
                     this.setState({exchangeModalVisible: false, password: null, exchangeAmount: 0.0})
                   }}
