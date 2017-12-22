@@ -8,7 +8,8 @@ import {
   ScrollView,
   Modal,
   Clipboard,
-  ActionSheetIOS
+  ActionSheetIOS,
+  Alert,
 } from 'react-native';
 import {
   List,
@@ -53,9 +54,10 @@ class WalletDetailView extends Component {
       sendCancelButtonDisable: false,
       tradeButtonDisable: false,
       tradeCancelButtonDisable: false,
+      tradeAmountErrorMessage: null,
+      tradePasswordErrorMessage: null,
     };
 
-    this.sendAddressInput = null;
     this.scanner = null;
 
     // bind methods
@@ -163,7 +165,6 @@ class WalletDetailView extends Component {
                       console.log("read: ", data);
                       if (EthereumService.getInstance().isValidateAddress(data)) {
                         console.log("is an address");
-                        this.sendAddressInput.text = data;
                         this.setState({sendModalVisible: true, scanModalVisible: false, sendAddress: data})
                       } else {
                         console.log("is not an address");
@@ -191,9 +192,9 @@ class WalletDetailView extends Component {
             <Card title="SEND">
               <FormLabel>To</FormLabel>
               <FormInput
-                ref={(ref) => this.sendAddressInput = ref}
                 multiline
                 inputStyle={{width: '100%'}}
+                value={this.state.sendAddress}
                 onChangeText={(text) => this.state.sendAddress = text}
               />
               {
@@ -272,7 +273,7 @@ class WalletDetailView extends Component {
 
                     console.log("validate end");
                     if (isValidate) {
-                      const token = _s.state.token;
+                      const token = _.state.token;
                       var tx = null;
                       if (token.symbol != "ETH") {
                         // token from, to, value, decimals, contractAddress, gasLimit
@@ -297,16 +298,26 @@ class WalletDetailView extends Component {
                       tx.sign(privateKey);
 
                       // send tx
-                      await EthereumService.getInstance().sendTx(tx);
-
-                      _.setState({sendModalVisible: false,
-                        sendAmount: 0,
-                        password: null,
-                        sendAddress: null,
-                        sendAddressErrorMessage: null,
-                        sendAmountErrorMessage: null,
-                        sendPasswordErrorMessage: null,
-                      });
+                      try {
+                        await EthereumService.getInstance().sendTx(tx);
+                        _.setState({sendModalVisible: false,
+                          sendAmount: 0,
+                          password: null,
+                          sendAddress: null,
+                          sendAddressErrorMessage: null,
+                          sendAmountErrorMessage: null,
+                          sendPasswordErrorMessage: null,
+                        });
+                      } catch (e) {
+                        // console.error(e);
+                        Alert.alert(
+                          "Failed to send",
+                          e.message,
+                          [
+                            {text: "Cancel", style: "cancel"},
+                          ]
+                        );
+                      }
                     }
 
                     _.setState({
@@ -406,6 +417,12 @@ class WalletDetailView extends Component {
                   this.setState({ sourceAmount: sourceAmount, destAmount : destAmount });
                 }}
               />
+              {
+                this.state.tradeAmountErrorMessage &&
+                <FormValidationMessage>
+                  {this.state.tradeAmountErrorMessage}
+                </FormValidationMessage>
+              }
               <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType == "BID" ? this.state.token.symbol : "ETH"}</FormLabel>
               <FormLabel>Password</FormLabel>
               <FormInput
@@ -413,6 +430,12 @@ class WalletDetailView extends Component {
                 placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
+              {
+                this.state.tradePasswordErrorMessage &&
+                <FormValidationMessage>
+                  {this.state.tradePasswordErrorMessage}
+                </FormValidationMessage>
+              }
               <View style={{
                 padding: 10,
               }}>
@@ -428,14 +451,23 @@ class WalletDetailView extends Component {
                       tradeCancelButtonDisable: true
                     });
 
+                    const etherBlance = WalletService.getInstance().wallet.balance;
+
                     var isValidate = true;
 
                     // amount validation
-                    isValidate = isValidate & (_.state.sourceAmount <= _.state.token.balance);
+                    if (_.state.exchangeType == "BID" && _.state.sourceAmount > etherBlance ||
+                        _.state.exchangeType == "ASK" && _.state.sourceAmount > _.state.token.balance) {
+                        isValidate = false;
+                        _.setState({tradeAmountErrorMessage: "Not enough to trade"});
+                    }
 
                     // password validation
                     const privateKey = await WalletService.getInstance().getSeed(_.state.password);
-                    isValidate = isValidate & (privateKey != null);
+                    if (privateKey == null) {
+                      isValidate = false;
+                      _.setState({tradePasswordErrorMessage: "Wrong password"});
+                    }
 
                     console.log("validate end");
                     if (isValidate) {
@@ -443,13 +475,14 @@ class WalletDetailView extends Component {
                       const token = _.state.token;
                       var tx = null;
                       if (_.state.exchangeType == "BID") {
-                        // token from, to, value, decimals, contractAddress, gasLimit
+                        // eth -> token
                         tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
                           _.state.sourceAmount,
                           _.state.token.address,
                           _.state.token.ownerAddress
                         );
                       } else {
+                        // token -> eth
                         // send approve tx
                         var approveTx = await EthereumService.getInstance().generateApproveTokenTx(
                           _.state.token.address,
@@ -469,10 +502,27 @@ class WalletDetailView extends Component {
                       // sign tx
                       tx.sign(privateKey);
 
-                      // send tx
-                      await EthereumService.getInstance().sendTx(tx);
-
-                      _.setState({exchangeModalVisible: false, password: null, sourceAmount: 0.0, destAmount: 0.0})
+                      try {
+                        // send tx
+                        await EthereumService.getInstance().sendTx(tx);
+                        _.setState({
+                          exchangeModalVisible: false,
+                          password: null,
+                          sourceAmount: 0.0,
+                          destAmount: 0.0,
+                          tradeAmountErrorMessage: null,
+                          tradePasswordErrorMessage: null,
+                        })
+                      } catch (e) {
+                        // console.error(e);
+                        Alert.alert(
+                          "Failed to trade",
+                          e.message,
+                          [
+                            {text: "Cancel", style: "cancel"},
+                          ]
+                        );
+                      }
                     }
 
                     _.setState({
