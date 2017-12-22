@@ -8,7 +8,8 @@ import {
   ScrollView,
   Modal,
   Clipboard,
-  ActionSheetIOS
+  ActionSheetIOS,
+  Alert,
 } from 'react-native';
 import {
   List,
@@ -55,7 +56,6 @@ class WalletDetailView extends Component {
       tradeCancelButtonDisable: false,
     };
 
-    this.sendAddressInput = null;
     this.scanner = null;
 
     // bind methods
@@ -163,7 +163,6 @@ class WalletDetailView extends Component {
                       console.log("read: ", data);
                       if (EthereumService.getInstance().isValidateAddress(data)) {
                         console.log("is an address");
-                        this.sendAddressInput.text = data;
                         this.setState({sendModalVisible: true, scanModalVisible: false, sendAddress: data})
                       } else {
                         console.log("is not an address");
@@ -191,9 +190,9 @@ class WalletDetailView extends Component {
             <Card title="SEND">
               <FormLabel>To</FormLabel>
               <FormInput
-                ref={(ref) => this.sendAddressInput = ref}
                 multiline
                 inputStyle={{width: '100%'}}
+                value={this.state.sendAddress}
                 onChangeText={(text) => this.state.sendAddress = text}
               />
               {
@@ -297,7 +296,19 @@ class WalletDetailView extends Component {
                       tx.sign(privateKey);
 
                       // send tx
-                      await EthereumService.getInstance().sendTx(tx);
+                      try {
+                        await EthereumService.getInstance().sendTx(tx);
+                      } catch (e) {
+                        console.error(e);
+                        Alert.alert(
+                          "Failed to send",
+                          JSON.stringify(e),
+                          [
+                            {text: "Cancel", style: "cancel"},
+                          ]
+                        );
+                      }
+
 
                       _.setState({sendModalVisible: false,
                         sendAmount: 0,
