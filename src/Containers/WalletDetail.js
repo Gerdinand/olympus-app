@@ -271,7 +271,7 @@ class WalletDetailView extends Component {
 
                     console.log("validate end");
                     if (isValidate) {
-                      const token = _s.state.token;
+                      const token = _.state.token;
                       var tx = null;
                       if (token.symbol != "ETH") {
                         // token from, to, value, decimals, contractAddress, gasLimit
@@ -298,26 +298,24 @@ class WalletDetailView extends Component {
                       // send tx
                       try {
                         await EthereumService.getInstance().sendTx(tx);
+                        _.setState({sendModalVisible: false,
+                          sendAmount: 0,
+                          password: null,
+                          sendAddress: null,
+                          sendAddressErrorMessage: null,
+                          sendAmountErrorMessage: null,
+                          sendPasswordErrorMessage: null,
+                        });
                       } catch (e) {
                         console.error(e);
                         Alert.alert(
                           "Failed to send",
-                          JSON.stringify(e),
+                          e.message,
                           [
                             {text: "Cancel", style: "cancel"},
                           ]
                         );
                       }
-
-
-                      _.setState({sendModalVisible: false,
-                        sendAmount: 0,
-                        password: null,
-                        sendAddress: null,
-                        sendAddressErrorMessage: null,
-                        sendAmountErrorMessage: null,
-                        sendPasswordErrorMessage: null,
-                      });
                     }
 
                     _.setState({
@@ -480,10 +478,21 @@ class WalletDetailView extends Component {
                       // sign tx
                       tx.sign(privateKey);
 
-                      // send tx
-                      await EthereumService.getInstance().sendTx(tx);
+                      try {
+                        // send tx
+                        await EthereumService.getInstance().sendTx(tx);
 
-                      _.setState({exchangeModalVisible: false, password: null, sourceAmount: 0.0, destAmount: 0.0})
+                        _.setState({exchangeModalVisible: false, password: null, sourceAmount: 0.0, destAmount: 0.0})
+                      } catch (e) {
+                        console.error(e);
+                        Alert.alert(
+                          "Failed to trade",
+                          e.message,
+                          [
+                            {text: "Cancel", style: "cancel"},
+                          ]
+                        );
+                      }
                     }
 
                     _.setState({
