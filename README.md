@@ -1,5 +1,5 @@
 # Hora
-Hora, Olympus Wallet.
+Hora, Olympus App.
 
 This repository is for testing purposes only, do not use it for real deployment.
 
