@@ -28,7 +28,7 @@ import BigNumber from "bignumber.js";
 import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import QRCode from 'react-native-qrcode';
-import { EthereumService, WalletService, EthereumNetService } from '../Services';
+import {WalletService, EthereumNetService } from '../Services';
 
 class WalletDetailView extends Component {
   constructor(props) {

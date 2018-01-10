@@ -57,12 +57,13 @@ class WalletService {
         txs: [],
         pendingTxHash: null,
       };
-      let tokens = network === 'MAIN' ? SupportedMainTokens : SupportedTokens
       // 2. add tokens
-      for (var i = 0; i < tokens.length; i++) {
-        const t = tokens[i];
-        const token = new Token(t.name, t.icon, t.symbol, t.address, wallet.address, t.decimals);
-        wallet.tokens.push(token);
+      for (var i = 0; i < SupportedTokens.length; i++) {
+        const t = SupportedTokens[i];
+        if (t.net === network || i == 0) {
+            const token = new Token(t.name, t.icon, t.symbol, t.address, wallet.address, t.decimals);
+            wallet.tokens.push(token);
+        }
       }
 
       this.wallet = wallet;

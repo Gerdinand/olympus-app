@@ -14,6 +14,7 @@ import BigNumber from "bignumber.js";
 import { EventRegister } from 'react-native-event-listeners';
 import { getETHPrice } from './Currency';
 import WalletService from './Wallet';
+import asy from 'async';
 
 let network = 'MAIN';
 class EthereumNetService {
@@ -183,29 +184,67 @@ class EthereumNetService {
     var balanceInUSD = ethPrice * balance;
     console.log("USD: ", balanceInUSD);
 
+    let tokenIndex = [];
+    let balanceArray = [];
+    let pair = [];
+    let price = {};
     for (var i = 1; i < wallet.tokens.length; i++) {
       var token = wallet.tokens[i];
-      var tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
-      token.balance = tokenBalance;
 
+      tokenIndex.push({
+          symbol : token.symbol,
+          address : token.address,
+          ownerAddress : token.ownerAddress,
+          decimals : token.decimals
+      })
 
       if (network === 'MAIN') {
-          const tokenPrice = await this.getRate(`eth_${token.symbol.toLowerCase()}`);
-          token.price = parseFloat(tokenPrice).toFixed(2);
+          pair.push(`eth_${token.symbol.toLowerCase()}`);
       } else {
-          const priceInWei = await this.getPrice(Constants.ETHER_ADDRESS, token.address);
-          const tokenPrice = this.rpc.fromWei(priceInWei, "ether").toFixed(2);
-          token.price = tokenPrice;
+
+          pair.push(token.address);
       }
 
 
-      balanceInUSD += (1.0 / token.price) * ethPrice * tokenBalance;
-
-      console.log(token.symbol + " price: " + token.price);
-      console.log(token.symbol + " balance: " + token.balance);
     }
 
-    wallet.balanceInUSD = balanceInUSD.toFixed(2);
+    //get token balance
+    await asy.eachLimit(tokenIndex, 10, async (item,callback) => {
+          var tokenBalance = await this.getTokenBalance(item.address, item.ownerAddress, item.decimals);
+          balanceArray[item.symbol] = tokenBalance;
+          callback();
+    },(err) => {
+        console.log(balanceArray);
+        for (var i = 1; i < wallet.tokens.length; i++) {
+            var token = wallet.tokens[i];
+            token.balance = balanceArray[token.symbol];
+        }
+    })
+
+
+    //get token price by eth
+    await asy.eachLimit(pair, 10, async (item,callback) => {
+      if (network === 'MAIN') {
+          price[item] = parseFloat(await this.getRate(item)).toFixed(2);
+      } else {
+          price[item] = rpc.fromWei(await this.getPrice(Constants.ETHER_ADDRESS, token.address), "ether").toFixed(2);
+      }
+        callback();
+    },(err) => {
+        console.log(price);
+        for (var i = 1; i < wallet.tokens.length; i++) {
+            var token = wallet.tokens[i];
+            if (network === 'MAIN') {
+                token.price = price[`eth_${token.symbol.toLowerCase()}`];
+            } else {
+                token.price = price[token.address];
+            }
+
+            balanceInUSD += (1.0 / token.price) * ethPrice * token.balance;
+        }
+        wallet.balanceInUSD = balanceInUSD.toFixed(2);
+    })
+
 
 
     const url = network === 'MAIN' ?
