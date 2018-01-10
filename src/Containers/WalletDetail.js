@@ -30,7 +30,7 @@ import { EventRegister } from 'react-native-event-listeners';
 import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService, EthereumNetService } from '../Services';
 
-class MainWalletDetailView extends Component {
+class WalletDetailView extends Component {
   constructor(props) {
     super(props);
 
@@ -94,7 +94,6 @@ class MainWalletDetailView extends Component {
   componentWillMount() {
     var _ = this;
 
-    //TODO reload the wallet
     this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
       for (var i = 0; i < wallet.tokens.length; i++) {
         const token = wallet.tokens[i];
@@ -153,7 +152,8 @@ class MainWalletDetailView extends Component {
         pair = `${_.state.token.symbol.toLowerCase()}_eth`
       }
         if (net === 'MAIN') {
-            //TODO create an order
+
+            //create an order
             let rate = fetch(`https://shapeshift.io/rate/${pair}`);
             let limit = fetch(`https://shapeshift.io/limit/${pair}`);
 
@@ -180,8 +180,6 @@ class MainWalletDetailView extends Component {
             let orderRes = await result[2].json();
 
             if (orderRes.orderId) {
-                console.log(orderRes);
-                console.log(data);
                 _.setState({shapeshift: {
                         order : orderRes,
                         pair: pair,
@@ -189,8 +187,6 @@ class MainWalletDetailView extends Component {
                         max: limitRes.limit,
                         min: limitRes.min
                     }})
-            } else {
-                alert('order error')
             }
 
         }
@@ -566,15 +562,15 @@ class MainWalletDetailView extends Component {
                         } else {
                             // token -> eth
                             // send approve tx
-                            var approveTx = await EthereumService.getInstance().generateApproveTokenTx(
+                            var approveTx = await EthereumNetService.getInstance(this.state.network).generateApproveTokenTx(
                                 _.state.token.address,
                                 _.state.sourceAmount,
                                 _.state.token.ownerAddress
                             );
                             approveTx.sign(privateKey);
-                            await EthereumService.getInstance().sendTx(approveTx);
+                            await EthereumNetService.getInstance(this.state.network).sendTx(approveTx);
 
-                            tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
+                            tx = await EthereumNetService.getInstance(this.state.network).generateTradeFromTokenToEtherTx(
                                 _.state.token.address,
                                 _.state.sourceAmount,
                                 _.state.token.ownerAddress
@@ -587,7 +583,6 @@ class MainWalletDetailView extends Component {
 
                       try {
                         // send tx
-                          //TODO stop tx
                         await EthereumNetService.getInstance(this.state.network).sendTx(tx);
                         _.setState({
                           exchangeModalVisible: false,
@@ -713,4 +708,4 @@ var styles = StyleSheet.create({
   },
 });
 
-export default MainWalletDetailView;
+export default WalletDetailView;

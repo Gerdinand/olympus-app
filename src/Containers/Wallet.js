@@ -17,7 +17,7 @@ import {
 
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
-import { WalletService, EthereumService, SupportedTokens, EthereumNetService, WebSocket } from '../Services';
+import { WalletService, EthereumNetService} from '../Services';
 import Toast from '@remobile/react-native-toast';
 
 class WalletView extends Component {
@@ -34,16 +34,6 @@ class WalletView extends Component {
       refreshing: false,
     };
     this.fetchData = this.fetchData.bind(this);
-
-
-      WebSocket.getInstance().connect();
-      // var ws = new WebSocket('wss://socket.etherscan.io/wshandler');
-      // ws.onopen = () => {
-      //     console.log("hello");
-      // }
-      // ws.onmessage = (e) => {
-      //     console.log(e.data);
-      // }
   }
 
   componentWillMount() {
