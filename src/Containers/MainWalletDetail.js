@@ -10,7 +10,6 @@ import {
   Clipboard,
   ActionSheetIOS,
   Alert,
-    AsyncStorage,
 } from 'react-native';
 import {
   List,
@@ -28,7 +27,7 @@ import BigNumber from "bignumber.js";
 import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import QRCode from 'react-native-qrcode';
-import { EthereumService, WalletService, EthereumNetService } from '../Services';
+import { EthereumService, WalletService } from '../Services';
 
 class MainWalletDetailView extends Component {
   constructor(props) {
@@ -57,8 +56,6 @@ class MainWalletDetailView extends Component {
       tradeCancelButtonDisable: false,
       tradeAmountErrorMessage: null,
       tradePasswordErrorMessage: null,
-      network: null,
-        shapeshift: {}
     };
 
     this.scanner = null;
@@ -93,8 +90,6 @@ class MainWalletDetailView extends Component {
 
   componentWillMount() {
     var _ = this;
-
-    //TODO reload the wallet
     this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
       for (var i = 0; i < wallet.tokens.length; i++) {
         const token = wallet.tokens[i];
@@ -112,10 +107,7 @@ class MainWalletDetailView extends Component {
       }
     });
 
-      AsyncStorage.getItem("network").then( async (net) => {
-          _.setState({network: net});
-          _.reloadTxs(WalletService.getInstance(net).wallet);
-      })
+    this.reloadTxs(WalletService.getInstance().wallet);
   }
 
   componentWillUnmount() {
@@ -141,59 +133,12 @@ class MainWalletDetailView extends Component {
     ActionSheetIOS.showActionSheetWithOptions({
       options: ["ETH -> " + _.state.token.symbol, _.state.token.symbol + " -> ETH", "Cancel"],
       cancelButtonIndex: 2,
-    }, async (buttonIndex) => {
-        let net = await AsyncStorage.getItem('network');
-        let pair = null;
-        _.setState({network : net});
+    }, (buttonIndex) => {
       if (0 == buttonIndex) {
         _.setState({ exchangeType: "BID", exchangeModalVisible: true });
-        pair = `eth_${_.state.token.symbol.toLowerCase()}`
       } else if (1 == buttonIndex) {
         _.setState({ exchangeType: "ASK", exchangeModalVisible: true });
-        pair = `${_.state.token.symbol.toLowerCase()}_eth`
       }
-        if (net === 'MAIN') {
-            //TODO create an order
-            let rate = fetch(`https://shapeshift.io/rate/${pair}`);
-            let limit = fetch(`https://shapeshift.io/limit/${pair}`);
-
-            //create an order data
-            let data = {
-                method: 'POST',
-                body: JSON.stringify({
-                    withdrawal: _.state.token.ownerAddress,
-                    returnAddress: _.state.token.ownerAddress,
-                    pair:pair,
-                    apiKey : '720d06bc3e4ecab21a8134b0245970bb619df559032dc3c5c99d3a7bdf586d3d9ae0bf46735ba1bb1f5a2e4bc29a1c044a8317ea081c64f8c2c3b8dece161045'
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-
-            let order = fetch('https://shapeshift.io/shift', data);
-
-
-            let result = await Promise.all([rate,limit,order]);
-            let rateRes = await result[0].json();
-            let limitRes = await result[1].json();
-            let orderRes = await result[2].json();
-
-            if (orderRes.orderId) {
-                console.log(orderRes);
-                console.log(data);
-                _.setState({shapeshift: {
-                        order : orderRes,
-                        pair: pair,
-                        rate: rateRes.rate,
-                        max: limitRes.limit,
-                        min: limitRes.min
-                    }})
-            } else {
-                alert('order error')
-            }
-
-        }
     });
   }
 
@@ -218,7 +163,7 @@ class MainWalletDetailView extends Component {
                     onRead={(e) => {
                       const data = e.data;
                       console.log("read: ", data);
-                      if (EthereumNetService.getInstance(this.state.network).isValidateAddress(data)) {
+                      if (EthereumService.getInstance().isValidateAddress(data)) {
                         console.log("is an address");
                         this.setState({sendModalVisible: true, scanModalVisible: false, sendAddress: data})
                       } else {
@@ -302,7 +247,7 @@ class MainWalletDetailView extends Component {
                     var isValidate = true;
 
                     // address validation
-                    if (!EthereumNetService.getInstance(this.state.network).isValidateAddress(_.state.sendAddress)) {
+                    if (!EthereumService.getInstance().isValidateAddress(_.state.sendAddress)) {
                       isValidate = false;
                       _.setState({sendAddressErrorMessage: "Invalidate address"});
                     } else {
@@ -318,7 +263,7 @@ class MainWalletDetailView extends Component {
                     }
 
                     // password validation
-                    const privateKey = await WalletService.getInstance(this.state.network).getSeed(_.state.password);
+                    const privateKey = await WalletService.getInstance().getSeed(_.state.password);
                     if (!privateKey) {
                       isValidate = false;
                       _.setState({sendPasswordErrorMessage: "Wrong password"});
@@ -332,7 +277,7 @@ class MainWalletDetailView extends Component {
                       var tx = null;
                       if (token.symbol != "ETH") {
                         // token from, to, value, decimals, contractAddress, gasLimit
-                        tx = await EthereumNetService.getInstance(this.state.network).generateTokenTx(
+                        tx = await EthereumService.getInstance().generateTokenTx(
                           token.ownerAddress,
                           _.state.sendAddress,
                           _.state.sendAmount,
@@ -341,7 +286,7 @@ class MainWalletDetailView extends Component {
                           "40000"
                         );
                       } else {
-                        tx = await EthereumNetService.getInstance(this.state.network).generateTx(
+                        tx = await EthereumService.getInstance().generateTx(
                           token.ownerAddress,
                           _.state.sendAddress,
                           _.state.sendAmount,
@@ -354,7 +299,7 @@ class MainWalletDetailView extends Component {
 
                       // send tx
                       try {
-                        await EthereumNetService.getInstance(this.state.network).sendTx(tx);
+                        await EthereumService.getInstance().sendTx(tx);
                         _.setState({sendModalVisible: false,
                           sendAmount: 0,
                           password: null,
@@ -364,7 +309,6 @@ class MainWalletDetailView extends Component {
                           sendPasswordErrorMessage: null,
                         });
                       } catch (e) {
-                          console.log(e);
                         // console.error(e);
                         Alert.alert(
                           "Failed to send",
@@ -455,9 +399,6 @@ class MainWalletDetailView extends Component {
           <View style={styles.modelContainer}>
             <Card title={this.state.exchangeType == "BID" ? "ETH -> " + this.state.token.symbol : this.state.token.symbol + " -> ETH"}>
               <FormLabel>Exchange</FormLabel>
-                {
-                    this.state.network === 'MAIN' && <FormLabel>{'max:'+ this.state.shapeshift.max + ' ' + 'min:' + this.state.shapeshift.min}</FormLabel>
-                }
               <FormInput
                 inputStyle={{width: '100%'}}
                 placeholder="Amount to exchange"
@@ -510,7 +451,7 @@ class MainWalletDetailView extends Component {
                       tradeCancelButtonDisable: true
                     });
 
-                    const etherBlance = WalletService.getInstance(this.state.network).wallet.balance;
+                    const etherBlance = WalletService.getInstance().wallet.balance;
 
                     var isValidate = true;
 
@@ -522,7 +463,7 @@ class MainWalletDetailView extends Component {
                     }
 
                     // password validation
-                    const privateKey = await WalletService.getInstance(this.state.network).getSeed(_.state.password);
+                    const privateKey = await WalletService.getInstance().getSeed(_.state.password);
                     if (privateKey == null) {
                       isValidate = false;
                       _.setState({tradePasswordErrorMessage: "Wrong password"});
@@ -535,51 +476,27 @@ class MainWalletDetailView extends Component {
                       var tx = null;
                       if (_.state.exchangeType == "BID") {
                         // eth -> token
-                        if (_.state.network === 'MAIN') {
-                            //shapeshift main net
-                            tx = await EthereumNetService.getInstance(this.state.network).generateTx(
-                                _.state.token.ownerAddress,
-                                _.state.shapeshift.order.deposit,
-                                _.state.sourceAmount,
-                                "40000"
-                            );
-
-                        } else {
-                            //kyber kovan net
-                            tx = await EthereumNetService.getInstance(this.state.network).generateTradeFromEtherToTokenTx(
-                                _.state.sourceAmount,
-                                _.state.token.address,
-                                _.state.token.ownerAddress
-                            );
-                        }
+                        tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
+                          _.state.sourceAmount,
+                          _.state.token.address,
+                          _.state.token.ownerAddress
+                        );
                       } else {
+                        // token -> eth
+                        // send approve tx
+                        var approveTx = await EthereumService.getInstance().generateApproveTokenTx(
+                          _.state.token.address,
+                          _.state.sourceAmount,
+                          _.state.token.ownerAddress
+                        );
+                        approveTx.sign(privateKey);
+                        await EthereumService.getInstance().sendTx(approveTx);
 
-                        if (_.state.network === 'MAIN') {
-                            tx = await EthereumNetService.getInstance(this.state.network).generateTokenTx(
-                                _.state.token.ownerAddress,
-                                _.state.shapeshift.order.deposit,
-                                _.state.sourceAmount,
-                                _.state.token.decimals,
-                                _.state.token.address,
-                                "40000"
-                            );
-                        } else {
-                            // token -> eth
-                            // send approve tx
-                            var approveTx = await EthereumService.getInstance().generateApproveTokenTx(
-                                _.state.token.address,
-                                _.state.sourceAmount,
-                                _.state.token.ownerAddress
-                            );
-                            approveTx.sign(privateKey);
-                            await EthereumService.getInstance().sendTx(approveTx);
-
-                            tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
-                                _.state.token.address,
-                                _.state.sourceAmount,
-                                _.state.token.ownerAddress
-                            );
-                        }
+                        tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
+                          _.state.token.address,
+                          _.state.sourceAmount,
+                          _.state.token.ownerAddress
+                        );
                       }
 
                       // sign tx
@@ -587,8 +504,7 @@ class MainWalletDetailView extends Component {
 
                       try {
                         // send tx
-                          //TODO stop tx
-                        await EthereumNetService.getInstance(this.state.network).sendTx(tx);
+                        await EthereumService.getInstance().sendTx(tx);
                         _.setState({
                           exchangeModalVisible: false,
                           password: null,

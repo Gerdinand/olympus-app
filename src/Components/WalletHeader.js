@@ -58,16 +58,17 @@ class WalletHeader extends Component {
       React.PropTypes.string,
       React.PropTypes.number,
     ]).isRequired,
+    network: React.PropTypes.string.isRequired
   }
 
   render() {
-    const { name, address, balance } = this.props;
+    const { name, address, balance, network } = this.props;
     return (
       <View style={{backgroundColor: 'transparent'}}>
         <View style={styles.container}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.address}>{address}</Text>
-          <Text style={styles.tips}>BALANCE</Text>
+          <Text style={styles.tips}>{`BALANCE (${network})`}</Text>
           <Text style={styles.assets}>{balance}</Text>
         </View>
       </View>

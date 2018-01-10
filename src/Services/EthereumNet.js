@@ -15,16 +15,16 @@ import { EventRegister } from 'react-native-event-listeners';
 import { getETHPrice } from './Currency';
 import WalletService from './Wallet';
 
-class EthereumService {
+let network = 'MAIN';
+class EthereumNetService {
 
   constructor() {
     this.kovanRpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
-    this.mainRpc = new Web3(new Web3.providers.HttpProvider("https://main.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
-    this.rpc = this.kovanRpc; //default network
-    this.network = 'KOVAN';
+    this.mainRpc = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
+    this.rpc = this.mainRpc; //default network
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
     this.kyberAddress = Constants.KYBER_NETWORK_ADDRESS;
-    this.kyberContract = this.rpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
+    this.kyberContract = this.kovanRpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
     this.intervalID = null;
     this.isSyncing = false;
 
@@ -34,44 +34,56 @@ class EthereumService {
 
   static myInstance = null;
 
-  static getInstance() {
+  static getInstance(net) {
     if (this.myInstance == null) {
-      this.myInstance = new EthereumService();
+      this.myInstance = new EthereumNetService();
+    }
+
+    if (net === 'MAIN') {
+      network = 'MAIN';
+    } else {
+      network = 'KOVAN';
     }
     return this.myInstance;
   }
 
   version() {
-    return this.rpc.version.api
+    let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
+    return rpc.version.api
   }
 
   isValidateAddress(address) {
-    return this.rpc.isAddress(address);
+      let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
+    return rpc.isAddress(address);
   }
 
   async getNonce(address) {
-    const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb));
+      let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
+    const nonce = await Promisify(cb => rpc.eth.getTransactionCount(address, rpc.eth.defaultBlock, cb));
     return nonce
   }
 
   async getGasPrice() {
-    const gasPrice = await Promisify(cb => this.rpc.eth.getGasPrice(cb));
+      let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
+    const gasPrice = await Promisify(cb => rpc.eth.getGasPrice(cb));
     return gasPrice;
   }
 
   async generateTx(from, to, value, gasLimit, txData="") {
+      let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
+      let chainId = network === 'MAIN' ? 1 : 42;
     const gasPrice = await this.getGasPrice();
     console.log("gas price: " + gasPrice + " x 3");
     console.log("limit: ", gasLimit);
 
     let rawTx = {
-      nonce: this.rpc.toHex(await this.getNonce(from)),
-      gasPrice: this.rpc.toHex(gasPrice * 3),
-      gasLimit: this.rpc.toHex(gasLimit),
+      nonce: rpc.toHex(await this.getNonce(from)),
+      gasPrice: rpc.toHex(gasPrice * 3),
+      gasLimit: rpc.toHex(gasLimit),
       to: to,
-      value: this.rpc.toHex(this.rpc.toWei(value, "ether")),
+      value: rpc.toHex(rpc.toWei(value, "ether")),
       data: txData,
-      chainId: 42,
+      chainId: chainId,
     };
 
     const tx = new EthereumTx(rawTx);
@@ -79,11 +91,14 @@ class EthereumService {
   }
 
   async generateTokenTx(source, dest, value, decimals, contractAddress, gasLimit) {
+      let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
+      let chainId = network === 'MAIN' ? 1 : 42;
     console.log(dest);
     const bigValue = new BigNumber(value);
     var base = new BigNumber(10);
     const amount = bigValue.times(base.pow(decimals));
-    const contract = this.erc20Contract.at(contractAddress);
+    // const contract = this.erc20Contract.at(contractAddress);
+      const contract = rpc.eth.contract(Constants.ERC20).at(contractAddress);
 
     let rawTx = {
       from: source,
@@ -93,7 +108,7 @@ class EthereumService {
       to: contractAddress,
       value: "0x0",
       data: contract.transfer.getData(dest, amount),
-      chainId: 42,
+      chainId: chainId,
     };
 
     const tx = new EthereumTx(rawTx);
@@ -101,17 +116,19 @@ class EthereumService {
   }
 
   async sendTx(tx) {
+      let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
     let serializedTx = tx.serialize();
-    const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb));
-    WalletService.getInstance().wallet.pendingTxHash = hash;
-    this.sync(WalletService.getInstance().wallet);
+    const hash = await Promisify(cb => rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb));
+    WalletService.getInstance(network).wallet.pendingTxHash = hash;
+    this.sync(WalletService.getInstance(network).wallet);
     console.log("tx hash: " + hash);
   }
 
   async getBalance(address) {
+    let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
     try {
-      const balanceInWei = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
-      const balance = this.rpc.fromWei(balanceInWei, "ether");
+      const balanceInWei = await Promisify(cb => rpc.eth.getBalance(address, cb));
+      const balance = rpc.fromWei(balanceInWei, "ether");
 
       return balance.toNumber();
     } catch (e) {
@@ -120,7 +137,9 @@ class EthereumService {
   }
 
   async getTokenBalance(address, ownerAddress, decimals) {
-    var instance = this.erc20Contract.at(address);
+      let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
+    var instance = rpc.eth.contract(Constants.ERC20).at(address);
+    // var instance = this.erc20Contract.at(address);
     const balance = await Promisify(cb => instance.balanceOf(ownerAddress, cb));
 
     const bigBalance = new BigNumber(balance);
@@ -131,7 +150,7 @@ class EthereumService {
   }
 
   runloop() {
-    this.sync(WalletService.getInstance().wallet);
+    this.sync(WalletService.getInstance(network).wallet);
   }
 
   fireTimer () {
@@ -144,18 +163,20 @@ class EthereumService {
   }
 
   async sync(wallet) {
-    console.log(this.network);
+      let rpc = network === 'MAIN' ? this.mainRpc : this.kovanRpc;
     if (this.isSyncing) {
       return ;
     }
     this.isSyncing = true;
 
     const balance = await this.getBalance(wallet.address);
+    console.log(balance);
     wallet.balance = balance;
     wallet.tokens[0].balance = balance;
     console.log("ETH balance: ", wallet.balance);
 
     const ethPrice = await getETHPrice();
+
     wallet.ethPrice = ethPrice;
     console.log("ETH price: ", ethPrice);
 
@@ -168,8 +189,7 @@ class EthereumService {
       token.balance = tokenBalance;
 
 
-      if (this.network === 'MAIN') {
-
+      if (network === 'MAIN') {
           const tokenPrice = await this.getRate(`eth_${token.symbol.toLowerCase()}`);
           token.price = parseFloat(tokenPrice).toFixed(2);
       } else {
@@ -188,7 +208,7 @@ class EthereumService {
     wallet.balanceInUSD = balanceInUSD.toFixed(2);
 
 
-    const url = this.network === 'MAIN' ?
+    const url = network === 'MAIN' ?
         "http://api.etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4" :
         "http://kovan.etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4";
 
@@ -244,7 +264,7 @@ class EthereumService {
     gasLimit,
     nonce) {
 
-    const amount = this.rpc.toWei(sourceAmount, "ether");
+    const amount = this.kovanRpc.toWei(sourceAmount, "ether");
 
     const exchangeData = this.kyberContract.walletTrade.getData(
       sourceToken,
@@ -258,16 +278,14 @@ class EthereumService {
     );
 
     let rawTx = {
-      nonce: this.rpc.toHex(nonce),
-      gasPrice: this.rpc.toHex(await this.getGasPrice()),
-      gasLimit: this.rpc.toHex(gasLimit),
+      nonce: this.kovanRpc.toHex(nonce),
+      gasPrice: this.kovanRpc.toHex(await this.getGasPrice()),
+      gasLimit: this.kovanRpc.toHex(gasLimit),
       to: this.kyberAddress,
       value: sourceToken == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
       chainId: 42,
     };
-
-    console.log(JSON.stringify(rawTx));
 
     const tx = new EthereumTx(rawTx);
     return tx;
@@ -331,4 +349,4 @@ class EthereumService {
   }
 }
 
-export default EthereumService;
+export default EthereumNetService;

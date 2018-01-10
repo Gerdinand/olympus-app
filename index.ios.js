@@ -89,8 +89,10 @@ export default class Hora extends Component {
 
   async loadingWallet() {
     const isUsed = await AsyncStorage.getItem("used");
+    const net = await AsyncStorage.getItem("network");
     if (isUsed) {
-      const wallet = await WalletService.getInstance().getActiveWallet();
+      const wallet = await WalletService.getInstance(net).getActiveWallet();
+
       this.setState({ loading: false, hasWallet: wallet != null });
     } else {
       this.setState({ loading: false, hasWallet: null });

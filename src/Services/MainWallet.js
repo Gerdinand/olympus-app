@@ -10,12 +10,10 @@ import EthJs from 'ethereumjs-wallet-react-native';
 
 import { addressFromJSONString, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
-import SupportedTokens from './SupportedTokens';
 import SupportedMainTokens from './SupportedMainTokens';
-
 import Token from './Token';
-let network = 'MAIN';
-class WalletService {
+
+class MainWalletService {
 
   constructor(props) {
     this.wallet = null;
@@ -23,15 +21,11 @@ class WalletService {
 
   static myInstance = null;
 
-  static getInstance(net) {
+  static getInstance() {
     if (this.myInstance == null) {
-      this.myInstance = new WalletService();
+      this.myInstance = new MainWalletService();
     }
-      if (net === 'MAIN') {
-          network = 'MAIN';
-      } else {
-          network = 'KOVAN';
-      }
+
     return this.myInstance;
   }
 
@@ -57,10 +51,10 @@ class WalletService {
         txs: [],
         pendingTxHash: null,
       };
-      let tokens = network === 'MAIN' ? SupportedMainTokens : SupportedTokens
+
       // 2. add tokens
-      for (var i = 0; i < tokens.length; i++) {
-        const t = tokens[i];
+      for (var i = 0; i < SupportedMainTokens.length; i++) {
+        const t = SupportedMainTokens[i];
         const token = new Token(t.name, t.icon, t.symbol, t.address, wallet.address, t.decimals);
         wallet.tokens.push(token);
       }
@@ -155,4 +149,4 @@ class WalletService {
 
 }
 
-export default WalletService;
+export default MainWalletService;

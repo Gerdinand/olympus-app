@@ -7,6 +7,7 @@ import {
   Text,
   ScrollView,
   RefreshControl,
+    AsyncStorage,
   Button
 } from 'react-native';
 import {
@@ -16,7 +17,7 @@ import {
 
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
-import { WalletService, EthereumService, SupportedTokens } from '../Services';
+import { WalletService, EthereumService, SupportedTokens, EthereumNetService, WebSocket } from '../Services';
 import Toast from '@remobile/react-native-toast';
 
 class WalletView extends Component {
@@ -27,15 +28,54 @@ class WalletView extends Component {
     this.walletListener = null;
 
     this.state = {
+      network: 'MAIN',
       wallet: null,
+      mainWallet: null,
       refreshing: false,
     };
-
     this.fetchData = this.fetchData.bind(this);
+
+
+      WebSocket.getInstance().connect();
+      // var ws = new WebSocket('wss://socket.etherscan.io/wshandler');
+      // ws.onopen = () => {
+      //     console.log("hello");
+      // }
+      // ws.onmessage = (e) => {
+      //     console.log(e.data);
+      // }
   }
 
   componentWillMount() {
+      AsyncStorage.getItem("network").then( async (net) => {
+          switch (net) {
+              case 'MAIN' :
+                  this.setState({network: 'MAIN'});
+                  break;
+
+              case 'KOVAN' :
+                  this.setState({network: 'KOVAN'});
+                  break;
+              default :
+                  this.setState({network: 'MAIN'});
+                  await AsyncStorage.setItem("network", 'MAIN');
+          }
+          this.setState({
+              wallet: WalletService.getInstance(this.state.network).wallet,
+          });
+          this.fetchData();
+
+      })
     var _ = this;
+    this.networkListener = EventRegister.addEventListener("network.updated", async (net) =>  {
+        _.setState({network: net});
+        WalletService.getInstance(this.state.network).resetActiveWallet();
+        await WalletService.getInstance(this.state.network).getActiveWallet();
+        this.setState({
+            wallet: WalletService.getInstance(this.state.network).wallet,
+        });
+        this.fetchData();
+    });
     this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
       if (wallet.txs.length != _.state.wallet.length) {
         Toast.showShortTop.bind(null, "New transaction confirmed.");
@@ -43,20 +83,28 @@ class WalletView extends Component {
       _.setState({ wallet: wallet, refreshing: false });
     });
 
-    this.setState({ wallet: WalletService.getInstance().wallet });
-    console.log(JSON.stringify(WalletService.getInstance().wallet));
+    this.setState({
+        wallet: WalletService.getInstance(this.state.network).wallet,
+    });
+
+    console.log(JSON.stringify(WalletService.getInstance(this.state.network).wallet));
 
     this.fetchData();
-    EthereumService.getInstance().fireTimer();
+    EthereumNetService.getInstance(this.state.network).fireTimer();
   }
 
   componentWillUnmount() {
-    EthereumService.getInstance().invalidateTimer();
+    EthereumNetService.getInstance(this.state.network).invalidateTimer();
+
+    EventRegister.removeEventListener(this.networkListener);
     EventRegister.removeEventListener(this.walletListener);
+
   }
 
+
+
   fetchData() {
-    EthereumService.getInstance().sync(WalletService.getInstance().wallet);
+      EthereumNetService.getInstance(this.state.network).sync(WalletService.getInstance(this.state.network).wallet);
   }
 
   _onRefresh() {
@@ -81,6 +129,7 @@ class WalletView extends Component {
           name={this.state.wallet.name}
           address={this.state.wallet.address}
           balance={this.state.wallet.ethPrice != 0 ? "$ " + this.state.wallet.balanceInUSD : "$ --"}
+          network={this.state.network}
         />
         <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
         {

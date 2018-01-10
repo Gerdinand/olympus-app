@@ -38,6 +38,10 @@ const list1 = [
     icon: <Image source={require('../../images/wallet.png')}/>,
     title: 'Wallet Backup',
   },
+    {
+        icon: <Image source={require('../../images/wallet.png')}/>,
+        title: 'Net Work',
+    },
 ];
 
 const list2 = [
@@ -62,10 +66,19 @@ class MeView extends Component {
 
   onPress(list, index) {
     if (list == list1) {
-      if (index == 0) {
-        // backup
-        this.props.navigation.navigate("Backup");
+
+      switch (index) {
+          case 0 :
+              this.props.navigation.navigate("Backup");
+              break;
+          case 1 :
+              this.props.navigation.navigate("Network");
+              break;
       }
+      // if (index == 0) {
+      //   // backup
+      //   this.props.navigation.navigate("Backup");
+      // }
     } else if (list  == list2) {
       if (index == 0) {
         // homepage

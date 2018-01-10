@@ -13,15 +13,12 @@ import EthereumTx from 'ethereumjs-tx';
 import BigNumber from "bignumber.js";
 import { EventRegister } from 'react-native-event-listeners';
 import { getETHPrice } from './Currency';
-import WalletService from './Wallet';
+import MainWalletService from './MainWallet';
 
-class EthereumService {
+class EthereumMainService {
 
   constructor() {
-    this.kovanRpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
-    this.mainRpc = new Web3(new Web3.providers.HttpProvider("https://main.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
-    this.rpc = this.kovanRpc; //default network
-    this.network = 'KOVAN';
+    this.rpc = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
     this.kyberAddress = Constants.KYBER_NETWORK_ADDRESS;
     this.kyberContract = this.rpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
@@ -36,8 +33,9 @@ class EthereumService {
 
   static getInstance() {
     if (this.myInstance == null) {
-      this.myInstance = new EthereumService();
+      this.myInstance = new EthereumMainService();
     }
+
     return this.myInstance;
   }
 
@@ -103,8 +101,8 @@ class EthereumService {
   async sendTx(tx) {
     let serializedTx = tx.serialize();
     const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb));
-    WalletService.getInstance().wallet.pendingTxHash = hash;
-    this.sync(WalletService.getInstance().wallet);
+    MainWalletService.getInstance().wallet.pendingTxHash = hash;
+    this.sync(MainWalletService.getInstance().wallet);
     console.log("tx hash: " + hash);
   }
 
@@ -131,7 +129,7 @@ class EthereumService {
   }
 
   runloop() {
-    this.sync(WalletService.getInstance().wallet);
+    this.sync(MainWalletService.getInstance().wallet);
   }
 
   fireTimer () {
@@ -144,7 +142,6 @@ class EthereumService {
   }
 
   async sync(wallet) {
-    console.log(this.network);
     if (this.isSyncing) {
       return ;
     }
@@ -162,24 +159,17 @@ class EthereumService {
     var balanceInUSD = ethPrice * balance;
     console.log("USD: ", balanceInUSD);
 
-    for (var i = 1; i < wallet.tokens.length; i++) {
+    console.log(wallet.tokens);
+
+    for (var i = 0; i < wallet.tokens.length; i++) {
       var token = wallet.tokens[i];
       var tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
       token.balance = tokenBalance;
 
+        const tokenPrice = await this.getPrice(`eth_${token.symbol.toLowerCase()}`);
+      token.price = parseFloat(tokenPrice).toFixed(2);
 
-      if (this.network === 'MAIN') {
-
-          const tokenPrice = await this.getRate(`eth_${token.symbol.toLowerCase()}`);
-          token.price = parseFloat(tokenPrice).toFixed(2);
-      } else {
-          const priceInWei = await this.getPrice(Constants.ETHER_ADDRESS, token.address);
-          const tokenPrice = this.rpc.fromWei(priceInWei, "ether").toFixed(2);
-          token.price = tokenPrice;
-      }
-
-
-      balanceInUSD += (1.0 / token.price) * ethPrice * tokenBalance;
+      balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
 
       console.log(token.symbol + " price: " + token.price);
       console.log(token.symbol + " balance: " + token.balance);
@@ -187,11 +177,7 @@ class EthereumService {
 
     wallet.balanceInUSD = balanceInUSD.toFixed(2);
 
-
-    const url = this.network === 'MAIN' ?
-        "http://api.etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4" :
-        "http://kovan.etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4";
-
+    const url = "http://etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4";
     const response = await fetch(url, {method: "GET"});
     const responseText = await response.text();
 
@@ -215,22 +201,18 @@ class EthereumService {
 
     this.isSyncing = false;
 
-    EventRegister.emit("wallet.updated", wallet);
+    EventRegister.emit("mainWallet.updated", wallet);
 
     return wallet;
   }
 
-  // Kyber Integraiton
-  async getPrice(source, dest) {
-    const result = await Promisify(cb => this.kyberContract.getPrice(source, dest, cb));
-    return result;
-  }
-    // ShapeShift Integraiton
-  async getRate(paire) {
-    let response = await fetch(`http://shapeshift.io/rate/${paire}`);
-    let responseJson = await response.json();
+  // ShapeShift Integraiton
+  async getPrice(paire) {
 
-    return responseJson.rate;
+      let response = await fetch(`http://shapeshift.io/rate/${paire}`);
+      let responseJson = await response.json();
+
+      return responseJson.rate;
   }
 
   async generateTradeTx(
@@ -331,4 +313,4 @@ class EthereumService {
   }
 }
 
-export default EthereumService;
+export default EthereumMainService;
