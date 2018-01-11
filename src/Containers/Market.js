@@ -16,14 +16,26 @@ import {
 const list = [
   {
     icon: require('../../images/index.png'),
-    title: 'Market Index'
+    title: 'Index'
+  },
+  {
+    icon: require('../../images/index.png'),
+    title: 'Lending'
+  },
+  {
+    icon: require('../../images/index.png'),
+    title: 'Futures'
+  },
+  {
+    icon: require('../../images/index.png'),
+    title: 'Options'
   },
 ];
 
 class MarketView extends Component {
   render() {
     const { navigation } = this.props;
-    
+
     return (
       <ScrollView style={{backgroundColor: '#F5F5F5'}}>
         <List>
@@ -34,7 +46,9 @@ class MarketView extends Component {
               avatar={l.icon}
               title={l.title}
               onPress={() => {
-                navigation.navigate('MarketIndex');
+                if (i == 0) {
+                  navigation.navigate('MarketIndex');
+                }
               }}
             />
           ))
