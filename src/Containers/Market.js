@@ -19,15 +19,15 @@ const list = [
     title: 'Index'
   },
   {
-    icon: require('../../images/index.png'),
+    icon: require('../../images/lending.png'),
     title: 'Lending'
   },
   {
-    icon: require('../../images/index.png'),
+    icon: require('../../images/future.png'),
     title: 'Futures'
   },
   {
-    icon: require('../../images/index.png'),
+    icon: require('../../images/option.png'),
     title: 'Options'
   },
 ];
