@@ -45,7 +45,10 @@ class CreateWalletView extends Component {
       this.setState({passwordErrorMessage2: "Please retype password"});
     } else if (this.state.password1 != this.state.password2) {
       this.setState({passwordErrorMessage2: "Password is different"});
-    } else {
+		} else if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(this.state.password1)){
+			this.setState({ passwordErrorMessage1: 
+				"Password should at least have 6 characters, and it should contain one number, one lowercase and one uppercase letter." });
+		} else {
       return true;
     }
 
@@ -69,7 +72,8 @@ class CreateWalletView extends Component {
         }
         <FormLabel>Passphrase</FormLabel>
         <FormInput
-          placeholder="Type in your passphrase"
+					secureTextEntry={true}
+					placeholder="Type in your passphrase"
           onChangeText={(text) => this.state.password1 = text}
         />
         {
@@ -80,6 +84,7 @@ class CreateWalletView extends Component {
         }
         <FormLabel>Retype Passphrase</FormLabel>
         <FormInput
+					secureTextEntry={true}
           placeholder="Retype your passphrase"
           onChangeText={(text) => this.state.password2 = text}
         />
