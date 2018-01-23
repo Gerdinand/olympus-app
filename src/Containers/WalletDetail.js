@@ -218,7 +218,8 @@ class WalletDetailView extends Component {
               }
               <FormLabel>Password</FormLabel>
               <FormInput
-                inputStyle={{width: '100%'}}
+								inputStyle={{width: '100%'}}
+								secureTextEntry={true}								
                 placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
@@ -426,7 +427,8 @@ class WalletDetailView extends Component {
               <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType == "BID" ? this.state.token.symbol : "ETH"}</FormLabel>
               <FormLabel>Password</FormLabel>
               <FormInput
-                inputStyle={{width: '100%'}}
+								inputStyle={{width: '100%'}}
+								secureTextEntry={true}								
                 placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
