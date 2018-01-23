@@ -48,6 +48,7 @@
 		8AD0ABEC0E27420C96DC4026 /* libRNOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7587BDBEA7854F7C935032F0 /* libRNOS.a */; };
 		A3DA24A721914F209AE87BF8 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 65ADA5A2930049FAB7406013 /* SimpleLineIcons.ttf */; };
 		AB67E1BDDBE5459BB99D9380 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 764881B1E3B746C4896786C9 /* MaterialCommunityIcons.ttf */; };
+		BAD443772DDB47508A0C972B /* libRCTToast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D83DB86FA63495FB9B0C94A /* libRCTToast.a */; };
 		C7C16A338D8D44F2AAD17A8C /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B2CCF1896434C328219F82A /* EvilIcons.ttf */; };
 		C80B7D65CDDA4934A062AAAB /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D3C290B0D7B43FEB4349986 /* libUdpSockets.a */; };
 		C9B4DF3DFCC74C09AF2E57B8 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69EA6CBB0C4A411EB4093936 /* Entypo.ttf */; };
@@ -99,6 +100,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = Hora;
+		};
+		0227BC3F1FFD24600067614C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2B54CFD94B8D46C890B1557E /* RCTToast.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 327633421BFAAD7E004DA88E;
+			remoteInfo = RCTToast;
 		};
 		139105C01AF99BAD00B5F7CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -316,6 +324,7 @@
 		00E356EE1AD99517003FC87E /* HoraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HoraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* HoraTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HoraTests.m; sourceTree = "<group>"; };
+		0D83DB86FA63495FB9B0C94A /* libRCTToast.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTToast.a; sourceTree = "<group>"; };
 		0D9CC2707B2E4ACFA0A3F838 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
 		118B5ACDBF984C0DA5679F23 /* libTcpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libTcpSockets.a; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
@@ -332,6 +341,7 @@
 		20B5F4D7690C4AD783E03177 /* libRNFastCrypto.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFastCrypto.a; sourceTree = "<group>"; };
 		20E77F06374D4FE397A7EA9E /* libRCTCamera.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTCamera.a; sourceTree = "<group>"; };
 		22A2257AA354439DB2BF01D1 /* libRNKeychain.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNKeychain.a; sourceTree = "<group>"; };
+		2B54CFD94B8D46C890B1557E /* RCTToast.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTToast.xcodeproj; path = "../node_modules/@remobile/react-native-toast/ios/RCTToast.xcodeproj"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Hora-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hora-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Hora-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Hora-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		45E868E1A14949E090432117 /* UdpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = UdpSockets.xcodeproj; path = "../node_modules/react-native-udp/ios/UdpSockets.xcodeproj"; sourceTree = "<group>"; };
@@ -393,6 +403,7 @@
 				F7B3508891124705B6A09BEE /* libTcpSockets.a in Frameworks */,
 				C80B7D65CDDA4934A062AAAB /* libUdpSockets.a in Frameworks */,
 				69BC64EC2C4F41E7970334C3 /* libRCTCamera.a in Frameworks */,
+				BAD443772DDB47508A0C972B /* libRCTToast.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +489,14 @@
 				00E356F11AD99517003FC87E /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0227BC3C1FFD245F0067614C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0227BC401FFD24600067614C /* libRCTToast.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
@@ -602,6 +621,7 @@
 				7A385D607BDB4956B829D183 /* TcpSockets.xcodeproj */,
 				45E868E1A14949E090432117 /* UdpSockets.xcodeproj */,
 				9CD7C5F136F6484C89E448BC /* RCTCamera.xcodeproj */,
+				2B54CFD94B8D46C890B1557E /* RCTToast.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -652,6 +672,7 @@
 				118B5ACDBF984C0DA5679F23 /* libTcpSockets.a */,
 				5D3C290B0D7B43FEB4349986 /* libUdpSockets.a */,
 				20E77F06374D4FE397A7EA9E /* libRCTCamera.a */,
+				0D83DB86FA63495FB9B0C94A /* libRCTToast.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -794,7 +815,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 2LA7SLA9PL;
+						DevelopmentTeam = CQUW6FZ725;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -861,6 +882,10 @@
 				{
 					ProductGroup = 832341B11AAA6A8300B99B32 /* Products */;
 					ProjectRef = 832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */;
+				},
+				{
+					ProductGroup = 0227BC3C1FFD245F0067614C /* Products */;
+					ProjectRef = 2B54CFD94B8D46C890B1557E /* RCTToast.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302E01ABCB9EE00DB3ED1 /* Products */;
@@ -947,6 +972,13 @@
 			fileType = archive.ar;
 			path = libRCTVibration.a;
 			remoteRef = 00C302E31ABCB9EE00DB3ED1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0227BC401FFD24600067614C /* libRCTToast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTToast.a;
+			remoteRef = 0227BC3F1FFD24600067614C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		139105C11AF99BAD00B5F7CC /* libRCTSettings.a */ = {
@@ -1306,12 +1338,14 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = HoraTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1348,12 +1382,14 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = HoraTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1380,7 +1416,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hora/Hora.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 2LA7SLA9PL;
+				DEVELOPMENT_TEAM = CQUW6FZ725;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1393,6 +1429,7 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = Hora/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1413,7 +1450,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hora/Hora.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2LA7SLA9PL;
+				DEVELOPMENT_TEAM = CQUW6FZ725;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1426,6 +1463,7 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = Hora/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1464,11 +1502,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = "Hora-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1515,11 +1555,13 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = "Hora-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1567,6 +1609,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Hora-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1592,6 +1635,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
