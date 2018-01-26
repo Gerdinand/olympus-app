@@ -31,8 +31,8 @@ import { EthereumService, WalletService } from '../Services';
 
 class WalletDetailView extends Component {
   constructor(props) {
-    super(props);
-
+		super(props);
+		
     this.state = {
       sendModalVisible: false,
       scanModalVisible: false,
@@ -72,41 +72,14 @@ class WalletDetailView extends Component {
   });
 
   reloadTxs(wallet) {
-    for (var i = 0; i < wallet.tokens.length; i++) {
-      const token = wallet.tokens[i];
-      if (token.address == this.state.token.address) {
-        var txs = [];
-        for (var j = 0; j < wallet.txs.length; j++) {
-          const tx = wallet.txs[j];
-          if (tx.from == token.ownerAddress || tx.to == token.ownerAddress) {
-            txs.push(tx);
-          }
-        }
-        this.setState({ token: token, txs: txs, pendingTxHash: wallet.pendingTxHash });
-        break;
-      }
-    }
+		const token = wallet.tokens.find((token) => token.address === this.state.token.address);
+		const txs = wallet.txs.filter((tx) => tx.from === token.ownerAddress || tx.to === token.ownerAddress);
+		this.setState({ token: token, txs: txs, pendingTxHash: wallet.pendingTxHash });
   }
 
   componentWillMount() {
-    var _ = this;
-    this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
-      for (var i = 0; i < wallet.tokens.length; i++) {
-        const token = wallet.tokens[i];
-        if (token.address == _.state.token.address) {
-          var txs = [];
-          for (var j = 0; j < wallet.txs.length; j++) {
-            const tx = wallet.txs[j];
-            if (tx.from == token.ownerAddress || tx.to == token.ownerAddress) {
-              txs.push(tx);
-            }
-          }
-          _.setState({ token: token, txs: txs, pendingTxHash: wallet.pendingTxHash });
-          break;
-        }
-      }
-    });
-
+		// var _ = this;
+    this.walletListener = EventRegister.addEventListener("wallet.updated", this.reloadTxs);
     this.reloadTxs(WalletService.getInstance().wallet);
   }
 
