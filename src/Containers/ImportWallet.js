@@ -43,6 +43,7 @@ class ImportWalletView extends Component {
         />
         <FormLabel>Password</FormLabel>
         <FormInput
+					secureTextEntry={true}
           onChangeText={(text) => this.state.password = text}
         />
         <FormLabel>Paste wallet json</FormLabel>
