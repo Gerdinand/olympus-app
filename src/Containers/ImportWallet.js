@@ -2,21 +2,22 @@
 
 import React, { Component } from 'react';
 import {
-  StyleSheet,
   View,
-  Text,
 } from 'react-native';
 import {
   FormLabel,
   FormInput,
-  Button
+  Button,
 } from 'react-native-elements';
 
 import WalletService from '../Services/Wallet';
-import EthereumService from '../Services/Ethereum';
 import { EventRegister } from 'react-native-event-listeners';
 
 class ImportWalletView extends Component {
+
+  static navigationOptions = {
+    title: 'Import wallet',
+  };
 
   constructor(props) {
     super(props);
@@ -24,16 +25,12 @@ class ImportWalletView extends Component {
     this.state = {
       name: null,
       password: null,
-      json: null
+      json: null,
     };
   }
 
-  static navigationOptions = {
-    title: 'Import wallet',
-  };
-
   render() {
-    var _ = this;
+    let _ = this;
 
     return (
       <View>
@@ -43,21 +40,22 @@ class ImportWalletView extends Component {
         />
         <FormLabel>Password</FormLabel>
         <FormInput
-					secureTextEntry={true}
+          secureTextEntry={true}
           onChangeText={(text) => this.state.password = text}
         />
         <FormLabel>Paste wallet json</FormLabel>
         <FormInput
           multiline
-          inputStyle={{width: '100%'}}
+          inputStyle={{ width: '100%' }}
           onChangeText={(text) => this.state.json = text}
         />
         <View style={{
           padding: 10,
-        }}>
-          <Button buttonStyle={{backgroundColor: '#5589FF'}}
+        }}
+        >
+          <Button buttonStyle={{ backgroundColor: '#5589FF' }}
             raised
-            title={"Import"}
+            title={'Import'}
             onPress={async () => {
               if (_.state.name != null &&
                 _.state.name.length != 0 &&
@@ -69,7 +67,7 @@ class ImportWalletView extends Component {
                 const done = await WalletService.getInstance().importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
                 if (done) {
                   await WalletService.getInstance().getActiveWallet();
-                  EventRegister.emit("hasWallet", true);
+                  EventRegister.emit('hasWallet', true);
                 }
               }
             }}

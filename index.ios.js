@@ -3,11 +3,7 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  TabBarIOS,
-  StyleSheet,
-  Text,
   View,
-  ScrollView,
   Image,
   AsyncStorage,
 } from 'react-native';
@@ -23,37 +19,37 @@ const Root = TabNavigator(
   {
     WalletTab: {
       screen: WalletTab,
-      path: "/wallet",
+      path: '/wallet',
       navigationOptions: {
-        tabBarLabel: "Wallet",
+        tabBarLabel: 'Wallet',
         tabBarIcon: ({ tintColor }) => (
-          <Image source={require("./images/wallet.png")} style={{tintColor: tintColor}}/>
-        )
-      }
+          <Image source={require('./images/wallet.png')} style={{ tintColor }} />
+        ),
+      },
     },
     MarketTab: {
       screen: MarketTab,
-      path: "/market",
+      path: '/market',
       navigationOptions: {
-        tabBarLabel: "Market",
+        tabBarLabel: 'Market',
         tabBarIcon: ({ tintColor }) => (
-          <Image source={require("./images/market.png")} style={{tintColor: tintColor}}/>
-        )
-      }
+          <Image source={require('./images/market.png')} style={{ tintColor }} />
+        ),
+      },
     },
     MeTab: {
       screen: MeTab,
-      path: "/me",
+      path: '/me',
       navigationOptions: {
-        tabBarLabel: "Me",
+        tabBarLabel: 'Me',
         tabBarIcon: ({ tintColor }) => (
-          <Image source={require("./images/me.png")} style={{tintColor: tintColor}}/>
-        )
-      }
+          <Image source={require('./images/me.png')} style={{ tintColor }} />
+        ),
+      },
     },
   },
   {
-    initialRouteName: "WalletTab",
+    initialRouteName: 'WalletTab',
     animationEnabled: false,
     swipeEnabled: true,
     tabBarOptions: {
@@ -75,11 +71,11 @@ export default class Hora extends Component {
 
   componentWillMount() {
     this.loadingWallet();
-    this.listener = EventRegister.addEventListener("hasWallet", (data) => {
-      console.log("[event] hasWallet");
+    this.listener = EventRegister.addEventListener('hasWallet', (data) => {
+      console.log('[event] hasWallet');
       this.setState({
         hasWallet: data,
-      })
+      });
     });
   }
 
@@ -88,7 +84,7 @@ export default class Hora extends Component {
   }
 
   async loadingWallet() {
-    const isUsed = await AsyncStorage.getItem("used");
+    const isUsed = await AsyncStorage.getItem('used');
     if (isUsed) {
       const wallet = await WalletService.getInstance().getActiveWallet();
       this.setState({ loading: false, hasWallet: wallet != null });
@@ -99,15 +95,15 @@ export default class Hora extends Component {
 
   render() {
     if (this.state.loading) {
-      return <View />
+      return <View />;
     }
 
     if (!this.state.hasWallet) {
-      return (<Welcome/>);
+      return (<Welcome />);
     } else {
-      return (<Root/>);
+      return (<Root />);
     }
   }
 }
 
-AppRegistry.registerComponent("Hora", () => Hora);
+AppRegistry.registerComponent('Hora', () => Hora);

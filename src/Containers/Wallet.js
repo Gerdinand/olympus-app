@@ -2,21 +2,17 @@
 
 import React, { Component } from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   ScrollView,
   RefreshControl,
-  Button
 } from 'react-native';
 import {
   List,
-  ListItem
+  ListItem,
 } from 'react-native-elements';
 
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
-import { WalletService, EthereumService, SupportedTokens } from '../Services';
+import { WalletService, EthereumService } from '../Services';
 import Toast from '@remobile/react-native-toast';
 
 class WalletView extends Component {
@@ -35,12 +31,12 @@ class WalletView extends Component {
   }
 
   componentWillMount() {
-    var _ = this;
-    this.walletListener = EventRegister.addEventListener("wallet.updated", (wallet) =>  {
+    let _ = this;
+    this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
       if (wallet.txs.length != _.state.wallet.length) {
-        Toast.showShortTop.bind(null, "New transaction confirmed.");
+        Toast.showShortTop.bind(null, 'New transaction confirmed.');
       }
-      _.setState({ wallet: wallet, refreshing: false });
+      _.setState({ wallet, refreshing: false });
     });
 
     this.setState({ wallet: WalletService.getInstance().wallet });
@@ -60,7 +56,7 @@ class WalletView extends Component {
   }
 
   _onRefresh() {
-    this.setState({refreshing: true});
+    this.setState({ refreshing: true });
     this.fetchData();
   }
 
@@ -69,7 +65,7 @@ class WalletView extends Component {
 
     return (
       <ScrollView
-        style={{backgroundColor: 'white'}}
+        style={{ backgroundColor: 'white' }}
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
@@ -80,49 +76,35 @@ class WalletView extends Component {
         <WalletHeader
           name={this.state.wallet.name}
           address={this.state.wallet.address}
-          balance={this.state.wallet.ethPrice != 0 ? "$ " + this.state.wallet.balanceInUSD : "$ --"}
+          balance={this.state.wallet.ethPrice != 0 ? `$ ${this.state.wallet.balanceInUSD}` : '$ --'}
         />
-        <List style={{height: 578}} containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent'}}>
-        {
-          this.state.wallet.tokens.map((t, i) => (
-            <ListItem
-              roundAvatar
-              hideChevron={true}
-              avatar={{uri: t.icon}}
-              key={i}
-              title={t.symbol}
-              subtitle={t.name}
-              rightTitle={(0 == i || t.price == 0) ? t.balance.toFixed(5).toString() : t.balance.toFixed(5).toString() + "\n1 ETH = " + t.price + " " + t.symbol}
-              rightTitleNumberOfLines={2}
-              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A', textAlign:'right'}}
-              onPress={() => {
-                console.log("navigate to : " + t.symbol);
+        <List style={{ height: 578 }} containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent' }}>
+          {
+            this.state.wallet.tokens.map((t, i) => (
+              <ListItem
+                roundAvatar
+                hideChevron={true}
+                avatar={{ uri: t.icon }}
+                key={i}
+                title={t.symbol}
+                subtitle={t.name}
+                rightTitle={(0 == i || t.price == 0) ? t.balance.toFixed(5).toString() : `${t.balance.toFixed(5).toString()}\n1 ETH = ${t.price} ${t.symbol}`}
+                rightTitleNumberOfLines={2}
+                rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A', textAlign: 'right' }}
+                onPress={() => {
+                  console.log(`navigate to : ${t.symbol}`);
 
-                navigation.navigate('WalletDetail', {
-                  token: t,
-                })
-              }}
-            />
-          ))
-        }
+                  navigation.navigate('WalletDetail', {
+                    token: t,
+                  });
+                }}
+              />
+            ))
+          }
         </List>
       </ScrollView>
     );
   }
 }
-
-var styles = StyleSheet.create({
-  description: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: '#FFFFFF'
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  }
-});
 
 export default WalletView;

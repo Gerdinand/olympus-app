@@ -1,8 +1,6 @@
 'use strict';
 
-import Promisify from '../Utils/Promisify';
-
-class Token {
+export default class Token {
   constructor(name, icon, symbol, address, ownerAddress, decimals = 18, balance = 0, price = 0) {
     this.name = name;
     this.icon = icon;
@@ -14,5 +12,3 @@ class Token {
     this.price = price;
   }
 }
-
-export default Token;

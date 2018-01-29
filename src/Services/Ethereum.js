@@ -1,16 +1,12 @@
 'use strict';
 
-import '../../shim.js'
+import '../../shim.js';
 
 import Web3 from 'web3';
-import EthJs from 'ethereumjs-wallet-react-native';
-import * as ethUtil from 'ethereumjs-util';
-import Tx from 'ethereumjs-tx';
 import Promisify from '../Utils/Promisify';
 import Constants from './Constants';
-import { numberToHex, hexToNumber, toTWei, toT } from '../Utils/Converter';
 import EthereumTx from 'ethereumjs-tx';
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { getETHPrice } from './Currency';
 import WalletService from './Wallet';
@@ -18,7 +14,7 @@ import WalletService from './Wallet';
 class EthereumService {
 
   constructor() {
-    this.rpc = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT", 9000));
+    this.rpc = new Web3(new Web3.providers.HttpProvider('https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT', 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
     this.kyberAddress = Constants.KYBER_NETWORK_ADDRESS;
     this.kyberContract = this.rpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
@@ -40,7 +36,7 @@ class EthereumService {
   }
 
   version() {
-    return this.rpc.version.api
+    return this.rpc.version.api;
   }
 
   isValidateAddress(address) {
@@ -49,7 +45,7 @@ class EthereumService {
 
   async getNonce(address) {
     const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb));
-    return nonce
+    return nonce;
   }
 
   async getGasPrice() {
@@ -57,17 +53,17 @@ class EthereumService {
     return gasPrice;
   }
 
-  async generateTx(from, to, value, gasLimit, txData="") {
+  async generateTx(from, to, value, gasLimit, txData = '') {
     const gasPrice = await this.getGasPrice();
-    console.log("gas price: " + gasPrice + " x 3");
-    console.log("limit: ", gasLimit);
+    console.log(`gas price: ${  gasPrice  } x 3`);
+    console.log('limit: ', gasLimit);
 
     let rawTx = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
       gasPrice: this.rpc.toHex(gasPrice * 3),
       gasLimit: this.rpc.toHex(gasLimit),
-      to: to,
-      value: this.rpc.toHex(this.rpc.toWei(value, "ether")),
+      to,
+      value: this.rpc.toHex(this.rpc.toWei(value, 'ether')),
       data: txData,
       chainId: 42,
     };
@@ -79,7 +75,7 @@ class EthereumService {
   async generateTokenTx(source, dest, value, decimals, contractAddress, gasLimit) {
     console.log(dest);
     const bigValue = new BigNumber(value);
-    var base = new BigNumber(10);
+    let base = new BigNumber(10);
     const amount = bigValue.times(base.pow(decimals));
     const contract = this.erc20Contract.at(contractAddress);
 
@@ -89,7 +85,7 @@ class EthereumService {
       gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
       gasLimit: this.rpc.toHex(gasLimit * 2),
       to: contractAddress,
-      value: "0x0",
+      value: '0x0',
       data: contract.transfer.getData(dest, amount),
       chainId: 42,
     };
@@ -100,16 +96,16 @@ class EthereumService {
 
   async sendTx(tx) {
     let serializedTx = tx.serialize();
-    const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb));
+    const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction(`0x${serializedTx.toString('hex')}`, cb));
     WalletService.getInstance().wallet.pendingTxHash = hash;
     this.sync(WalletService.getInstance().wallet);
-    console.log("tx hash: " + hash);
+    console.log(`tx hash: ${  hash}`);
   }
 
   async getBalance(address) {
     try {
       const balanceInWei = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
-      const balance = this.rpc.fromWei(balanceInWei, "ether");
+      const balance = this.rpc.fromWei(balanceInWei, 'ether');
 
       return balance.toNumber();
     } catch (e) {
@@ -118,11 +114,11 @@ class EthereumService {
   }
 
   async getTokenBalance(address, ownerAddress, decimals) {
-    var instance = this.erc20Contract.at(address);
+    let instance = this.erc20Contract.at(address);
     const balance = await Promisify(cb => instance.balanceOf(ownerAddress, cb));
 
     const bigBalance = new BigNumber(balance);
-    var base = new BigNumber(10);
+    let base = new BigNumber(10);
     const readableBalance = bigBalance.div(base.pow(decimals)).toNumber();
 
     return readableBalance;
@@ -132,52 +128,52 @@ class EthereumService {
     this.sync(WalletService.getInstance().wallet);
   }
 
-  fireTimer () {
+  fireTimer() {
     this.runloop();
     this.intervalID = setInterval(this.runloop.bind(this), 10000);
   }
 
-  invalidateTimer () {
+  invalidateTimer() {
     window.clearInterval(this.intervalID);
   }
 
   async sync(wallet) {
     if (this.isSyncing) {
-      return ;
+      return;
     }
     this.isSyncing = true;
 
     const balance = await this.getBalance(wallet.address);
     wallet.balance = balance;
     wallet.tokens[0].balance = balance;
-    console.log("ETH balance: ", wallet.balance);
+    console.log('ETH balance: ', wallet.balance);
 
     const ethPrice = await getETHPrice();
     wallet.ethPrice = ethPrice;
-    console.log("ETH price: ", ethPrice);
+    console.log('ETH price: ', ethPrice);
 
-    var balanceInUSD = ethPrice * balance;
-    console.log("USD: ", balanceInUSD);
+    let balanceInUSD = ethPrice * balance;
+    console.log('USD: ', balanceInUSD);
 
-    for (var i = 1; i < wallet.tokens.length; i++) {
-      var token = wallet.tokens[i];
-      var tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
+    for (let i = 1; i < wallet.tokens.length; i++) {
+      let token = wallet.tokens[i];
+      let tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
       token.balance = tokenBalance;
 
       const priceInWei = await this.getPrice(Constants.ETHER_ADDRESS, token.address);
-      const tokenPrice = this.rpc.fromWei(priceInWei, "ether").toFixed(2);
+      const tokenPrice = this.rpc.fromWei(priceInWei, 'ether').toFixed(2);
       token.price = tokenPrice;
 
       balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
 
-      console.log(token.symbol + " price: " + token.price);
-      console.log(token.symbol + " balance: " + token.balance);
+      console.log(`${token.symbol} price: ${token.price}`);
+      console.log(`${token.symbol} balance: ${token.balance}`);
     }
 
     wallet.balanceInUSD = balanceInUSD.toFixed(2);
 
-    const url = "http://kovan.etherscan.io/api?module=account&action=txlist&address="+ wallet.address +"&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4";
-    const response = await fetch(url, {method: "GET"});
+    const url = `http://kovan.etherscan.io/api?module=account&action=txlist&address=${  wallet.address  }&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
+    const response = await fetch(url, { method: 'GET' });
     const responseText = await response.text();
 
     if (response.status == 200) {
@@ -185,8 +181,8 @@ class EthereumService {
     }
 
     if (wallet.pendingTxHash) {
-      var hasPacked = false;
-      for (var i = 0; i < wallet.txs.length; i++) {
+      let hasPacked = false;
+      for (let i = 0; i < wallet.txs.length; i++) {
         if (wallet.txs[i].hash == wallet.pendingTxHash) {
           hasPacked = true;
           break;
@@ -200,7 +196,7 @@ class EthereumService {
 
     this.isSyncing = false;
 
-    EventRegister.emit("wallet.updated", wallet);
+    EventRegister.emit('wallet.updated', wallet);
 
     return wallet;
   }
@@ -222,7 +218,7 @@ class EthereumService {
     gasLimit,
     nonce) {
 
-    const amount = this.rpc.toWei(sourceAmount, "ether");
+    const amount = this.rpc.toWei(sourceAmount, 'ether');
 
     const exchangeData = this.kyberContract.walletTrade.getData(
       sourceToken,
@@ -240,7 +236,7 @@ class EthereumService {
       gasPrice: this.rpc.toHex(await this.getGasPrice()),
       gasLimit: this.rpc.toHex(gasLimit),
       to: this.kyberAddress,
-      value: sourceToken == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ? this.rpc.toHex(amount) : 0,
+      value: sourceToken == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
       chainId: 42,
     };
@@ -256,7 +252,7 @@ class EthereumService {
   }
 
   async generateApproveTokenTx(sourceToken, sourceAmount, destAddress) {
-    const amount = this.rpc.toWei(sourceAmount, "ether");
+    const amount = this.rpc.toWei(sourceAmount, 'ether');
     const tokenContract = this.erc20Contract.at(sourceToken);
     const approveData = tokenContract.approve.getData(this.kyberAddress, amount);
 
@@ -268,7 +264,7 @@ class EthereumService {
       value: 0,
       data: approveData,
       chainId: 42,
-    }
+    };
 
     console.log(JSON.stringify(rawTx));
 
@@ -277,29 +273,29 @@ class EthereumService {
   }
 
   async generateTradeFromTokenToEtherTx(sourceToken, sourceAmount, destAddress) {
-      const tx = await this.generateTradeTx(
-        sourceToken,
-        sourceAmount,
-        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        destAddress,
-        (new BigNumber(2)).pow(255),
-        await this.getPrice(sourceToken, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"),
-        true,
-        1000000,
-        await this.newNonce(destAddress) + 1,
-      );
+    const tx = await this.generateTradeTx(
+      sourceToken,
+      sourceAmount,
+      '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+      destAddress,
+      (new BigNumber(2)).pow(255),
+      await this.getPrice(sourceToken, '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'),
+      true,
+      1000000,
+      await this.newNonce(destAddress) + 1,
+    );
 
-      return tx;
+    return tx;
   }
 
   async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress) {
     const tx = await this.generateTradeTx(
-      "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
       sourceAmount,
       destToken,
       destAddress,
       (new BigNumber(2)).pow(255),
-      await this.getPrice("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", destToken),
+      await this.getPrice('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', destToken),
       true,
       1000000,
       await this.newNonce(destAddress),
