@@ -1,10 +1,10 @@
 'use strict';
 
-import '../../shim.js'
+import '../../shim.js';
 
 import { asyncRandomBytes } from 'react-native-secure-randombytes';
 
-window.randomBytes = asyncRandomBytes
+window.randomBytes = asyncRandomBytes;
 
 import EthJs from 'ethereumjs-wallet-react-native';
 
@@ -34,14 +34,14 @@ class WalletService {
   }
 
   async getActiveWallet() {
-    const infoString = await readItem("wallets");
+    const infoString = await readItem('wallets');
 
     if (infoString) {
       const info = JSON.parse(infoString);
 
       // TODO: select different wallet
       // 1. build basic wallet
-      var wallet = {
+      let wallet = {
         address: info[0].address,
         name: info[0].name,
         balance: 0,
@@ -53,7 +53,7 @@ class WalletService {
       };
 
       // 2. add tokens
-      for (var i = 0; i < SupportedTokens.length; i++) {
+      for (let i = 0; i < SupportedTokens.length; i++) {
         const t = SupportedTokens[i];
         const token = new Token(t.name, t.icon, t.symbol, t.address, wallet.address, t.decimals);
         wallet.tokens.push(token);
@@ -68,7 +68,7 @@ class WalletService {
   }
 
   async getSeed(password) {
-    const infoString = await readItem("wallets");
+    const infoString = await readItem('wallets');
 
     if (infoString) {
       const info = JSON.parse(infoString);
@@ -76,7 +76,7 @@ class WalletService {
 
       try {
         const seed = unlock(info[0].v3, password, true);
-        console.log("seed: ", seed);
+        console.log('seed: ', seed);
 
         return seed;
       } catch (e) {
@@ -88,7 +88,7 @@ class WalletService {
   }
 
   async getWalletJson(password) {
-    const infoString = await readItem("wallets");
+    const infoString = await readItem('wallets');
 
     if (infoString) {
       const info = JSON.parse(infoString);
@@ -96,7 +96,7 @@ class WalletService {
 
       try {
         const seed = unlock(info[0].v3, password, true);
-        console.log("seed: ", seed);
+        console.log('seed: ', seed);
 
         return info[0].v3;
       } catch (e) {
@@ -113,13 +113,13 @@ class WalletService {
       const keyString = JSON.stringify(json);
       const address = addressFromJSONString(keyString);
       const info = [
-        { address: address, name: name, v3: keyString }
+        { address, name, v3: keyString },
       ];
       const infoString = JSON.stringify(info);
 
-      this.wallet = { address: address, name: name };
+      this.wallet = { address, name };
 
-      await saveItem("wallets", infoString);
+      await saveItem('wallets', infoString);
       return true;
     } else {
       return false;
@@ -128,19 +128,19 @@ class WalletService {
 
   async generateV3Wallet(name, passphrase, options) {
     const wallet = await EthJs.generate();
-    const json = await wallet.toV3(passphrase, {kdf: "pbkdf2", c: 10240});
+    const json = await wallet.toV3(passphrase, { kdf: 'pbkdf2', c: 10240 });
 
     if (options.persistence) {
       const keyString = JSON.stringify(json);
       const address = addressFromJSONString(keyString);
       const info = [
-        { address: address, name: name, v3: keyString }
+        { address, name, v3: keyString },
       ];
       const infoString = JSON.stringify(info);
 
-      this.wallet = { address: address, name: name };
+      this.wallet = { address, name };
 
-      await saveItem("wallets", infoString);
+      await saveItem('wallets', infoString);
     }
 
     return json;
