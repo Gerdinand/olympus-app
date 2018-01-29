@@ -105,7 +105,7 @@ class WalletDetailView extends Component {
 
     let _ = this;
     ActionSheetIOS.showActionSheetWithOptions({
-      options: ['ETH -> ' + _.state.token.symbol, `${_.state.token.symbol} -> ETH`, 'Cancel'],
+      options: [`ETH -> ${  _.state.token.symbol}`, `${_.state.token.symbol} -> ETH`, 'Cancel'],
       cancelButtonIndex: 2,
     }, (buttonIndex) => {
       if (0 == buttonIndex) {
@@ -375,7 +375,7 @@ class WalletDetailView extends Component {
           onRequestClose={() => { this.setState({ exchangeModalVisible: false }); }}
         >
           <View style={styles.modelContainer}>
-            <Card title={this.state.exchangeType == 'BID' ? 'ETH -> ' + this.state.token.symbol : `${this.state.token.symbol} -> ETH`}>
+            <Card title={this.state.exchangeType == 'BID' ? `ETH -> ${  this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
               <FormLabel>Exchange</FormLabel>
               <FormInput
                 inputStyle={{ width: '100%' }}
