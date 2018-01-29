@@ -32,6 +32,14 @@ import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
 
 class WalletDetailView extends Component {
+
+  static navigationOptions = ({ navigation }) => ({
+    title: 'Asset',
+    tabBar: {
+      visible: false,
+    },
+  });
+
   constructor(props) {
     super(props);
 
@@ -66,19 +74,6 @@ class WalletDetailView extends Component {
     this.reloadTxs = this.reloadTxs.bind(this);
   }
 
-  static navigationOptions = ({ navigation }) => ({
-    title: 'Asset',
-    tabBar: {
-      visible: false,
-    },
-  });
-
-  reloadTxs(wallet) {
-    const token = wallet.tokens.find((token) => token.address === this.state.token.address);
-    const txs = wallet.txs.filter((tx) => tx.from === token.ownerAddress || tx.to === token.ownerAddress);
-    this.setState({ token, txs, pendingTxHash: wallet.pendingTxHash });
-  }
-
   componentWillMount() {
     this.walletListener = EventRegister.addEventListener('wallet.updated', this.reloadTxs);
     this.reloadTxs(WalletService.getInstance().wallet);
@@ -86,6 +81,12 @@ class WalletDetailView extends Component {
 
   componentWillUnmount() {
     EventRegister.removeEventListener(this.walletListener);
+  }
+
+  reloadTxs(wallet) {
+    const token = wallet.tokens.find((token) => token.address === this.state.token.address);
+    const txs = wallet.txs.filter((tx) => tx.from === token.ownerAddress || tx.to === token.ownerAddress);
+    this.setState({ token, txs, pendingTxHash: wallet.pendingTxHash });
   }
 
   onSend() {
@@ -105,7 +106,7 @@ class WalletDetailView extends Component {
 
     let _ = this;
     ActionSheetIOS.showActionSheetWithOptions({
-      options: [`ETH -> ${  _.state.token.symbol}`, `${_.state.token.symbol} -> ETH`, 'Cancel'],
+      options: [`ETH -> ${_.state.token.symbol}`, `${_.state.token.symbol} -> ETH`, 'Cancel'],
       cancelButtonIndex: 2,
     }, (buttonIndex) => {
       if (0 == buttonIndex) {
@@ -375,7 +376,7 @@ class WalletDetailView extends Component {
           onRequestClose={() => { this.setState({ exchangeModalVisible: false }); }}
         >
           <View style={styles.modelContainer}>
-            <Card title={this.state.exchangeType == 'BID' ? `ETH -> ${  this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
+            <Card title={this.state.exchangeType == 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
               <FormLabel>Exchange</FormLabel>
               <FormInput
                 inputStyle={{ width: '100%' }}
@@ -604,7 +605,7 @@ class WalletDetailView extends Component {
   }
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   modelContainer: {
     flex: 1,
     paddingTop: 40,
