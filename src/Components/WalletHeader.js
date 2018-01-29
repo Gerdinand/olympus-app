@@ -7,21 +7,20 @@ import {
 } from 'react-native';
 import {
   Text,
-  Button,
 } from 'react-native-elements';
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
-    marginRight:10,
-    marginLeft:10,
-    marginTop:10,
-    paddingTop:20,
-    paddingBottom:20,
-    aspectRatio: 16/9,
-    backgroundColor:'#4B5FFE',
-    borderRadius:8,
+    marginRight: 10,
+    marginLeft: 10,
+    marginTop: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
+    aspectRatio: 16 / 9,
+    backgroundColor: '#4B5FFE',
+    borderRadius: 8,
     borderWidth: 0,
-    borderColor: 'transparent'
+    borderColor: 'transparent',
   },
   name: {
     fontSize: 30,
@@ -46,7 +45,7 @@ var styles = StyleSheet.create({
     color: 'white',
     marginLeft: 15,
     marginTop: 6,
-  }
+  },
 });
 
 class WalletHeader extends Component {
@@ -63,7 +62,7 @@ class WalletHeader extends Component {
   render() {
     const { name, address, balance } = this.props;
     return (
-      <View style={{backgroundColor: 'transparent'}}>
+      <View style={{ backgroundColor: 'transparent' }}>
         <View style={styles.container}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.address}>{address}</Text>

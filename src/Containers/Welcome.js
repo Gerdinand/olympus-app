@@ -7,28 +7,27 @@ import {
   Text,
 } from 'react-native';
 import {
-  Button
+  Button,
 } from 'react-native-elements';
 import { StackNavigator } from 'react-navigation';
-import { EventRegister } from 'react-native-event-listeners';
 
 import CreateWalletView from './CreateWallet';
 import ImportWalletView from './ImportWallet';
 
 // Style
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop:50,
-    marginBottom:50,
-    marginLeft:15,
-    marginRight:15,
+    marginTop: 50,
+    marginBottom: 50,
+    marginLeft: 15,
+    marginRight: 15,
     borderRadius: 10,
     justifyContent: 'space-around',
     alignItems: 'stretch',
   },
   titleContainer: {
-    flex: 2
+    flex: 2,
   },
   title: {
     color: '#4A4A4A',
@@ -64,18 +63,18 @@ class WelcomeView extends Component {
           <Text style={styles.title}>
             Welcome to Olympus
           </Text>
-          <View style={styles.bottomLine}></View>
+          <View style={styles.bottomLine} />
         </View>
         <Button
           buttonStyle={styles.button1}
           raised
           primary1={true}
-          title={"Create new wallet"}
-          onPress={() => navigate("CreateWallet")}
+          title={'Create new wallet'}
+          onPress={() => navigate('CreateWallet')}
         />
         <Button buttonStyle={styles.button2}
           title="Import exist wallet"
-          onPress={() => navigate("ImportWallet")}
+          onPress={() => navigate('ImportWallet')}
           color={'#4A4A4A'}
         />
       </View>
@@ -88,7 +87,7 @@ const WelcomeNav = StackNavigator({
   CreateWallet: { screen: CreateWalletView },
   ImportWallet: { screen: ImportWalletView },
 }, {
-  cardStyle: {backgroundColor: 'white'}
+  cardStyle: { backgroundColor: 'white' },
 });
 
 export default WelcomeNav;

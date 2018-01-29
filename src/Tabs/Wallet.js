@@ -1,28 +1,16 @@
 'use strict';
 
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Button
-} from 'react-native';
-import {
-  List,
-  ListItem
-} from 'react-native-elements';
-
+import React from 'react';
 import { StackNavigator } from 'react-navigation';
 
 import { Wallet, WalletDetail } from '../Containers';
 
-const WalletScreen = ({navigation}) => (
-  <Wallet banner="Wallet" navigation={navigation}/>
+const WalletScreen = ({ navigation }) => (
+  <Wallet banner="Wallet" navigation={navigation} />
 );
 
-const WalletDetailScreen = ({navigation}) => (
-  <WalletDetail banner="Wallet Detail" navigation={navigation}/>
+const WalletDetailScreen = ({ navigation }) => (
+  <WalletDetail banner="Wallet Detail" navigation={navigation} />
 );
 
 const WalletTab = StackNavigator({
@@ -39,7 +27,7 @@ const WalletTab = StackNavigator({
     navigationOptions: () => ({
       title: 'Asset',
     }),
-  }
+  },
 });
 
 export default WalletTab;

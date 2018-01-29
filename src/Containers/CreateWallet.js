@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import {
-  Alert,
   View,
   AsyncStorage,
 } from 'react-native';
@@ -17,6 +16,11 @@ import { EventRegister } from 'react-native-event-listeners';
 import { WalletService } from '../Services';
 
 class CreateWalletView extends Component {
+
+  static navigationOptions = {
+    title: 'Create new wallet',
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -30,25 +34,23 @@ class CreateWalletView extends Component {
     this.eth = WalletService.getInstance();
   }
 
-  static navigationOptions = {
-    title: 'Create new wallet',
-  };
-
   isValidate() {
-    this.setState({nameErrorMessage: null, passwordErrorMessage1: null, passwordErrorMessage2: null});
+    this.setState({ nameErrorMessage: null, passwordErrorMessage1: null, passwordErrorMessage2: null });
 
     if (this.state.name == null || this.state.name.length == 0) {
-      this.setState({nameErrorMessage: "Name required"});
+      this.setState({ nameErrorMessage: 'Name required' });
     } else if (this.state.password1 == null || this.state.password1.length == 0) {
-      this.setState({passwordErrorMessage1: "Password required"});
+      this.setState({ passwordErrorMessage1: 'Password required' });
     } else if (this.state.password2 == null || this.state.password2.length == 0) {
-      this.setState({passwordErrorMessage2: "Please retype password"});
+      this.setState({ passwordErrorMessage2: 'Please retype password' });
     } else if (this.state.password1 != this.state.password2) {
-      this.setState({passwordErrorMessage2: "Password is different"});
-		} else if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(this.state.password1)){
-			this.setState({ passwordErrorMessage1: 
-				"Password should at least have 6 characters, and it should contain one number, one lowercase and one uppercase letter." });
-		} else {
+      this.setState({ passwordErrorMessage2: 'Password is different' });
+    } else if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(this.state.password1)) {
+      this.setState({
+        passwordErrorMessage1:
+          'Password should at least have 6 characters, and it should contain one number, one lowercase and one uppercase letter.',
+      });
+    } else {
       return true;
     }
 
@@ -62,7 +64,7 @@ class CreateWalletView extends Component {
         <FormInput
           placeholder="Give your wallet a name"
           onChangeText={(text) => this.state.name = text}
-          // value={this.state.name}
+        // value={this.state.name}
         />
         {
           this.state.nameErrorMessage &&
@@ -72,8 +74,8 @@ class CreateWalletView extends Component {
         }
         <FormLabel>Passphrase</FormLabel>
         <FormInput
-					secureTextEntry={true}
-					placeholder="Type in your passphrase"
+          secureTextEntry={true}
+          placeholder="Type in your passphrase"
           onChangeText={(text) => this.state.password1 = text}
         />
         {
@@ -84,7 +86,7 @@ class CreateWalletView extends Component {
         }
         <FormLabel>Retype Passphrase</FormLabel>
         <FormInput
-					secureTextEntry={true}
+          secureTextEntry={true}
           placeholder="Retype your passphrase"
           onChangeText={(text) => this.state.password2 = text}
         />
@@ -96,19 +98,20 @@ class CreateWalletView extends Component {
         }
         <View style={{
           padding: 10,
-        }}>
-          <Button buttonStyle={{backgroundColor: '#5589FF'}}
+        }}
+        >
+          <Button buttonStyle={{ backgroundColor: '#5589FF' }}
             raised
-            title={"Create New Wallet"}
+            title={'Create New Wallet'}
             onPress={async () => {
               if (this.isValidate()) {
                 const name = this.state.name;
                 const password = this.state.password1;
                 try {
-                  const json = await this.eth.generateV3Wallet(name, password, { persistence: true });
-                  await AsyncStorage.setItem("used", "true");
+                  /*const json = */await this.eth.generateV3Wallet(name, password, { persistence: true });
+                  await AsyncStorage.setItem('used', 'true');
                   await WalletService.getInstance().getActiveWallet();
-                  EventRegister.emit("hasWallet", true);
+                  EventRegister.emit('hasWallet', true);
                 } catch (e) {
                   console.error(e);
                 }

@@ -1,7 +1,7 @@
-import '../../shim.js'
+import '../../shim.js';
 
-import React,{ Component } from 'react';
-import { Alert, Button, Text, TextInput, StyleSheet, View } from 'react-native';
+import React, { Component } from 'react';
+import { Button, Text, TextInput, StyleSheet, View } from 'react-native';
 
 import bip39 from 'react-native-bip39';
 import hdkey from 'ethereumjs-wallet-react-native/hdkey';
@@ -13,9 +13,9 @@ class GenWallet extends Component {
     this.state = {
       mnemonic: 'walnut adjust swallow labor menu return coffee between asset wool remember skin',
       privKey: '',
-      addr:'',
-      pass:'',
-      hardPath:"m/44'/0'/0/1"
+      addr: '',
+      pass: '',
+      hardPath: 'm/44\'/0\'/0/1',
     };
   }
   generateWallet() {
@@ -23,10 +23,10 @@ class GenWallet extends Component {
     let wallet = hdkey.fromMasterSeed(seed).derivePath(this.state.hardPath);
 
     let priv = wallet._hdkey.privateKey.toString('hex');
-    let addr = '0x'+ethW.fromPrivateKey(wallet._hdkey.privateKey).getAddress().toString('hex');
+    let addr = `0x${ethW.fromPrivateKey(wallet._hdkey.privateKey).getAddress().toString('hex')}`;
     this.setState({
       privKey: priv,
-      addr: addr
+      addr,
     });
   }
   render() {
@@ -34,35 +34,36 @@ class GenWallet extends Component {
       <View style={styles.container}>
 
         <TextInput
-          style={{height: 40}}
+          style={{ height: 40 }}
           multiline={true}
           placeholder="Past mnemonic here!"
-          onChangeText={(mnemonic) => this.setState({mnemonic})}
+          onChangeText={(mnemonic) => this.setState({ mnemonic })}
           value={this.state.mnemonic}
         />
         <TextInput
-          style={{height: 40}}
+          style={{ height: 40 }}
           placeholder="Type passworld here!"
-          onChangeText={(pass) => this.setState({pass})}
+          onChangeText={(pass) => this.setState({ pass })}
           value={this.state.pass}
         />
         <TextInput
-          style={{height: 40}}
+          style={{ height: 40 }}
           placeholder="Type hardPath here!"
-          onChangeText={(hardPath) => this.setState({hardPath})}
+          onChangeText={(hardPath) => this.setState({ hardPath })}
           value={this.state.hardPath}
         />
         <Text
           multiline={true}
-          selectable = {true}>
+          selectable={true}
+        >
           privKey:{this.state.privKey}
         </Text>
-        <Text selectable = {true}>
+        <Text selectable={true}>
           address:{this.state.addr}
         </Text>
 
         <Button
-           onPress={this.generateWallet.bind(this)}
+          onPress={this.generateWallet.bind(this)}
           title="Press Me Generate Wallet"
         />
       </View>
@@ -71,8 +72,8 @@ class GenWallet extends Component {
 }
 const styles = StyleSheet.create({
   container: {
-  //   // flex: 1,
-  //   // justifyContent: 'center',
-  }
-})
+    //   // flex: 1,
+    //   // justifyContent: 'center',
+  },
+});
 module.exports = GenWallet;

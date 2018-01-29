@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   ScrollView,
   Modal,
   Clipboard,
   ActionSheetIOS,
   Alert,
+  FlatList,
 } from 'react-native';
 import {
   List,
@@ -21,9 +21,11 @@ import {
   FormInput,
   FormValidationMessage,
 } from 'react-native-elements';
+import { Text } from '../Controls';
+import Icon from 'react-native-vector-icons/Feather';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import QRCode from 'react-native-qrcode';
@@ -31,8 +33,8 @@ import { EthereumService, WalletService } from '../Services';
 
 class WalletDetailView extends Component {
   constructor(props) {
-		super(props);
-		
+    super(props);
+
     this.state = {
       sendModalVisible: false,
       scanModalVisible: false,
@@ -64,22 +66,21 @@ class WalletDetailView extends Component {
     this.reloadTxs = this.reloadTxs.bind(this);
   }
 
-  static navigationOptions = ({navigation}) => ({
-    title: "Asset",
+  static navigationOptions = ({ navigation }) => ({
+    title: 'Asset',
     tabBar: {
       visible: false,
-    }
+    },
   });
 
   reloadTxs(wallet) {
-		const token = wallet.tokens.find((token) => token.address === this.state.token.address);
-		const txs = wallet.txs.filter((tx) => tx.from === token.ownerAddress || tx.to === token.ownerAddress);
-		this.setState({ token: token, txs: txs, pendingTxHash: wallet.pendingTxHash });
+    const token = wallet.tokens.find((token) => token.address === this.state.token.address);
+    const txs = wallet.txs.filter((tx) => tx.from === token.ownerAddress || tx.to === token.ownerAddress);
+    this.setState({ token, txs, pendingTxHash: wallet.pendingTxHash });
   }
 
   componentWillMount() {
-		// var _ = this;
-    this.walletListener = EventRegister.addEventListener("wallet.updated", this.reloadTxs);
+    this.walletListener = EventRegister.addEventListener('wallet.updated', this.reloadTxs);
     this.reloadTxs(WalletService.getInstance().wallet);
   }
 
@@ -88,59 +89,59 @@ class WalletDetailView extends Component {
   }
 
   onSend() {
-    console.log("send modal");
-    this.setState({sendModalVisible: true});
+    console.log('send modal');
+    this.setState({ sendModalVisible: true });
   }
 
   onReceive() {
-    console.log("receive modal");
-    this.setState({receiveModalVisible: true});
+    console.log('receive modal');
+    this.setState({ receiveModalVisible: true });
   }
 
   onExchange() {
-    if (this.state.token.address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
-      return ;
+    if (this.state.token.address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
+      return;
     }
 
-    var _ = this;
+    let _ = this;
     ActionSheetIOS.showActionSheetWithOptions({
-      options: ["ETH -> " + _.state.token.symbol, _.state.token.symbol + " -> ETH", "Cancel"],
+      options: ['ETH -> ' + _.state.token.symbol, `${_.state.token.symbol} -> ETH`, 'Cancel'],
       cancelButtonIndex: 2,
     }, (buttonIndex) => {
       if (0 == buttonIndex) {
-        _.setState({ exchangeType: "BID", exchangeModalVisible: true });
+        _.setState({ exchangeType: 'BID', exchangeModalVisible: true });
       } else if (1 == buttonIndex) {
-        _.setState({ exchangeType: "ASK", exchangeModalVisible: true });
+        _.setState({ exchangeType: 'ASK', exchangeModalVisible: true });
       }
     });
   }
 
   render() {
-    var _ = this;
+    let _ = this;
 
     return (
-      <ScrollView style={{backgroundColor: 'white'}}>
+      <ScrollView style={{ backgroundColor: 'white' }}>
         <Modal
-          animationType={"fade"}
+          animationType={'fade'}
           transparent={true}
           visible={this.state.scanModalVisible}
-          onRequestClose={() => {this.setState({scanModalVisible: false})}}
+          onRequestClose={() => { this.setState({ scanModalVisible: false }); }}
         >
           <View style={styles.modelContainer}>
             <Card title="SCAN">
-              <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
-                <View style={{flex:1, maxWidth: 300, flexDirection:'row', justifyContent:'space-between'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ flex: 1, maxWidth: 300, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <QRCodeScanner
-                    ref={(node) => { this.scanner = node }}
-                    cameraStyle={{width: 300, height: 300}}
+                    ref={(node) => { this.scanner = node; }}
+                    cameraStyle={{ width: 300, height: 300 }}
                     onRead={(e) => {
                       const data = e.data;
-                      console.log("read: ", data);
+                      console.log('read: ', data);
                       if (EthereumService.getInstance().isValidateAddress(data)) {
-                        console.log("is an address");
-                        this.setState({sendModalVisible: true, scanModalVisible: false, sendAddress: data})
+                        console.log('is an address');
+                        this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: data });
                       } else {
-                        console.log("is not an address");
+                        console.log('is not an address');
                         this.scanner.reactivate();
                       }
                     }}
@@ -148,25 +149,25 @@ class WalletDetailView extends Component {
                 </View>
               </View>
               <Button buttonStyle={styles.modalCloseButton}
-                title={"Cancel"}
-                onPress={() => {this.setState({sendModalVisible: true, scanModalVisible: false})}}
+                title={'Cancel'}
+                onPress={() => { this.setState({ sendModalVisible: true, scanModalVisible: false }); }}
                 color={'#4A4A4A'}
               />
             </Card>
           </View>
         </Modal>
         <Modal
-          animationType={"fade"}
+          animationType={'fade'}
           transparent={true}
           visible={this.state.sendModalVisible}
-          onRequestClose={() => {this.setState({sendModalVisible: false})}}
-          >
+          onRequestClose={() => { this.setState({ sendModalVisible: false }); }}
+        >
           <View style={styles.modelContainer}>
             <Card title="SEND">
               <FormLabel>To</FormLabel>
               <FormInput
                 multiline
-                inputStyle={{width: '100%'}}
+                inputStyle={{ width: '100%' }}
                 value={this.state.sendAddress}
                 onChangeText={(text) => this.state.sendAddress = text}
               />
@@ -178,9 +179,9 @@ class WalletDetailView extends Component {
               }
               <FormLabel>Amount</FormLabel>
               <FormInput
-                inputStyle={{width: '100%'}}
+                inputStyle={{ width: '100%' }}
                 placeholder="0"
-                keyboardType={"numeric"}
+                keyboardType={'numeric'}
                 onChangeText={(text) => this.state.sendAmount = Number(text)}
               />
               {
@@ -191,8 +192,8 @@ class WalletDetailView extends Component {
               }
               <FormLabel>Password</FormLabel>
               <FormInput
-								inputStyle={{width: '100%'}}
-								secureTextEntry={true}								
+                inputStyle={{ width: '100%' }}
+                secureTextEntry={true}
                 placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
@@ -204,52 +205,53 @@ class WalletDetailView extends Component {
               }
               <View style={{
                 padding: 10,
-              }}>
+              }}
+              >
                 <Button
-                  title={"Send"}
+                  title={'Send'}
                   buttonStyle={styles.modalSendButton}
                   raised
                   disabled={this.state.sendButtonDisable}
                   onPress={async () => {
-                    console.log("send action");
+                    console.log('send action');
                     _.setState({
                       scanButtonDisable: true,
                       sendButtonDisable: true,
                       sendCancelButtonDisable: true,
                     });
 
-                    var isValidate = true;
+                    let isValidate = true;
 
                     // address validation
                     if (!EthereumService.getInstance().isValidateAddress(_.state.sendAddress)) {
                       isValidate = false;
-                      _.setState({sendAddressErrorMessage: "Invalidate address"});
+                      _.setState({ sendAddressErrorMessage: 'Invalidate address' });
                     } else {
-                      _.setState({sendAddressErrorMessage: null});
+                      _.setState({ sendAddressErrorMessage: null });
                     }
 
                     // amount validation
                     if (_.state.token.balance < _.state.sendAmount || _.state.sendAmount == 0) {
                       isValidate = false;
-                      _.setState({sendAmountErrorMessage: "Wrong amount"});
+                      _.setState({ sendAmountErrorMessage: 'Wrong amount' });
                     } else {
-                      _.setState({sendAmountErrorMessage: null});
+                      _.setState({ sendAmountErrorMessage: null });
                     }
 
                     // password validation
                     const privateKey = await WalletService.getInstance().getSeed(_.state.password);
                     if (!privateKey) {
                       isValidate = false;
-                      _.setState({sendPasswordErrorMessage: "Wrong password"});
+                      _.setState({ sendPasswordErrorMessage: 'Wrong password' });
                     } else {
-                      _.setState({sendPasswordErrorMessage: null});
+                      _.setState({ sendPasswordErrorMessage: null });
                     }
 
-                    console.log("validate end");
+                    console.log('validate end');
                     if (isValidate) {
                       const token = _.state.token;
-                      var tx = null;
-                      if (token.symbol != "ETH") {
+                      let tx = null;
+                      if (token.symbol != 'ETH') {
                         // token from, to, value, decimals, contractAddress, gasLimit
                         tx = await EthereumService.getInstance().generateTokenTx(
                           token.ownerAddress,
@@ -257,14 +259,14 @@ class WalletDetailView extends Component {
                           _.state.sendAmount,
                           token.decimals,
                           token.address,
-                          "40000"
+                          '40000'
                         );
                       } else {
                         tx = await EthereumService.getInstance().generateTx(
                           token.ownerAddress,
                           _.state.sendAddress,
                           _.state.sendAmount,
-                          "40000"
+                          '40000'
                         );
                       }
 
@@ -274,7 +276,8 @@ class WalletDetailView extends Component {
                       // send tx
                       try {
                         await EthereumService.getInstance().sendTx(tx);
-                        _.setState({sendModalVisible: false,
+                        _.setState({
+                          sendModalVisible: false,
                           sendAmount: 0,
                           password: null,
                           sendAddress: null,
@@ -285,10 +288,10 @@ class WalletDetailView extends Component {
                       } catch (e) {
                         // console.error(e);
                         Alert.alert(
-                          "Failed to send",
+                          'Failed to send',
                           e.message,
                           [
-                            {text: "Cancel", style: "cancel"},
+                            { text: 'Cancel', style: 'cancel' },
                           ]
                         );
                       }
@@ -302,20 +305,20 @@ class WalletDetailView extends Component {
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
-                  title={"Scan"}
+                  title={'Scan'}
                   disabled={this.state.scanButtonDisable}
                   onPress={() => {
-                    this.setState({sendModalVisible: false, scanModalVisible: true, sendAddress: null})
+                    this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
                     if (this.scanner) {
-                        this.scanner.reactivate();
+                      this.scanner.reactivate();
                     }
                   }}
                   color={'#4A4A4A'}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
-                  title={"Cancel"}
+                  title={'Cancel'}
                   disabled={this.state.sendCancelButtonDisable}
-                  onPress={() => {this.setState({sendModalVisible: false, sendAmount: 0, password: null, sendAddress: null})}}
+                  onPress={() => { this.setState({ sendModalVisible: false, sendAmount: 0, password: null, sendAddress: null }); }}
                   color={'#4A4A4A'}
                 />
               </View>
@@ -324,39 +327,40 @@ class WalletDetailView extends Component {
         </Modal>
 
         <Modal
-          animationType={"fade"}
+          animationType={'fade'}
           transparent={true}
           visible={this.state.receiveModalVisible}
-          onRequestClose={() => {this.setState({receiveModalVisible: false})}}
-          >
+          onRequestClose={() => { this.setState({ receiveModalVisible: false }); }}
+        >
           <View style={styles.modelContainer}>
             <Card title="RECEIVE">
-              <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
-                <View style={{flex:1, maxWidth: 200, flexDirection:'row', justifyContent:'space-between'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ flex: 1, maxWidth: 200, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <QRCode
                     value={this.state.token.ownerAddress}
                     size={200}
-                    bgColor='black'
-                    fgColor='white'
+                    bgColor="black"
+                    fgColor="white"
                   />
                 </View>
               </View>
-              <Text style={{color: "black", fontSize: 12, textAlign: 'center', marginTop: 15}}>{this.state.token.ownerAddress}</Text>
+              <Text style={{ color: 'black', fontSize: 12, textAlign: 'center', marginTop: 15 }}>{this.state.token.ownerAddress}</Text>
               <View style={{
                 padding: 10,
-              }}>
+              }}
+              >
                 <Button
-                  title={"Copy address"}
+                  title={'Copy address'}
                   buttonStyle={styles.modalSendButton}
                   raised
                   onPress={() => {
-                    Clipboard.setString(this.state.token.ownerAddress)
-                    this.setState({receiveModalVisible: false});
+                    Clipboard.setString(this.state.token.ownerAddress);
+                    this.setState({ receiveModalVisible: false });
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
-                  title={"Cancel"}
-                  onPress={() => {this.setState({receiveModalVisible: false})}}
+                  title={'Cancel'}
+                  onPress={() => { this.setState({ receiveModalVisible: false }); }}
                   color={'#4A4A4A'}
                 />
               </View>
@@ -365,22 +369,22 @@ class WalletDetailView extends Component {
         </Modal>
 
         <Modal
-          animationType={"fade"}
+          animationType={'fade'}
           transparent={true}
           visible={this.state.exchangeModalVisible}
-          onRequestClose={() => {this.setState({exchangeModalVisible: false})}}
-          >
+          onRequestClose={() => { this.setState({ exchangeModalVisible: false }); }}
+        >
           <View style={styles.modelContainer}>
-            <Card title={this.state.exchangeType == "BID" ? "ETH -> " + this.state.token.symbol : this.state.token.symbol + " -> ETH"}>
+            <Card title={this.state.exchangeType == 'BID' ? 'ETH -> ' + this.state.token.symbol : `${this.state.token.symbol} -> ETH`}>
               <FormLabel>Exchange</FormLabel>
               <FormInput
-                inputStyle={{width: '100%'}}
+                inputStyle={{ width: '100%' }}
                 placeholder="Amount to exchange"
-                keyboardType={"numeric"}
+                keyboardType={'numeric'}
                 onChangeText={(text) => {
                   const sourceAmount = Number(text);
-                  var destAmount = 0;
-                  if (this.state.exchangeType == "BID") {
+                  let destAmount = 0;
+                  if (this.state.exchangeType == 'BID') {
                     destAmount = sourceAmount * this.state.token.price;
                   } else {
                     destAmount = sourceAmount * (1.0 / this.state.token.price);
@@ -388,7 +392,7 @@ class WalletDetailView extends Component {
 
                   destAmount = destAmount.toFixed(4);
 
-                  this.setState({ sourceAmount: sourceAmount, destAmount : destAmount });
+                  this.setState({ sourceAmount, destAmount });
                 }}
               />
               {
@@ -397,11 +401,11 @@ class WalletDetailView extends Component {
                   {this.state.tradeAmountErrorMessage}
                 </FormValidationMessage>
               }
-              <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType == "BID" ? this.state.token.symbol : "ETH"}</FormLabel>
+              <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType == 'BID' ? this.state.token.symbol : 'ETH'}</FormLabel>
               <FormLabel>Password</FormLabel>
               <FormInput
-								inputStyle={{width: '100%'}}
-								secureTextEntry={true}								
+                inputStyle={{ width: '100%' }}
+                secureTextEntry={true}
                 placeholder="To unlock the wallet"
                 onChangeText={(text) => this.state.password = text}
               />
@@ -413,43 +417,44 @@ class WalletDetailView extends Component {
               }
               <View style={{
                 padding: 10,
-              }}>
+              }}
+              >
                 <Button
-                  title={"Trade"}
+                  title={'Trade'}
                   buttonStyle={styles.modalSendButton}
                   raised
                   disabled={this.state.tradeButtonDisable}
                   onPress={async () => {
-                    console.log("trade action");
+                    console.log('trade action');
                     _.setState({
                       tradeButtonDisable: true,
-                      tradeCancelButtonDisable: true
+                      tradeCancelButtonDisable: true,
                     });
 
                     const etherBlance = WalletService.getInstance().wallet.balance;
 
-                    var isValidate = true;
+                    let isValidate = true;
 
                     // amount validation
-                    if (_.state.exchangeType == "BID" && _.state.sourceAmount > etherBlance ||
-                        _.state.exchangeType == "ASK" && _.state.sourceAmount > _.state.token.balance) {
-                        isValidate = false;
-                        _.setState({tradeAmountErrorMessage: "Not enough to trade"});
+                    if (_.state.exchangeType == 'BID' && _.state.sourceAmount > etherBlance ||
+                      _.state.exchangeType == 'ASK' && _.state.sourceAmount > _.state.token.balance) {
+                      isValidate = false;
+                      _.setState({ tradeAmountErrorMessage: 'Not enough to trade' });
                     }
 
                     // password validation
                     const privateKey = await WalletService.getInstance().getSeed(_.state.password);
                     if (privateKey == null) {
                       isValidate = false;
-                      _.setState({tradePasswordErrorMessage: "Wrong password"});
+                      _.setState({ tradePasswordErrorMessage: 'Wrong password' });
                     }
 
-                    console.log("validate end");
+                    console.log('validate end');
                     if (isValidate) {
                       // generate tx
-                      const token = _.state.token;
-                      var tx = null;
-                      if (_.state.exchangeType == "BID") {
+                      // const token = _.state.token;
+                      let tx = null;
+                      if (_.state.exchangeType == 'BID') {
                         // eth -> token
                         tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
                           _.state.sourceAmount,
@@ -459,7 +464,7 @@ class WalletDetailView extends Component {
                       } else {
                         // token -> eth
                         // send approve tx
-                        var approveTx = await EthereumService.getInstance().generateApproveTokenTx(
+                        let approveTx = await EthereumService.getInstance().generateApproveTokenTx(
                           _.state.token.address,
                           _.state.sourceAmount,
                           _.state.token.ownerAddress
@@ -487,14 +492,14 @@ class WalletDetailView extends Component {
                           destAmount: 0.0,
                           tradeAmountErrorMessage: null,
                           tradePasswordErrorMessage: null,
-                        })
+                        });
                       } catch (e) {
                         // console.error(e);
                         Alert.alert(
-                          "Failed to trade",
+                          'Failed to trade',
                           e.message,
                           [
-                            {text: "Cancel", style: "cancel"},
+                            { text: 'Cancel', style: 'cancel' },
                           ]
                         );
                       }
@@ -502,7 +507,7 @@ class WalletDetailView extends Component {
 
                     _.setState({
                       tradeButtonDisable: false,
-                      tradeCancelButtonDisable: false
+                      tradeCancelButtonDisable: false,
                     });
                   }}
                 />
@@ -510,7 +515,7 @@ class WalletDetailView extends Component {
                   title="Cancel"
                   disabled={this.state.tradeCancelButtonDisable}
                   onPress={() => {
-                    this.setState({exchangeModalVisible: false, password: null, exchangeAmount: 0.0})
+                    this.setState({ exchangeModalVisible: false, password: null, exchangeAmount: 0.0 });
                   }}
                   color={'#4A4A4A'}
                 />
@@ -519,14 +524,14 @@ class WalletDetailView extends Component {
           </View>
         </Modal>
 
-        <Card style={{backgroundColor: 'transparent'}}>
+        <Card style={{ backgroundColor: 'transparent' }}>
           <Text style={styles.name}>{this.state.token.symbol}</Text>
           <Text style={styles.balance}>{this.state.token.balance.toFixed(5)}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup
             textStyle={{ fontSize: 13 }}
-            onPress= {(selectedIndex) => {
+            onPress={(selectedIndex) => {
               if (0 == selectedIndex) {
                 this.onSend();
               } else if (1 == selectedIndex) {
@@ -535,30 +540,64 @@ class WalletDetailView extends Component {
                 this.onExchange();
               }
             }}
-            buttons={this.state.token.address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ? ["Send", "Receive"] : ["Send", "Receive", "Exchange"]}
+            buttons={this.state.token.address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
           />
         </View>
         <List>
-        {this.state.pendingTxHash &&
-          <ListItem
-            hideChevron={true}
-            key={-1}
-            title={"PENDING"}
-            subtitle={"wait for a minute"}
-          />
-        }
-        {
-          this.state.txs.map((l, i) => (
+          {this.state.pendingTxHash &&
             <ListItem
               hideChevron={true}
-              key={i}
-              title={(l.from == this.state.token.ownerAddress) ? "SENT" : "RECEIVED"}
-              subtitle={(l.from == this.state.token.ownerAddress) ? l.to : l.from}
-              rightTitle={(new BigNumber(l.value)).div(1000000000000000000).toString()}
-              rightTitleStyle={{fontWeight:'bold', color:'#4A4A4A'}}
+              key={-1}
+              title={'PENDING'}
+              subtitle={'wait for a minute'}
             />
-          ))
-        }
+          }
+          {
+            <FlatList
+              data={this.state.txs}
+              keyExtractor={(x, i) => i}
+              renderItem={({ item }) => {
+                const isSending = item.from == this.state.token.ownerAddress;
+                return (
+                  <View style={styles.itemContainer}>
+                    <Icon
+                      name={isSending ? 'corner-up-left' : 'corner-down-right'}
+                      size={24}
+                      color={'gray'}
+                    />
+                    <View>
+                      <Text style={styles.truncatedText}>
+                        {isSending ? item.to : item.from}
+                      </Text>
+                      <Text>
+                        {Moment(Number(`${item.timeStamp}000`)).fromNow()}
+                      </Text>
+                    </View>
+                    <View>
+                      <Text>
+                        {(isSending ? '-' : '') +
+                          (new BigNumber(item.value)).div(1000000000000000000).toString()}
+                      </Text>
+                      <Text>
+                        {`${(new BigNumber(item.cumulativeGasUsed)).div(1000000).toString()}ETH`}
+                      </Text>
+                    </View>
+                  </View>);
+              }}
+            />
+          }
+          {/* {
+						this.state.txs.map((l, i) => (
+							<ListItem
+								hideChevron={true}
+								key={i}
+								title={(l.from == this.state.token.ownerAddress) ? "SENT" : "RECEIVED"}
+								subtitle={(l.from == this.state.token.ownerAddress) ? l.to : l.from}
+								rightTitle={(new BigNumber(l.value)).div(1000000000000000000).toString()}
+								rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A' }}
+							/>
+						))
+					} */}
         </List>
       </ScrollView>
     );
@@ -601,6 +640,13 @@ var styles = StyleSheet.create({
   modalCloseButton: {
     marginTop: 15,
     backgroundColor: 'transparent',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    height: 60,
+  },
+  truncatedText: {
+    maxWidth: 240,
   },
 });
 
