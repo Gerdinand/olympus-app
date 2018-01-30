@@ -1,9 +1,7 @@
 'use strict';
 
 import React from 'react';
-
 import { StackNavigator } from 'react-navigation';
-
 import { Me, Backup } from '../Containers';
 
 const MeScreen = ({ navigation }) => (

@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
-
 import { Wallet, WalletDetail } from '../Containers';
 
 const WalletScreen = ({ navigation }) => (

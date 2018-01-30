@@ -33,7 +33,7 @@ class BackupView extends Component {
         <FormInput
           secureTextEntry={true}
           placeholder="to unlock wallet"
-          onChangeText={(text) => this.state.password = text}
+          onChangeText={(password) => this.setState({ password })}
         />
         <View style={{
           padding: 10,

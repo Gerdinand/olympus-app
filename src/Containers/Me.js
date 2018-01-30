@@ -15,6 +15,7 @@ import {
 import { removeItem } from '../Utils/KeyStore';
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletService, EthereumService } from '../Services';
+import PropTypes from 'prop-types';
 
 const list1 = [
   {
@@ -42,6 +43,9 @@ const list3 = [
 ];
 
 class MeView extends Component {
+  static propTypes = {
+    navigation: PropTypes.object.isRequired,
+  }
 
   onPress(list, index) {
     if (list == list1) {
