@@ -1,10 +1,15 @@
 import React, { PureComponent } from 'react';
 import { View } from 'react-native';
+import PropTypes from 'prop-types';
 
-/**
- * Margin between two components, some white space in middle
- */
 export class Margin extends PureComponent {
+  static propTypes = {
+    style: View.propTypes.style,
+    margin: PropTypes.number,
+    marginVertical: PropTypes.number,
+    marginHorizontal: PropTypes.number,
+  };
+
   render() {
     return (
       <View
@@ -13,8 +18,7 @@ export class Margin extends PureComponent {
           { margin: this.props.margin },
           { marginVertical: this.props.marginVertical },
           { marginHorizontal: this.props.marginHorizontal },
-        ]
-        }
+        ]}
       />
     );
   }

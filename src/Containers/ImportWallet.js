@@ -36,18 +36,18 @@ class ImportWalletView extends Component {
       <View>
         <FormLabel>Name</FormLabel>
         <FormInput
-          onChangeText={(text) => this.state.name = text}
+          onChangeText={(name) => this.setState({ name })}
         />
         <FormLabel>Password</FormLabel>
         <FormInput
           secureTextEntry={true}
-          onChangeText={(text) => this.state.password = text}
+          onChangeText={(password) => this.setState({ password })}
         />
         <FormLabel>Paste wallet json</FormLabel>
         <FormInput
           multiline
           inputStyle={{ width: '100%' }}
-          onChangeText={(text) => this.state.json = text}
+          onChangeText={(json) => this.setState({ json })}
         />
         <View style={{
           padding: 10,

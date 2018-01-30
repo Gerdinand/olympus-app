@@ -21,7 +21,7 @@ import {
   FormInput,
   FormValidationMessage,
 } from 'react-native-elements';
-import { Text } from '../Controls';
+import { Text, Row } from '../Controls';
 import Icon from 'react-native-vector-icons/Feather';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -30,8 +30,12 @@ import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
+import PropTypes from 'prop-types';
 
 class WalletDetailView extends Component {
+  static propTypes = {
+    navigation: PropTypes.object,
+  }
 
   static navigationOptions = ({ navigation }) => ({
     title: 'Asset',
@@ -170,7 +174,7 @@ class WalletDetailView extends Component {
                 multiline
                 inputStyle={{ width: '100%' }}
                 value={this.state.sendAddress}
-                onChangeText={(text) => this.state.sendAddress = text}
+                onChangeText={(sendAddress) => this.setState({ sendAddress })}
               />
               {
                 this.state.sendAddressErrorMessage &&
@@ -183,7 +187,7 @@ class WalletDetailView extends Component {
                 inputStyle={{ width: '100%' }}
                 placeholder="0"
                 keyboardType={'numeric'}
-                onChangeText={(text) => this.state.sendAmount = Number(text)}
+                onChangeText={(text) => this.setState({ sendAmount: Number(text) })}
               />
               {
                 this.state.sendAmountErrorMessage &&
@@ -196,7 +200,7 @@ class WalletDetailView extends Component {
                 inputStyle={{ width: '100%' }}
                 secureTextEntry={true}
                 placeholder="To unlock the wallet"
-                onChangeText={(text) => this.state.password = text}
+                onChangeText={(password) => this.setState({ password })}
               />
               {
                 this.state.sendPasswordErrorMessage &&
@@ -408,7 +412,7 @@ class WalletDetailView extends Component {
                 inputStyle={{ width: '100%' }}
                 secureTextEntry={true}
                 placeholder="To unlock the wallet"
-                onChangeText={(text) => this.state.password = text}
+                onChangeText={(password) => this.setState({ password })}
               />
               {
                 this.state.tradePasswordErrorMessage &&
@@ -560,7 +564,7 @@ class WalletDetailView extends Component {
               renderItem={({ item }) => {
                 const isSending = item.from == this.state.token.ownerAddress;
                 return (
-                  <View style={styles.itemContainer}>
+                  <Row style={styles.itemContainer}>
                     <Icon
                       name={isSending ? 'corner-up-left' : 'corner-down-right'}
                       size={24}
@@ -583,7 +587,7 @@ class WalletDetailView extends Component {
                         {`${(new BigNumber(item.cumulativeGasUsed)).div(1000000).toString()}ETH`}
                       </Text>
                     </View>
-                  </View>);
+                  </Row>);
               }}
             />
           }

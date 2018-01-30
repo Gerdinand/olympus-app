@@ -1,9 +1,10 @@
 import React from 'react';
 import { Text as SytemText } from 'react-native';
+import PropTypes from 'prop-types';
 
 export class Text extends React.PureComponent {
-  propTypes: {
-    children:React.PropTypes.any,
+  static propTypes = {
+    children: PropTypes.node,
   }
 
   render() {

@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
-
 import { Market, MarketIndex } from '../Containers';
 
 const MarketScreen = ({ navigation }) => (
