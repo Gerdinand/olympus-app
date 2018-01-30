@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 
 export class Row extends PureComponent {
   static propTypes = {
-    justifyContent: PropTypes.any,
-    style: PropTypes.any,
-    alignItems: PropTypes.any,
-    alignSelf: PropTypes.any,
-    viewProps: PropTypes.any,
-    children: PropTypes.any,
+    justifyContent: PropTypes.string,
+    style: View.propTypes.style,
+    alignItems: PropTypes.string,
+    alignSelf: PropTypes.string,
+    viewProps: View.propTypes,
+    children: PropTypes.node,
   };
 
   constructor(props) {

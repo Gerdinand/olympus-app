@@ -13,6 +13,7 @@ import { StackNavigator } from 'react-navigation';
 
 import CreateWalletView from './CreateWallet';
 import ImportWalletView from './ImportWallet';
+import PropTypes from 'prop-types';
 
 // Style
 let styles = StyleSheet.create({
@@ -51,10 +52,15 @@ let styles = StyleSheet.create({
 });
 
 class WelcomeView extends Component {
+  static propTypes = {
+    navigation: PropTypes.object,
+  }
+
   static navigationOptions = {
     title: 'Welcome',
     header: null,
   };
+
   render() {
     const { navigate } = this.props.navigation;
     return (
@@ -86,8 +92,6 @@ const WelcomeNav = StackNavigator({
   Home: { screen: WelcomeView },
   CreateWallet: { screen: CreateWalletView },
   ImportWallet: { screen: ImportWalletView },
-}, {
-  cardStyle: { backgroundColor: 'white' },
-});
+}, { cardStyle: { backgroundColor: 'white' } });
 
 export default WelcomeNav;

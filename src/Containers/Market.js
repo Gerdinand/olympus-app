@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
 } from 'react-native-elements';
+import PropTypes from 'prop-types';
 
 const list = [
   {
@@ -29,6 +30,10 @@ const list = [
 ];
 
 class MarketView extends Component {
+  static propTypes = {
+    navigation: PropTypes.object.isRequired,
+  }
+
   render() {
     const { navigation } = this.props;
 

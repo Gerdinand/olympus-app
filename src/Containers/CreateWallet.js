@@ -63,7 +63,7 @@ class CreateWalletView extends Component {
         <FormLabel>Wallet Name</FormLabel>
         <FormInput
           placeholder="Give your wallet a name"
-          onChangeText={(text) => this.state.name = text}
+          onChangeText={(name) => this.setState({ name })}
         // value={this.state.name}
         />
         {
@@ -76,7 +76,7 @@ class CreateWalletView extends Component {
         <FormInput
           secureTextEntry={true}
           placeholder="Type in your passphrase"
-          onChangeText={(text) => this.state.password1 = text}
+          onChangeText={(password1) => this.setState({ password1 })}
         />
         {
           this.state.passwordErrorMessage1 &&
@@ -88,7 +88,7 @@ class CreateWalletView extends Component {
         <FormInput
           secureTextEntry={true}
           placeholder="Retype your passphrase"
-          onChangeText={(text) => this.state.password2 = text}
+          onChangeText={(password2) => this.setState({ password2 })}
         />
         {
           this.state.passwordErrorMessage2 &&

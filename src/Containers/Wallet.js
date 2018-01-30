@@ -14,8 +14,12 @@ import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
 import { WalletService, EthereumService } from '../Services';
 import Toast from '@remobile/react-native-toast';
+import PropTypes from 'prop-types';
 
 class WalletView extends Component {
+  static propTypes = {
+    navigation: PropTypes.object,
+  }
 
   constructor(props) {
     super(props);
