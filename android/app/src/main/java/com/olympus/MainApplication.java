@@ -1,4 +1,4 @@
-package com.hora;
+package com.olympus;
 
 import android.app.Application;
 
