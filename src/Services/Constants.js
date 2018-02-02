@@ -17,7 +17,7 @@ const KYBER_WALLET_DATA = '0x6060604052341561000c57fe5b604051602080610f6b8339810
 const EPSILON = 1000;
 const RATE_EPSILON = 0.002;
 const ETHER_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
-const KYBER_NETWORK_ADDRESS = '0x2b7f9ae5a29ff7c387c8b794ed1f3cc45bbc57d0';
+const KYBER_NETWORK_ADDRESS = '0xe801403a9b8dae494f9088a4687c1c139fae2fe4';
 const TRADE_TOPIC = '0xec0d3e799aa270a144d7e3be084ccfc657450e33ecea1b1a4154c95cedaae5c3';
 const INIT_EXCHANGE_FORM_STATE = {
   advanced: false,

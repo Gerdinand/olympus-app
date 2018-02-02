@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,
+  AsyncStorage,
 } from 'react-native';
 import {
   FormLabel,
@@ -67,6 +68,7 @@ class ImportWalletView extends Component {
                 const done = await WalletService.getInstance().importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
                 if (done) {
                   await WalletService.getInstance().getActiveWallet();
+                  await AsyncStorage.setItem('used', 'true');
                   EventRegister.emit('hasWallet', true);
                 }
               }
