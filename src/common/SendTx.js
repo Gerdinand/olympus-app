@@ -37,7 +37,7 @@ class SendTx extends Component {
         to: _.state.addr,
         value: web3.utils.numberToHex(web3.utils.toWei(_.state.value, 'ether')),
         data: '',
-        chainId: 3,
+        chainId: 3, // not we use ropsten, not kovan 42,
       };
       let tx = new Tx(rawTx);
       tx.sign(Buffer(_.state.privKey, 'hex'));
