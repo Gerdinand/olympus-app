@@ -1,14 +1,14 @@
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { View, ViewPropTypes } from 'react-native';
 import PropTypes from 'prop-types';
 
 export class Row extends PureComponent {
   static propTypes = {
     justifyContent: PropTypes.string,
-    style: View.propTypes.style,
+    style: ViewPropTypes.style,
     alignItems: PropTypes.string,
     alignSelf: PropTypes.string,
-    viewProps: View.propTypes,
+    viewProps: ViewPropTypes,
     children: PropTypes.node,
   };
 

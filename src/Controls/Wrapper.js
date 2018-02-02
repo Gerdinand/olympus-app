@@ -1,15 +1,15 @@
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { View, ViewPropTypes } from 'react-native';
 import PropTypes from 'prop-types';
 
 export class Wrapper extends PureComponent {
   static propTypes = {
     padding: PropTypes.number,
-    style: View.propTypes.style,
+    style: ViewPropTypes.style,
     paddingVertical: PropTypes.number,
     paddingHorizontal: PropTypes.number,
     children: PropTypes.node,
-    viewProps: View.propTypes,
+    viewProps: ViewPropTypes,
   }
 
   constructor(props) {

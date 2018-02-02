@@ -1,23 +1,23 @@
 rootProject.name = 'Olympus'
-include ':react-native-camera'
-project(':react-native-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera/android')
+include ':react-native-vector-icons'
+project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':react-native-udp'
 project(':react-native-udp').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-udp/android')
 include ':react-native-tcp'
 project(':react-native-tcp').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-tcp/android')
 include ':react-native-secure-randombytes'
 project(':react-native-secure-randombytes').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-secure-randombytes/android')
+include ':react-native-randombytes'
+project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-randombytes/android')
 include ':react-native-os'
 project(':react-native-os').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-os/android')
 include ':react-native-keychain'
 project(':react-native-keychain').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-keychain/android')
-include ':react-native-sensitive-info'
-project(':react-native-sensitive-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sensitive-info/android')
-include ':react-native-vector-icons'
-project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':react-native-fast-crypto'
 project(':react-native-fast-crypto').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fast-crypto/android')
-include ':react-native-randombytes'
-project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-randombytes/android')
+include ':react-native-camera'
+project(':react-native-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera/android')
+include ':@remobile/react-native-toast'
+project(':@remobile/react-native-toast').projectDir = new File(rootProject.projectDir, '../node_modules/@remobile/react-native-toast/android')
 
 include ':app'
