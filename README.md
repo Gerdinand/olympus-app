@@ -1,5 +1,4 @@
-# Hora
-Hora, Olympus App.
+# Olympus App
 
 This repository is for testing purposes only, do not use it for real deployment.
 
@@ -10,7 +9,7 @@ This repository is for testing purposes only, do not use it for real deployment.
 - [x] basic ethereum wallet
 - [x] kyber network integration
 
-[MVP Milestone is here.](https://github.com/Olympus-Labs/Hora/milestone/1)
+[MVP Milestone is here.](https://github.com/Olympus-Labs/OlympusApp/milestone/1)
 
 ## Config
 
