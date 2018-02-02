@@ -14,6 +14,7 @@ const KYBER_EXCHANGES = {
   'binance': '0xf965d592d0d30bcbae8c66f32fc97de707a7823f',
   'bitfinex': '0x40602b10470c41671393de663e7f6b611bea0530',
 };
+const CHAIN_ID = 3;
 
 // contract datas
 // compiled with v0.4.11+commit.68ef5810
@@ -72,4 +73,5 @@ export default {
   KYBER_NETWORK_ADDRESS, RESERVES, KYBER_WALLET,
   KYBER_WALLET_DATA, INIT_EXCHANGE_FORM_STATE,
   RATE_EPSILON, TRADE_TOPIC, KYBER_EXCHANGES,
+  CHAIN_ID,
 };

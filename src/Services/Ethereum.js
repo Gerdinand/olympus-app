@@ -66,7 +66,7 @@ class EthereumService {
       to,
       value: this.rpc.toHex(this.rpc.toWei(value, 'ether')),
       data: txData,
-      chainId: 3, // not we use ropsten, not kovan 42,
+      chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
     const tx = new EthereumTx(rawTx);
@@ -88,7 +88,7 @@ class EthereumService {
       to: contractAddress,
       value: '0x0',
       data: contract.transfer.getData(dest, amount),
-      chainId: 3, // not we use ropsten, not kovan 42,
+      chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
     const tx = new EthereumTx(rawTx);
@@ -242,7 +242,7 @@ class EthereumService {
       to: this.kyberAddress,
       value: sourceToken == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
-      chainId: 3, // not we use ropsten, not kovan 42,
+      chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
     console.log(JSON.stringify(rawTx));
@@ -267,7 +267,7 @@ class EthereumService {
       to: sourceToken,
       value: 0,
       data: approveData,
-      chainId: 3, // not we use ropsten, not kovan 42,
+      chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
     console.log(JSON.stringify(rawTx));
