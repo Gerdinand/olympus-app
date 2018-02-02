@@ -58,7 +58,7 @@ const Root = TabNavigator(
   }
 );
 
-export default class Hora extends Component {
+export default class Olympus extends Component {
 
   constructor(props) {
     super(props);
@@ -106,4 +106,4 @@ export default class Hora extends Component {
   }
 }
 
-AppRegistry.registerComponent('Hora', () => Hora);
+AppRegistry.registerComponent('Olympus', () => Olympus);
