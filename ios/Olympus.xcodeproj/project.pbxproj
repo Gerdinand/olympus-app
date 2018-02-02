@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -35,7 +36,6 @@
 		8AD0ABEC0E27420C96DC4026 /* libRNOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7587BDBEA7854F7C935032F0 /* libRNOS.a */; };
 		A3DA24A721914F209AE87BF8 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 65ADA5A2930049FAB7406013 /* SimpleLineIcons.ttf */; };
 		AB67E1BDDBE5459BB99D9380 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 764881B1E3B746C4896786C9 /* MaterialCommunityIcons.ttf */; };
-		BAD443772DDB47508A0C972B /* libRCTToast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D83DB86FA63495FB9B0C94A /* libRCTToast.a */; };
 		C7C16A338D8D44F2AAD17A8C /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B2CCF1896434C328219F82A /* EvilIcons.ttf */; };
 		C80B7D65CDDA4934A062AAAB /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D3C290B0D7B43FEB4349986 /* libUdpSockets.a */; };
 		C9B4DF3DFCC74C09AF2E57B8 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69EA6CBB0C4A411EB4093936 /* Entypo.ttf */; };
@@ -87,13 +87,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = Olympus;
-		};
-		0227BC3F1FFD24600067614C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2B54CFD94B8D46C890B1557E /* RCTToast.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 327633421BFAAD7E004DA88E;
-			remoteInfo = RCTToast;
 		};
 		139105C01AF99BAD00B5F7CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -379,7 +372,6 @@
 				F7B3508891124705B6A09BEE /* libTcpSockets.a in Frameworks */,
 				C80B7D65CDDA4934A062AAAB /* libUdpSockets.a in Frameworks */,
 				69BC64EC2C4F41E7970334C3 /* libRCTCamera.a in Frameworks */,
-				BAD443772DDB47508A0C972B /* libRCTToast.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -443,14 +435,6 @@
 				00E356F11AD99517003FC87E /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		0227BC3C1FFD245F0067614C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				0227BC401FFD24600067614C /* libRCTToast.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
@@ -575,7 +559,6 @@
 				7A385D607BDB4956B829D183 /* TcpSockets.xcodeproj */,
 				45E868E1A14949E090432117 /* UdpSockets.xcodeproj */,
 				9CD7C5F136F6484C89E448BC /* RCTCamera.xcodeproj */,
-				2B54CFD94B8D46C890B1557E /* RCTToast.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -624,7 +607,6 @@
 				118B5ACDBF984C0DA5679F23 /* libTcpSockets.a */,
 				5D3C290B0D7B43FEB4349986 /* libUdpSockets.a */,
 				20E77F06374D4FE397A7EA9E /* libRCTCamera.a */,
-				0D83DB86FA63495FB9B0C94A /* libRCTToast.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -731,7 +713,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = CQUW6FZ725;
+						DevelopmentTeam = 2LA7SLA9PL;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -787,10 +769,6 @@
 				{
 					ProductGroup = 832341B11AAA6A8300B99B32 /* Products */;
 					ProjectRef = 832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */;
-				},
-				{
-					ProductGroup = 0227BC3C1FFD245F0067614C /* Products */;
-					ProjectRef = 2B54CFD94B8D46C890B1557E /* RCTToast.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302E01ABCB9EE00DB3ED1 /* Products */;
@@ -875,13 +853,6 @@
 			fileType = archive.ar;
 			path = libRCTVibration.a;
 			remoteRef = 00C302E31ABCB9EE00DB3ED1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		0227BC401FFD24600067614C /* libRCTToast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTToast.a;
-			remoteRef = 0227BC3F1FFD24600067614C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		139105C11AF99BAD00B5F7CC /* libRCTSettings.a */ = {
@@ -1190,14 +1161,12 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
-					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = OlympusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1234,14 +1203,12 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
-					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = OlympusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1268,7 +1235,7 @@
 				CODE_SIGN_ENTITLEMENTS = Olympus/Olympus.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = CQUW6FZ725;
+				DEVELOPMENT_TEAM = 2LA7SLA9PL;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1281,7 +1248,6 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
-					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = Olympus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1302,7 +1268,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Olympus/Olympus.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CQUW6FZ725;
+				DEVELOPMENT_TEAM = 2LA7SLA9PL;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1315,7 +1281,6 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
-					"$(SRCROOT)/../node_modules/@remobile/react-native-toast/ios/RCTToast",
 				);
 				INFOPLIST_FILE = Olympus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
