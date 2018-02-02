@@ -1,3 +1,38 @@
 {
-  "presets": ["react-native"]
+  "presets": [
+    "react-native"
+  ],
+  "plugins": [
+    [
+      "babel-plugin-rewrite-require",
+      {
+        "aliases": {
+          "zlib": "browserify-zlib",
+          "console": "console-browserify",
+          "constants": "constants-browserify",
+          "crypto": "crypto-browserify",
+          "dns": "dns.js",
+          "net": "react-native-tcp",
+          "domain": "domain-browser",
+          "http": "react-native-http",
+          "https": "https-browserify",
+          "os": "react-native-os",
+          "path": "path-browserify",
+          "querystring": "querystring-es3",
+          "fs": "react-native-level-fs",
+          "_stream_transform": "readable-stream/transform",
+          "_stream_readable": "readable-stream/readable",
+          "_stream_writable": "readable-stream/writable",
+          "_stream_duplex": "readable-stream/duplex",
+          "_stream_passthrough": "readable-stream/passthrough",
+          "dgram": "react-native-udp",
+          "stream": "stream-browserify",
+          "timers": "timers-browserify",
+          "tty": "tty-browserify",
+          "vm": "vm-browserify",
+          "tls": false
+        }
+      }
+    ]
+  ]
 }
