@@ -3,17 +3,16 @@ package com.olympus;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.remobile.toast.RCTToastPackage;
-import com.lwansbrough.RCTCamera.RCTCameraPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
 import com.bitgo.randombytes.RandomBytesPackage;
+import com.bitgo.randombytes.RandomBytesPackage;
 import com.peel.react.rnos.RNOSModule;
 import com.oblador.keychain.KeychainPackage;
-import br.com.classapp.RNSensitiveInfo.RNSensitiveInfoPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
 import co.airbitz.fastcrypto.RNFastCryptoPackage;
-import com.bitgo.randombytes.RandomBytesPackage;
+import com.lwansbrough.RCTCamera.RCTCameraPackage;
+import com.remobile.toast.RCTToastPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -34,17 +33,16 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RCTToastPackage(),
-            new RCTCameraPackage(),
+            new VectorIconsPackage(),
             new UdpSocketsModule(),
             new TcpSocketsModule(),
             new RandomBytesPackage(),
+            new RandomBytesPackage(),
             new RNOSModule(),
             new KeychainPackage(),
-            new RNSensitiveInfoPackage(),
-            new VectorIconsPackage(),
             new RNFastCryptoPackage(),
-            new RandomBytesPackage()
+            new RCTCameraPackage(),
+            new RCTToastPackage()
       );
     }
   };

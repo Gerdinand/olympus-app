@@ -126,17 +126,16 @@ android {
 }
 
 dependencies {
-    compile project(':@remobile/react-native-toast')
-    compile project(':react-native-camera')
+    compile project(':react-native-vector-icons')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
     compile project(':react-native-secure-randombytes')
+    compile project(':react-native-randombytes')
     compile project(':react-native-os')
     compile project(':react-native-keychain')
-    compile project(':react-native-sensitive-info')
-    compile project(':react-native-vector-icons')
     compile project(':react-native-fast-crypto')
-    compile project(':react-native-randombytes')
+    compile project(':react-native-camera')
+    compile project(':@remobile/react-native-toast')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules

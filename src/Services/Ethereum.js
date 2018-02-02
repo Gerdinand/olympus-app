@@ -14,7 +14,7 @@ import WalletService from './Wallet';
 class EthereumService {
 
   constructor() {
-    this.rpc = new Web3(new Web3.providers.HttpProvider('https://kovan.infura.io/xiNNVkYQ6V3IsiPWTTNT', 9000));
+    this.rpc = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/xiNNVkYQ6V3IsiPWTTNT', 9000));
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
     this.kyberAddress = Constants.KYBER_NETWORK_ADDRESS;
     this.kyberContract = this.rpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
@@ -55,7 +55,7 @@ class EthereumService {
 
   async generateTx(from, to, value, gasLimit, txData = '') {
     const gasPrice = await this.getGasPrice();
-    console.log(`gas price: ${  gasPrice  } x 3`);
+    console.log(`gas price: ${gasPrice} x 3`);
     console.log('limit: ', gasLimit);
 
     let rawTx = {
@@ -99,7 +99,7 @@ class EthereumService {
     const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction(`0x${serializedTx.toString('hex')}`, cb));
     WalletService.getInstance().wallet.pendingTxHash = hash;
     this.sync(WalletService.getInstance().wallet);
-    console.log(`tx hash: ${  hash}`);
+    console.log(`tx hash: ${hash}`);
   }
 
   async getBalance(address) {
@@ -160,7 +160,11 @@ class EthereumService {
       let tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
       token.balance = tokenBalance;
 
-      const priceInWei = await this.getPrice(Constants.ETHER_ADDRESS, token.address);
+      // this now returns 2 numbers.
+      // The function returns the expected and worse case conversion rate between source and dest tokens,
+      // where source and dest are 20 bytes addresses.
+      const priceInWei = (await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address))[0];
+
       const tokenPrice = this.rpc.fromWei(priceInWei, 'ether').toFixed(2);
       token.price = tokenPrice;
 
@@ -172,13 +176,9 @@ class EthereumService {
 
     wallet.balanceInUSD = balanceInUSD.toFixed(2);
 
-    const url = `http://kovan.etherscan.io/api?module=account&action=txlist&address=${  wallet.address  }&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
-    const response = await fetch(url, { method: 'GET' });
-    const responseText = await response.text();
-
-    if (response.status == 200) {
-      wallet.txs = JSON.parse(responseText).result;
-    }
+    const url = `https://ropsten.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
+    const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
+    wallet.txs = response ? (await response.json()).result : [];
 
     if (wallet.pendingTxHash) {
       let hasPacked = false;
@@ -202,8 +202,8 @@ class EthereumService {
   }
 
   // Kyber Integraiton
-  async getPrice(source, dest) {
-    const result = await Promisify(cb => this.kyberContract.getPrice(source, dest, cb));
+  async getExpectedRate(source, dest) {
+    const result = await Promisify(cb => this.kyberContract.getExpectedRate(source, dest, 1, cb));
     return result;
   }
 
@@ -279,7 +279,7 @@ class EthereumService {
       '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
       destAddress,
       (new BigNumber(2)).pow(255),
-      await this.getPrice(sourceToken, '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'),
+      await this.getExpectedRate(sourceToken, '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'),
       true,
       1000000,
       await this.newNonce(destAddress) + 1,
@@ -295,7 +295,7 @@ class EthereumService {
       destToken,
       destAddress,
       (new BigNumber(2)).pow(255),
-      await this.getPrice('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', destToken),
+      await this.getExpectedRate('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', destToken),
       true,
       1000000,
       await this.newNonce(destAddress),

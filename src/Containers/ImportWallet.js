@@ -67,6 +67,7 @@ class ImportWalletView extends Component {
 
                 const done = await WalletService.getInstance().importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
                 if (done) {
+                  // await AsyncStorage.setItem('used', 'true');
                   await WalletService.getInstance().getActiveWallet();
                   await AsyncStorage.setItem('used', 'true');
                   EventRegister.emit('hasWallet', true);
