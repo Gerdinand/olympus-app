@@ -49,8 +49,8 @@ class WalletDetailView extends Component {
     super(props);
 
     this.state = {
-      options:[],
-      cancelButtonIndex:0,
+      options: [],
+      cancelButtonIndex: 0,
       sendModalVisible: false,
       scanModalVisible: false,
       receiveModalVisible: false,
@@ -76,7 +76,7 @@ class WalletDetailView extends Component {
     };
 
     this.scanner = null;
-    
+
     // bind methods
     this.reloadTxs = this.reloadTxs.bind(this);
   }
@@ -84,6 +84,10 @@ class WalletDetailView extends Component {
   componentWillMount() {
     this.walletListener = EventRegister.addEventListener('wallet.updated', this.reloadTxs);
     this.reloadTxs(WalletService.getInstance().wallet);
+    this.setState({
+      options: [`ETH -> ${this.state.token.symbol}`, `${this.state.token.symbol} -> ETH`, 'Cancel'],
+      cancelButtonIndex: 2,
+    });
   }
 
   componentWillUnmount() {
@@ -112,10 +116,6 @@ class WalletDetailView extends Component {
     }
 
     let _ = this;
-    _.setState({
-      options:['ETH -> ' + _.state.token.symbol, _.state.token.symbol + ' -> ETH', 'Cancel'],
-      cancelButtonIndex: 2,
-    });
     _.ActionSheet.show();
     /* ActionSheetIOS.showActionSheetWithOptions({
       options: [`ETH -> ${_.state.token.symbol}`, `${_.state.token.symbol} -> ETH`, 'Cancel'],
@@ -624,7 +624,7 @@ class WalletDetailView extends Component {
         <ActionSheet
           ref={o => this.ActionSheet = o}
           options={this.state.options}
-          cancelButtonIndex={this.state.cancelButtonIndex }
+          cancelButtonIndex={this.state.cancelButtonIndex}
           onPress={this.handlePress.bind(this)}
         />
       </ScrollView>
