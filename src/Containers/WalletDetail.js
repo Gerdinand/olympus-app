@@ -7,7 +7,7 @@ import {
   ScrollView,
   Modal,
   Clipboard,
-  ActionSheetIOS,
+  //ActionSheetIOS,
   Alert,
   FlatList,
 } from 'react-native';
@@ -23,6 +23,7 @@ import {
 } from 'react-native-elements';
 import { Text, Row } from '../Controls';
 import Icon from 'react-native-vector-icons/Feather';
+import ActionSheet from 'react-native-actionsheet';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
@@ -48,6 +49,8 @@ class WalletDetailView extends Component {
     super(props);
 
     this.state = {
+      options:[],
+      cancelButtonIndex:0,
       sendModalVisible: false,
       scanModalVisible: false,
       receiveModalVisible: false,
@@ -73,7 +76,7 @@ class WalletDetailView extends Component {
     };
 
     this.scanner = null;
-
+    
     // bind methods
     this.reloadTxs = this.reloadTxs.bind(this);
   }
@@ -109,7 +112,12 @@ class WalletDetailView extends Component {
     }
 
     let _ = this;
-    ActionSheetIOS.showActionSheetWithOptions({
+    _.setState({
+      options:['ETH -> ' + _.state.token.symbol, _.state.token.symbol + ' -> ETH', 'Cancel'],
+      cancelButtonIndex: 2,
+    });
+    _.ActionSheet.show();
+    /* ActionSheetIOS.showActionSheetWithOptions({
       options: [`ETH -> ${_.state.token.symbol}`, `${_.state.token.symbol} -> ETH`, 'Cancel'],
       cancelButtonIndex: 2,
     }, (buttonIndex) => {
@@ -118,7 +126,16 @@ class WalletDetailView extends Component {
       } else if (1 == buttonIndex) {
         _.setState({ exchangeType: 'ASK', exchangeModalVisible: true });
       }
-    });
+    }); */
+  }
+
+  handlePress(buttonIndex) {
+    let _ = this;
+    if (0 == buttonIndex) {
+      _.setState({ exchangeType: 'BID', exchangeModalVisible: true });
+    } else if (1 == buttonIndex) {
+      _.setState({ exchangeType: 'ASK', exchangeModalVisible: true });
+    }
   }
 
   render() {
@@ -604,6 +621,12 @@ class WalletDetailView extends Component {
 						))
 					} */}
         </List>
+        <ActionSheet
+          ref={o => this.ActionSheet = o}
+          options={this.state.options}
+          cancelButtonIndex={this.state.cancelButtonIndex }
+          onPress={this.handlePress.bind(this)}
+        />
       </ScrollView>
     );
   }
