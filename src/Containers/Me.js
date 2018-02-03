@@ -5,13 +5,14 @@ import {
   ScrollView,
   Image,
   Linking,
-  ActionSheetIOS,
+  //ActionSheetIOS,
 } from 'react-native';
 import {
   List,
   ListItem,
 } from 'react-native-elements';
 
+import ActionSheet from 'react-native-actionsheet';
 import { removeItem } from '../Utils/KeyStore';
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletService, EthereumService } from '../Services';
@@ -42,6 +43,10 @@ const list3 = [
   },
 ];
 
+const options=['Sign out', 'Cancel'];
+const CANCEL_INDEX=1;
+const destructiveButtonIndex=0;
+
 class MeView extends Component {
   static propTypes = {
     navigation: PropTypes.object.isRequired,
@@ -65,7 +70,8 @@ class MeView extends Component {
       if (index == 0) {
         // sign out
         // let _ = this;
-        ActionSheetIOS.showActionSheetWithOptions({
+        this.ActionSheet.show();
+        /* ActionSheetIOS.showActionSheetWithOptions({
           options: ['Sign out', 'Cancel'],
           destructiveButtonIndex: 0,
           cancelButtonIndex: 1,
@@ -76,8 +82,17 @@ class MeView extends Component {
             removeItem('wallets');
             EventRegister.emit('hasWallet', false);
           }
-        });
+        }); */
       }
+    }
+  }
+
+  handlePress(buttonIndex) {
+    if (0 == buttonIndex) {
+      EthereumService.getInstance().invalidateTimer();
+      WalletService.getInstance().resetActiveWallet();
+      removeItem('wallets');
+      EventRegister.emit('hasWallet', false);
     }
   }
 
@@ -126,6 +141,14 @@ class MeView extends Component {
             ))
           }
         </List>
+        <ActionSheet
+          ref={o => this.ActionSheet = o}
+          title={''}
+          options={options}
+          cancelButtonIndex={CANCEL_INDEX }
+          destructiveButtonIndex={destructiveButtonIndex}
+          onPress={this.handlePress.bind(this)}
+        />
       </ScrollView>
     );
   }
