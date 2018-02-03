@@ -142,7 +142,7 @@ class WalletDetailView extends Component {
     let _ = this;
 
     return (
-      <ScrollView style={{ backgroundColor: 'white' }}>
+      <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
         <Modal
           animationType={'fade'}
           transparent={true}
@@ -225,14 +225,15 @@ class WalletDetailView extends Component {
                   {this.state.sendPasswordErrorMessage}
                 </FormValidationMessage>
               }
-              <View style={{
-                padding: 10,
-              }}
+              <View 
+                style={{
+                  padding: 10,
+                }}
               >
                 <Button
                   title={'Send'}
                   buttonStyle={styles.modalSendButton}
-                  raised
+                  //raised={true}
                   disabled={this.state.sendButtonDisable}
                   onPress={async () => {
                     console.log('send action');
@@ -255,7 +256,7 @@ class WalletDetailView extends Component {
                     // amount validation
                     if (_.state.token.balance < _.state.sendAmount || _.state.sendAmount == 0) {
                       isValidate = false;
-                      _.setState({ sendAmountErrorMessage: 'Wrong amount' });
+                      _.setState({ sendAmountErrorMessage: 'Insufficient balance' });
                     } else {
                       _.setState({ sendAmountErrorMessage: null });
                     }

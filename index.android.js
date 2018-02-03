@@ -109,7 +109,7 @@ const Root = TabNavigator(
     animationEnabled: false,
     swipeEnabled: true,
     tabBarOptions: {
-      showIcon:true,
+      // showIcon:true,
       activeTintColor:'rgb(255,255,255)',
       //activeTintColor: '#5589FF',
     },
