@@ -6,15 +6,16 @@ import Web3 from 'web3';
 import Promisify from '../Utils/Promisify';
 import Constants from './Constants';
 import EthereumTx from 'ethereumjs-tx';
-import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { getETHPrice } from './Currency';
 import WalletService from './Wallet';
 
-class EthereumService {
+let BigNumber;
 
+class EthereumService {
   constructor() {
     this.rpc = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/xiNNVkYQ6V3IsiPWTTNT', 9000));
+    BigNumber = this.rpc.BigNumber;
     this.erc20Contract = this.rpc.eth.contract(Constants.ERC20);
     this.kyberAddress = Constants.KYBER_NETWORK_ADDRESS;
     this.kyberContract = this.rpc.eth.contract(Constants.KYBER_ABI).at(this.kyberAddress);
@@ -65,7 +66,7 @@ class EthereumService {
       to,
       value: this.rpc.toHex(this.rpc.toWei(value, 'ether')),
       data: txData,
-      chainId: 42,
+      chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
     const tx = new EthereumTx(rawTx);
@@ -87,7 +88,7 @@ class EthereumService {
       to: contractAddress,
       value: '0x0',
       data: contract.transfer.getData(dest, amount),
-      chainId: 42,
+      chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
     const tx = new EthereumTx(rawTx);
@@ -160,10 +161,7 @@ class EthereumService {
       let tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
       token.balance = tokenBalance;
 
-      // this now returns 2 numbers.
-      // The function returns the expected and worse case conversion rate between source and dest tokens,
-      // where source and dest are 20 bytes addresses.
-      const priceInWei = (await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address))[0];
+      const priceInWei = await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address);
 
       const tokenPrice = this.rpc.fromWei(priceInWei, 'ether').toFixed(2);
       token.price = tokenPrice;
@@ -203,7 +201,10 @@ class EthereumService {
 
   // Kyber Integraiton
   async getExpectedRate(source, dest) {
-    const result = await Promisify(cb => this.kyberContract.getExpectedRate(source, dest, 1, cb));
+    // this now returns 2 numbers.
+    // The function returns the expected and worse case conversion rate between source and dest tokens,
+    // where source and dest are 20 bytes addresses.
+    const result = (await Promisify(cb => this.kyberContract.getExpectedRate(source, dest, 1, cb)))[0];
     return result;
   }
 
@@ -214,21 +215,24 @@ class EthereumService {
     destAddress,
     maxDestAmount,
     minConversionRate,
+    walletId,
     throwOnFailure,
     gasLimit,
     nonce) {
 
     const amount = this.rpc.toWei(sourceAmount, 'ether');
 
-    const exchangeData = this.kyberContract.walletTrade.getData(
+    // address,uint256,address,address,uint256,uint256,address
+    const exchangeData = this.kyberContract.trade.getData(
       sourceToken,
       amount,
       destToken,
       destAddress,
       maxDestAmount,
       minConversionRate,
-      throwOnFailure,
-      0
+      walletId,
+      // throwOnFailure,
+      // 0
     );
 
     let rawTx = {
@@ -238,7 +242,7 @@ class EthereumService {
       to: this.kyberAddress,
       value: sourceToken == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
-      chainId: 42,
+      chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
     console.log(JSON.stringify(rawTx));
@@ -263,7 +267,7 @@ class EthereumService {
       to: sourceToken,
       value: 0,
       data: approveData,
-      chainId: 42,
+      chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
     console.log(JSON.stringify(rawTx));
@@ -280,6 +284,7 @@ class EthereumService {
       destAddress,
       (new BigNumber(2)).pow(255),
       await this.getExpectedRate(sourceToken, '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'),
+      Constants.KYBER_EXCHANGES.binance, // todo: use binance for now.
       true,
       1000000,
       await this.newNonce(destAddress) + 1,
@@ -296,6 +301,7 @@ class EthereumService {
       destAddress,
       (new BigNumber(2)).pow(255),
       await this.getExpectedRate('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', destToken),
+      Constants.KYBER_EXCHANGES.binance, // todo: use binance for now.
       true,
       1000000,
       await this.newNonce(destAddress),
