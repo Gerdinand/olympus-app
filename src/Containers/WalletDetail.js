@@ -6,8 +6,6 @@ import {
   View,
   ScrollView,
   Modal,
-  Clipboard,
-  //ActionSheetIOS,
   Alert,
   FlatList,
 } from 'react-native';
@@ -24,14 +22,14 @@ import {
 import { Text, Row } from '../Controls';
 import Icon from 'react-native-vector-icons/Feather';
 import ActionSheet from 'react-native-actionsheet';
-
+import Toast from '@remobile/react-native-toast';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
 import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
-import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
 import PropTypes from 'prop-types';
+import { AddressModal } from '../Components/addressModal';
 
 class WalletDetailView extends Component {
   static propTypes = {
@@ -115,18 +113,7 @@ class WalletDetailView extends Component {
       return;
     }
 
-    let _ = this;
-    _.ActionSheet.show();
-    /* ActionSheetIOS.showActionSheetWithOptions({
-      options: [`ETH -> ${_.state.token.symbol}`, `${_.state.token.symbol} -> ETH`, 'Cancel'],
-      cancelButtonIndex: 2,
-    }, (buttonIndex) => {
-      if (0 == buttonIndex) {
-        _.setState({ exchangeType: 'BID', exchangeModalVisible: true });
-      } else if (1 == buttonIndex) {
-        _.setState({ exchangeType: 'ASK', exchangeModalVisible: true });
-      }
-    }); */
+    this.ActionSheet.show();
   }
 
   handlePress(buttonIndex) {
@@ -348,47 +335,17 @@ class WalletDetailView extends Component {
           </View>
         </Modal>
 
-        <Modal
-          animationType={'fade'}
-          transparent={true}
+        <AddressModal
+          title={'RECEIVE'}
           visible={this.state.receiveModalVisible}
-          onRequestClose={() => { this.setState({ receiveModalVisible: false }); }}
-        >
-          <View style={styles.modelContainer}>
-            <Card title="RECEIVE">
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <View style={{ flex: 1, maxWidth: 200, flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <QRCode
-                    value={this.state.token.ownerAddress}
-                    size={200}
-                    bgColor="black"
-                    fgColor="white"
-                  />
-                </View>
-              </View>
-              <Text style={{ color: 'black', fontSize: 12, textAlign: 'center', marginTop: 15 }}>{this.state.token.ownerAddress}</Text>
-              <View style={{
-                padding: 10,
-              }}
-              >
-                <Button
-                  title={'Copy address'}
-                  buttonStyle={styles.modalSendButton}
-                  raised
-                  onPress={() => {
-                    Clipboard.setString(this.state.token.ownerAddress);
-                    this.setState({ receiveModalVisible: false });
-                  }}
-                />
-                <Button buttonStyle={styles.modalCloseButton}
-                  title={'Cancel'}
-                  onPress={() => { this.setState({ receiveModalVisible: false }); }}
-                  color={'#4A4A4A'}
-                />
-              </View>
-            </Card>
-          </View>
-        </Modal>
+          address={this.state.token.ownerAddress}
+          onClose={(message) => {
+            this.setState({ receiveModalVisible: false });
+            if (message) {
+              Toast.showShortTop.bind(null, message);
+            }
+          }}
+        />
 
         <Modal
           animationType={'fade'}
@@ -633,11 +590,6 @@ class WalletDetailView extends Component {
 }
 
 const styles = StyleSheet.create({
-  modelContainer: {
-    flex: 1,
-    paddingTop: 40,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
   name: {
     fontSize: 30,
     color: '#4A4A4A',
@@ -660,14 +612,6 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     marginLeft: 15,
     marginTop: 6,
-  },
-  modalSendButton: {
-    marginTop: 30,
-    backgroundColor: '#5589FF',
-  },
-  modalCloseButton: {
-    marginTop: 15,
-    backgroundColor: 'transparent',
   },
   itemContainer: {
     flexDirection: 'row',
