@@ -82,15 +82,15 @@ export default class Olympus extends Component {
   }
 
   componentDidMount() {
-    this.listener = DeviceEventEmitter.addListener('showToast', (text) => {
+    this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
       this.refs.toast.show(text, DURATION.LENGTH_LONG);
     });
   }
 
   componentWillUnmount() {
     EventRegister.removeEventListener(this.listener);
-    if (this.listener) {
-      this.listener.remove();
+    if (this.toastListener) {
+      this.toastListener.remove();
     }
   }
 
