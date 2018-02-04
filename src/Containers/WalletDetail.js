@@ -9,7 +9,6 @@ import {
   Alert,
   Image,
   FlatList,
-  Dimensions,
 } from 'react-native';
 import {
   List,
@@ -24,7 +23,7 @@ import {
 import { Text, Row } from '../Controls';
 import Icon from 'react-native-vector-icons/Feather';
 import ActionSheet from 'react-native-actionsheet';
-import Toast from '@remobile/react-native-toast';
+import Toast from 'react-native-simple-toast';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
 import Moment from 'moment';
@@ -348,7 +347,7 @@ class WalletDetailView extends Component {
           onClose={(message) => {
             this.setState({ receiveModalVisible: false });
             if (message) {
-              Toast.showShortTop.bind(null, message);
+              Toast.show(message);
             }
           }}
         />
@@ -537,7 +536,7 @@ class WalletDetailView extends Component {
               subtitle={'wait for a minute'}
             />
           }
-          {
+          {/* {
             <FlatList
               data={this.state.txs}
               keyExtractor={(x, i) => i}
@@ -570,19 +569,19 @@ class WalletDetailView extends Component {
                   </Row>);
               }}
             />
+          } */}
+          {
+            this.state.txs.map((l, i) => (
+              <ListItem
+                hideChevron={true}
+                key={i}
+                title={(l.from == this.state.token.ownerAddress) ? 'SENT' : 'RECEIVED'}
+                subtitle={(l.from == this.state.token.ownerAddress) ? l.to : l.from}
+                rightTitle={(new BigNumber(l.value)).div(1000000000000000000).toString()}
+                rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A' }}
+              />
+            ))
           }
-          {/* {
-						this.state.txs.map((l, i) => (
-							<ListItem
-								hideChevron={true}
-								key={i}
-								title={(l.from == this.state.token.ownerAddress) ? "SENT" : "RECEIVED"}
-								subtitle={(l.from == this.state.token.ownerAddress) ? l.to : l.from}
-								rightTitle={(new BigNumber(l.value)).div(1000000000000000000).toString()}
-								rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A' }}
-							/>
-						))
-					} */}
         </List>
         <ActionSheet
           ref={o => this.ActionSheet = o}

@@ -11,7 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Row } from '../Controls/index';
 import { AddressModal } from '../Components/addressModal';
-import Toast from '@remobile/react-native-toast';
+import Toast from 'react-native-simple-toast';
 
 let styles = StyleSheet.create({
   container: {
@@ -98,7 +98,7 @@ class WalletHeader extends Component {
           onClose={(message) => {
             this.setState({ modalVisible: false });
             if (message) {
-              Toast.showShortTop.bind(null, message);
+              Toast.show(message);
             }
           }}
         />
