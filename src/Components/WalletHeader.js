@@ -10,7 +10,7 @@ import {
 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Row } from '../Controls/index';
-import { AddressModal } from '../Components/addressModal';
+import { AddressModal } from '../Components';
 import Toast from 'react-native-simple-toast';
 
 let styles = StyleSheet.create({
@@ -55,7 +55,7 @@ let styles = StyleSheet.create({
   },
 });
 
-class WalletHeader extends Component {
+export class WalletHeader extends Component {
 
   static propTypes = {
     name: React.PropTypes.string.isRequired,
@@ -107,4 +107,3 @@ class WalletHeader extends Component {
   }
 }
 
-export default WalletHeader;
