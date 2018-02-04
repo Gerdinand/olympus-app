@@ -126,6 +126,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-secure-randombytes')
     compile project(':react-native-vector-icons')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
