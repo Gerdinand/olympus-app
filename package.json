@@ -9,7 +9,6 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@remobile/react-native-toast": "^1.0.7",
     "assert": "^1.4.1",
     "bignumber.js": "^6.0.0",
     "browserify-zlib": "^0.1.4",
@@ -45,6 +44,7 @@
     "react-native-qrcode-scanner": "0.0.28",
     "react-native-randombytes": "^3.0.0",
     "react-native-secure-randombytes": "^2.2.2",
+    "react-native-simple-toast": "0.0.8",
     "react-native-tcp": "^3.3.0",
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^4.4.2",
