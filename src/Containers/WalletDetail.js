@@ -585,6 +585,13 @@ class WalletDetailView extends Component {
 
               return (
                 <ListItem
+                  roundAvatar
+                  leftIcon={{
+                    name: isSending ? 'arrow-top-right' : 'arrow-bottom-right',
+                    type: 'material-community',
+                    color: 'rgb(89,139,246)',
+                  }}
+                  leftIconUnderlayColor="red"
                   key={i}
                   title={dest}
                   subtitle={time}
