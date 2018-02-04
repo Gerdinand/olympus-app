@@ -30,7 +30,7 @@ import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../Services';
 import PropTypes from 'prop-types';
-import { AddressModal } from '../Components/addressModal';
+import { AddressModal } from '../Components';
 
 class WalletDetailView extends Component {
   static propTypes = {
