@@ -8,7 +8,7 @@ import {
   Modal,
   Alert,
   Image,
-  FlatList,
+  Linking,
 } from 'react-native';
 import {
   List,
@@ -20,8 +20,8 @@ import {
   FormInput,
   FormValidationMessage,
 } from 'react-native-elements';
-import { Text, Row } from '../Controls';
-import Icon from 'react-native-vector-icons/Feather';
+import { Text } from '../Controls';
+// import Icon from 'react-native-vector-icons/Feather';
 import ActionSheet from 'react-native-actionsheet';
 import Toast from 'react-native-simple-toast';
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -124,6 +124,10 @@ class WalletDetailView extends Component {
     } else if (1 == buttonIndex) {
       _.setState({ exchangeType: 'ASK', exchangeModalVisible: true });
     }
+  }
+
+  formatAddress(address) {
+    return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
   render() {
@@ -571,16 +575,26 @@ class WalletDetailView extends Component {
             />
           } */}
           {
-            this.state.txs.map((l, i) => (
-              <ListItem
-                hideChevron={true}
-                key={i}
-                title={(l.from == this.state.token.ownerAddress) ? 'SENT' : 'RECEIVED'}
-                subtitle={(l.from == this.state.token.ownerAddress) ? l.to : l.from}
-                rightTitle={(new BigNumber(l.value)).div(1000000000000000000).toString()}
-                rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A' }}
-              />
-            ))
+            this.state.txs.map((l, i) => {
+              console.log(l);
+              const isSending = l.from == this.state.token.ownerAddress;
+              const direction = isSending ? '-' : '+';
+              const amount = (new BigNumber(l.value)).div(1000000000000000000).toFixed(4);
+              const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
+              const dest = this.formatAddress(isSending ? l.to : l.from);
+
+              return (
+                <ListItem
+                  key={i}
+                  title={dest}
+                  subtitle={time}
+                  rightTitle={`${direction}${amount} eth`}
+                  rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
+                  onPress={() => {
+                    Linking.openURL(`https://ropsten.etherscan.io/tx/${l.hash}`);
+                  }}
+                />);
+            })
           }
         </List>
         <ActionSheet
