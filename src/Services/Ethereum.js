@@ -45,6 +45,11 @@ class EthereumService {
     return this.rpc.isAddress(address);
   }
 
+  async getTransactionReceipt(tx) {
+    const log = await Promisify(cb => this.rpc.eth.getTransactionReceipt(tx, cb));
+    return log;
+  }
+
   async getNonce(address) {
     const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb));
     return nonce;
@@ -72,6 +77,10 @@ class EthereumService {
 
     const tx = new EthereumTx(rawTx);
     return tx;
+  }
+
+  toAscII(hex) {
+    return this.rpc.toAscii(hex);
   }
 
   async generateTokenTx(source, dest, value, decimals, contractAddress, gasLimit) {
@@ -178,7 +187,7 @@ class EthereumService {
     const url = `https://ropsten.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
     const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
     wallet.txs = response ? (await response.json()).result : [];
-    wallet.txs.forEach((tx) => tx.input = decodeTx(tx.input));
+    await Promise.all(wallet.txs.map(decodeTx));
 
     if (wallet.pendingTxHash) {
       let hasPacked = false;

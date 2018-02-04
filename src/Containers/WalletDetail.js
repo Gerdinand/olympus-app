@@ -112,7 +112,16 @@ class WalletDetailView extends Component {
 
   reloadTxs(wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
-    const txs = wallet.txs.filter((tx) => tx.from === token.ownerAddress || tx.to === token.ownerAddress);
+    const txs = wallet.txs.filter((tx) => {
+      if (this.state.token.address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
+        // ETH shows all trading history
+        return tx.from === token.ownerAddress || tx.to === token.ownerAddress;
+      }
+
+      return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
+        && (typeof tx.input === 'object')
+        && (tx.input.srcToken.symbol === token.symbol || tx.input.destToken.symbol === token.symbol);
+    });
     this.setState({ token, txs, pendingTxHash: wallet.pendingTxHash });
   }
 
@@ -552,7 +561,7 @@ class WalletDetailView extends Component {
 
         <Card style={{ backgroundColor: 'transparent' }}>
           <Text style={styles.name}>{this.state.token.symbol}</Text>
-          <Text style={styles.balance}>{this.state.token.balance.toFixed(5)}</Text>
+          <Text style={styles.balance}>{this.state.token.balance.toFixed(6)}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup
@@ -614,12 +623,43 @@ class WalletDetailView extends Component {
           } */}
           {
             this.state.txs.map((l, i) => {
-              console.log(l);
-              const isSending = l.from == this.state.token.ownerAddress;
-              const direction = isSending ? '-' : '+';
-              const amount = (new BigNumber(l.value)).div(1000000000000000000).toFixed(4);
-              const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
+              let isSending;
+              let amount;
+              let tokenAmount;
+              debugger;
+
+              if (l.logs && l.logs.length > 0) {
+                console.log(l);
+                const ethReceival = l.logs.find((log) => log.name === 'EtherReceival');
+                const trade = l.logs.find((log) => log.name === 'Trade');
+                const isETH = this.state.token.symbol === 'ETH';
+
+                if (ethReceival) {
+                  if (isETH) {
+                    isSending = false;
+                    tokenAmount = ethReceival.events.find((evt) => evt.name === 'amount').value;
+                  } else {
+                    isSending = true;
+                    tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
+                  }
+                } else if (trade) {
+                  let key;
+                  if (isETH) {
+                    isSending = l.input.srcToken.symbol === 'ETH';
+                  } else {
+                    isSending = l.input.srcToken.symbol === this.state.token.symbol;
+                  }
+                  key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
+                  tokenAmount = trade.events.find((evt) => evt.name === key).value;
+                }
+              } else {
+                isSending = l.from === this.state.token.ownerAddress;
+                tokenAmount = l.value;
+              }
+              amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
               const dest = this.formatAddress(isSending ? l.to : l.from);
+              const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
+              let direction = isSending ? '-' : '+';
 
               return (
                 <ListItem
@@ -633,7 +673,7 @@ class WalletDetailView extends Component {
                   key={i}
                   title={dest}
                   subtitle={time}
-                  rightTitle={`${direction}${amount} eth`}
+                  rightTitle={`${direction}${amount} ${this.state.token.symbol}`}
                   rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
                   onPress={() => {
                     Linking.openURL(`https://ropsten.etherscan.io/tx/${l.hash}`);
