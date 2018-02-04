@@ -212,7 +212,7 @@ class WalletDetailView extends Component {
                   {this.state.sendPasswordErrorMessage}
                 </FormValidationMessage>
               }
-              <View 
+              <View
                 style={{
                   padding: 10,
                 }}
@@ -220,7 +220,7 @@ class WalletDetailView extends Component {
                 <Button
                   title={'Send'}
                   buttonStyle={styles.modalSendButton}
-                  //raised={true}
+                  // raised={true}
                   disabled={this.state.sendButtonDisable}
                   onPress={async () => {
                     console.log('send action');
@@ -620,6 +620,19 @@ const styles = StyleSheet.create({
   },
   truncatedText: {
     maxWidth: 240,
+  },
+  modelContainer: {
+    flex: 1,
+    paddingTop: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  modalSendButton: {
+    marginTop: 30,
+    backgroundColor: '#5589FF',
+  },
+  modalCloseButton: {
+    marginTop: 15,
+    backgroundColor: 'transparent',
   },
 });
 
