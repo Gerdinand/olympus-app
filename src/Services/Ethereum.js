@@ -9,6 +9,7 @@ import EthereumTx from 'ethereumjs-tx';
 import { EventRegister } from 'react-native-event-listeners';
 import { getETHPrice } from './Currency';
 import WalletService from './Wallet';
+import { decodeTx } from '../Utils';
 
 let BigNumber;
 
@@ -177,6 +178,7 @@ class EthereumService {
     const url = `https://ropsten.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
     const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
     wallet.txs = response ? (await response.json()).result : [];
+    wallet.txs.forEach((tx) => tx.input = decodeTx(tx.input));
 
     if (wallet.pendingTxHash) {
       let hasPacked = false;
