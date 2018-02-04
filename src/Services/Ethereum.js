@@ -204,8 +204,8 @@ class EthereumService {
     // this now returns 2 numbers.
     // The function returns the expected and worse case conversion rate between source and dest tokens,
     // where source and dest are 20 bytes addresses.
-    const result = (await Promisify(cb => this.kyberContract.getExpectedRate(source, dest, 1, cb)))[0];
-    return result;
+    const result = (await Promisify(cb => this.kyberContract.getExpectedRate(source, dest, 1, cb)));
+    return result[0];
   }
 
   async generateTradeTx(

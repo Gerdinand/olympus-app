@@ -89,6 +89,7 @@ class WalletView extends Component {
                 roundAvatar
                 hideChevron={true}
                 avatar={{ uri: t.icon }}
+                avatarStyle={{ backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.5, padding: 2 }}
                 key={i}
                 title={t.symbol}
                 subtitle={t.name}

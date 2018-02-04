@@ -19,8 +19,9 @@ import {
   FormLabel,
   FormInput,
   FormValidationMessage,
+  Slider,
 } from 'react-native-elements';
-import { Text } from '../Controls';
+import { Text, Row } from '../Controls';
 // import Icon from 'react-native-vector-icons/Feather';
 import ActionSheet from 'react-native-actionsheet';
 import Toast from 'react-native-simple-toast';
@@ -31,6 +32,8 @@ import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../Services';
 import PropTypes from 'prop-types';
 import { AddressModal } from '../Components';
+import Constants from '../Services/Constants';
+import { toEtherNumber } from '../Utils';
 
 class WalletDetailView extends Component {
   static propTypes = {
@@ -48,6 +51,9 @@ class WalletDetailView extends Component {
     super(props);
 
     this.state = {
+      value: 0.21,
+      amountPlaceHolder: '0',
+      gasFee: 0,
       options: [],
       cancelButtonIndex: 0,
       sendModalVisible: false,
@@ -89,8 +95,19 @@ class WalletDetailView extends Component {
     });
   }
 
+  async componentDidMount() {
+    await this.calcuateGasFee();
+  }
+
   componentWillUnmount() {
     EventRegister.removeEventListener(this.walletListener);
+  }
+
+  async calcuateGasFee(gasLimit = Constants.GAS_LIMIT) {
+    const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => { });
+    this.setState({
+      gasFee: toEtherNumber(gasLimit * gasPrice),
+    });
   }
 
   reloadTxs(wallet) {
@@ -197,9 +214,15 @@ class WalletDetailView extends Component {
               <FormLabel>Amount</FormLabel>
               <FormInput
                 inputStyle={{ width: '100%' }}
-                placeholder="0"
+                placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
                 onChangeText={(text) => this.setState({ sendAmount: Number(text) })}
+                onFocus={() => {
+                  this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(4)}` });
+                }}
+                onBlur={() => {
+                  this.setState({ amountPlaceHolder: '0' });
+                }}
               />
               {
                 this.state.sendAmountErrorMessage &&
@@ -220,6 +243,21 @@ class WalletDetailView extends Component {
                   {this.state.sendPasswordErrorMessage}
                 </FormValidationMessage>
               }
+              <FormLabel>Gas Fee: {this.state.gasFee.toFixed(8)} eth</FormLabel>
+              <Row style={{ alignItems: 'stretch', justifyContent: 'center' }}>
+                <Slider
+                  style={{ width: '88%', marginTop: 12 }}
+                  value={this.state.value}
+                  step={0.01}
+                  minimumTrackTintColor="#5589FF"
+                  thumbTintColor="#5589FF"
+                  onValueChange={(value) => {
+                    if (isNaN(value)) { return; }
+                    this.calcuateGasFee(value * 100000);
+                    this.setState({ value });
+                  }}
+                />
+              </Row>
               <View
                 style={{
                   padding: 10,
@@ -243,7 +281,7 @@ class WalletDetailView extends Component {
                     // address validation
                     if (!EthereumService.getInstance().isValidateAddress(_.state.sendAddress)) {
                       isValidate = false;
-                      _.setState({ sendAddressErrorMessage: 'Invalidate address' });
+                      _.setState({ sendAddressErrorMessage: 'Invalid address' });
                     } else {
                       _.setState({ sendAddressErrorMessage: null });
                     }
@@ -260,7 +298,7 @@ class WalletDetailView extends Component {
                     const privateKey = await WalletService.getInstance().getSeed(_.state.password);
                     if (!privateKey) {
                       isValidate = false;
-                      _.setState({ sendPasswordErrorMessage: 'Wrong password' });
+                      _.setState({ sendPasswordErrorMessage: 'Invalid password' });
                     } else {
                       _.setState({ sendPasswordErrorMessage: null });
                     }
