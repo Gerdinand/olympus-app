@@ -9,6 +9,7 @@ import {
   Alert,
   Image,
   Linking,
+  DeviceEventEmitter,
 } from 'react-native';
 import {
   List,
@@ -24,7 +25,6 @@ import {
 import { Text, Row } from '../Controls';
 // import Icon from 'react-native-vector-icons/Feather';
 import ActionSheet from 'react-native-actionsheet';
-import Toast from 'react-native-simple-toast';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
 import Moment from 'moment';
@@ -389,7 +389,7 @@ class WalletDetailView extends Component {
           onClose={(message) => {
             this.setState({ receiveModalVisible: false });
             if (message) {
-              Toast.show(message);
+              DeviceEventEmitter.emit('showToast', message);
             }
           }}
         />
