@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   ScrollView,
   RefreshControl,
+  DeviceEventEmitter,
 } from 'react-native';
 import {
   List,
@@ -13,7 +14,6 @@ import {
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
 import { WalletService, EthereumService } from '../Services';
-import Toast from 'react-native-simple-toast';
 import PropTypes from 'prop-types';
 
 class WalletView extends Component {
@@ -38,7 +38,7 @@ class WalletView extends Component {
     let _ = this;
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
       if (_.state.wallet.length && wallet.txs.length != _.state.wallet.length) {
-        Toast.show('New transaction confirmed.');
+        DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');
       }
       _.setState({ wallet, refreshing: false });
     });

@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  DeviceEventEmitter,
 } from 'react-native';
 import {
   Text,
@@ -11,7 +12,6 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Row } from '../Controls/index';
 import { AddressModal } from '../Components';
-import Toast from 'react-native-simple-toast';
 
 let styles = StyleSheet.create({
   container: {
@@ -98,7 +98,7 @@ export class WalletHeader extends Component {
           onClose={(message) => {
             this.setState({ modalVisible: false });
             if (message) {
-              Toast.show(message);
+              DeviceEventEmitter.emit('showToast', message);
             }
           }}
         />
