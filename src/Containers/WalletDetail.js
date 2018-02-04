@@ -7,7 +7,9 @@ import {
   ScrollView,
   Modal,
   Alert,
+  Image,
   FlatList,
+  Dimensions,
 } from 'react-native';
 import {
   List,
@@ -172,7 +174,10 @@ class WalletDetailView extends Component {
           onRequestClose={() => { this.setState({ sendModalVisible: false }); }}
         >
           <View style={styles.modelContainer}>
-            <Card title="SEND">
+            <Card
+              title={`SEND ${this.state.token.symbol}`}
+            >
+              <Image source={{ uri: this.state.token.icon }} style={styles.icon} />
               <FormLabel>To</FormLabel>
               <FormInput
                 multiline
@@ -585,7 +590,7 @@ class WalletDetailView extends Component {
           cancelButtonIndex={this.state.cancelButtonIndex}
           onPress={this.handlePress.bind(this)}
         />
-      </ScrollView>
+      </ScrollView >
     );
   }
 }
@@ -633,6 +638,13 @@ const styles = StyleSheet.create({
   modalCloseButton: {
     marginTop: 15,
     backgroundColor: 'transparent',
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
 });
 
