@@ -287,6 +287,7 @@ class WalletDetailView extends Component {
                 <Button
                   title={'Send'}
                   buttonStyle={styles.modalSendButton}
+                  //raised={true}
                   disabled={this.state.sendButtonDisable}
                   onPress={async () => {
                     console.log('send action');
