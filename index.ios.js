@@ -108,8 +108,8 @@ export default class Olympus extends Component {
     return (
       <View style={{ flex: 1, zIndex: 100 }}>
         {this.state.loading && <View />}
-        {this.state.hasWallet && <Root />}
-        {!this.state.hasWallet && <Welcome />}
+        {!this.state.loading && this.state.hasWallet && <Root />}
+        {!this.state.loading && !this.state.hasWallet && <Welcome />}
         <Toast ref="toast" />
       </View>
     );
