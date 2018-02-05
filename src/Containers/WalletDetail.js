@@ -35,7 +35,7 @@ import { AddressModal } from '../Components';
 import Constants from '../Services/Constants';
 import { toEtherNumber } from '../Utils';
 
-const minBalance=0.1;
+const minBalance = 0.1;
 
 class WalletDetailView extends Component {
   static propTypes = {
@@ -84,7 +84,7 @@ class WalletDetailView extends Component {
     };
 
     this.scanner = null;
-    
+
     // bind methods
     this.reloadTxs = this.reloadTxs.bind(this);
   }
@@ -116,8 +116,8 @@ class WalletDetailView extends Component {
   reloadTxs(wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
     let ETHBalance;
-    wallet.tokens.map(toekn=>{
-      if(toekn.address=='0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'){
+    wallet.tokens.map(toekn => {
+      if (toekn.address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
         ETHBalance = toekn.balance;
       }
     });
@@ -131,7 +131,7 @@ class WalletDetailView extends Component {
         && (typeof tx.input === 'object')
         && (tx.input.srcToken.symbol === token.symbol || tx.input.destToken.symbol === token.symbol);
     });
-    console.log(3333,ETHBalance);
+    console.log(3333, ETHBalance);
     this.setState({ token, txs, ETHBalance, pendingTxHash: wallet.pendingTxHash });
   }
 
@@ -175,7 +175,8 @@ class WalletDetailView extends Component {
           animationType={'fade'}
           transparent={true}
           visible={this.state.scanModalVisible}
-          onRequestClose={() => { this.setState({ scanModalVisible: false }); }}
+          onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
+          onRequestClose={() => { this.setState({ scanModalVisible: false, amountPlaceHolder: '0' }); }}
         >
           <View style={styles.modelContainer}>
             <Card title="SCAN">
@@ -210,7 +211,8 @@ class WalletDetailView extends Component {
           animationType={'fade'}
           transparent={true}
           visible={this.state.sendModalVisible}
-          onRequestClose={() => { this.setState({ sendModalVisible: false }); }}
+          onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
+          onRequestClose={() => { this.setState({ sendModalVisible: false, amountPlaceHolder: '0' }); }}
         >
           <ScrollView style={styles.modelContainer} keyboardShouldPersistTaps={'handled'}>
             <Card
@@ -262,7 +264,7 @@ class WalletDetailView extends Component {
                   {this.state.sendPasswordErrorMessage}
                 </FormValidationMessage>
               }
-              <FormLabel>Gas Fee: {this.state.gasFee.toFixed(8)} eth</FormLabel>
+              <FormLabel>Gas Fee (est.): {this.state.gasFee.toFixed(8)} eth</FormLabel>
               <Row style={{ alignItems: 'stretch', justifyContent: 'center' }}>
                 <Slider
                   style={{ width: '88%', marginTop: 12 }}
@@ -416,14 +418,15 @@ class WalletDetailView extends Component {
           animationType={'fade'}
           transparent={true}
           visible={this.state.exchangeModalVisible}
-          onRequestClose={() => { this.setState({ exchangeModalVisible: false }); }}
+          onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
+          onRequestClose={() => { this.setState({ exchangeModalVisible: false, amountPlaceHolder: '0' }); }}
         >
           <View style={styles.modelContainer}>
             <Card title={this.state.exchangeType == 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
               <FormLabel>Exchange</FormLabel>
               <FormInput
                 inputStyle={{ width: '100%' }}
-                placeholder="Amount to exchange"
+                placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
                 onChangeText={(text) => {
                   const sourceAmount = Number(text);
@@ -437,6 +440,13 @@ class WalletDetailView extends Component {
                   destAmount = destAmount.toFixed(4);
 
                   this.setState({ sourceAmount, destAmount });
+                }}
+                onFocus={() => {
+                  const balance = this.state.exchangeType == 'BID' ? this.state.ETHBalance : this.state.token.balance;
+                  this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(4)}` });
+                }}
+                onBlur={() => {
+                  this.setState({ amountPlaceHolder: '0' });
                 }}
               />
               {
@@ -576,22 +586,22 @@ class WalletDetailView extends Component {
             textStyle={{ fontSize: 13 }}
             onPress={(selectedIndex) => {
               if (0 == selectedIndex) {
-                if(_.state.ETHBalance<minBalance){
+                if (_.state.ETHBalance < minBalance) {
                   return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
                 }
-                else if(_.state.token.balance<=0){
+                else if (_.state.token.balance <= 0) {
                   return DeviceEventEmitter.emit('showToast', `your balance in ${_.state.token.symbol} is insufficient`);
                 }
-                else{
+                else {
                   this.onSend();
                 }
               } else if (1 == selectedIndex) {
                 this.onReceive();
               } else if (2 == selectedIndex) {
-                if(_.state.ETHBalance<minBalance){
+                if (_.state.ETHBalance < minBalance) {
                   return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
                 }
-                else{
+                else {
                   this.onExchange();
                 }
               }
@@ -608,47 +618,12 @@ class WalletDetailView extends Component {
               subtitle={'wait for a minute'}
             />
           }
-          {/* {
-            <FlatList
-              data={this.state.txs}
-              keyExtractor={(x, i) => i}
-              renderItem={({ item }) => {
-                const isSending = item.from == this.state.token.ownerAddress;
-                return (
-                  <Row style={styles.itemContainer}>
-                    <Icon
-                      name={isSending ? 'corner-up-left' : 'corner-down-right'}
-                      size={24}
-                      color={'gray'}
-                    />
-                    <View>
-                      <Text style={styles.truncatedText}>
-                        {isSending ? item.to : item.from}
-                      </Text>
-                      <Text>
-                        {Moment(Number(`${item.timeStamp}000`)).fromNow()}
-                      </Text>
-                    </View>
-                    <View>
-                      <Text>
-                        {(isSending ? '-' : '') +
-                          (new BigNumber(item.value)).div(1000000000000000000).toString()}
-                      </Text>
-                      <Text>
-                        {`${(new BigNumber(item.cumulativeGasUsed)).div(1000000).toString()}ETH`}
-                      </Text>
-                    </View>
-                  </Row>);
-              }}
-            />
-          } */}
           {
             this.state.txs.map((l, i) => {
               let isSending;
               let amount;
               let tokenAmount;
               let gasFee;
-              debugger;
 
               if (l.logs && l.logs.length > 0) {
                 console.log(l);
@@ -677,9 +652,9 @@ class WalletDetailView extends Component {
               } else {
                 isSending = l.from === this.state.token.ownerAddress;
                 tokenAmount = l.value;
-                
+
               }
-              gasFee=(new BigNumber((l.gasPrice*l.gasUsed))).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
+              gasFee = (new BigNumber((l.gasPrice * l.gasUsed))).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
               console.log(gasFee);
               amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
               const dest = this.formatAddress(isSending ? l.to : l.from);
@@ -698,7 +673,7 @@ class WalletDetailView extends Component {
                   key={i}
                   title={dest}
                   subtitle={time}
-                  rightTitle={`${direction}${amount} ${this.state.token.symbol}`}
+                  rightTitle={`${direction}${amount}`}
                   rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
                   onPress={() => {
                     Linking.openURL(`https://ropsten.etherscan.io/tx/${l.hash}`);
