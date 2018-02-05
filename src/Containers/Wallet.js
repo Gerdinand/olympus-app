@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   ScrollView,
   RefreshControl,
+  DeviceEventEmitter,
 } from 'react-native';
 import {
   List,
@@ -13,7 +14,6 @@ import {
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletHeader } from '../Components';
 import { WalletService, EthereumService } from '../Services';
-import Toast from '@remobile/react-native-toast';
 import PropTypes from 'prop-types';
 
 class WalletView extends Component {
@@ -37,8 +37,8 @@ class WalletView extends Component {
   componentWillMount() {
     let _ = this;
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
-      if (wallet.txs.length != _.state.wallet.length) {
-        Toast.showShortTop.bind(null, 'New transaction confirmed.');
+      if (_.state.wallet.length && wallet.txs.length != _.state.wallet.length) {
+        DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');
       }
       _.setState({ wallet, refreshing: false });
     });
@@ -89,6 +89,7 @@ class WalletView extends Component {
                 roundAvatar
                 hideChevron={true}
                 avatar={{ uri: t.icon }}
+                avatarStyle={{ backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.5, padding: 2 }}
                 key={i}
                 title={t.symbol}
                 subtitle={t.name}

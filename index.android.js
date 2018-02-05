@@ -1,57 +1,149 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+'use strict';
 
-/* import React, { Component } from 'react';
+import React, { Component } from 'react';
 import {
   AppRegistry,
-  StyleSheet,
-  Text,
   View,
+  Image,
+  AsyncStorage,
+  DeviceEventEmitter,
 } from 'react-native';
 
+import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { EventRegister } from 'react-native-event-listeners';
+
+import { WalletTab, MarketTab, MeTab } from './src/Tabs';
+import { Welcome } from './src/Containers';
+import { WalletService } from './src/Services';
+import Toast, { DURATION } from 'react-native-easy-toast';
+
+const Root = TabNavigator(
+  {
+    WalletTab: {
+      screen: WalletTab,
+      path: '/wallet',
+      navigationOptions: {
+        tabBarLabel: 'Wallet',
+        title: 'Wallet',
+        tabBarIcon: ({ tintColor }) => (
+          <Image source={require('./images/wallet.png')} style={{ tintColor }} />
+        ),
+      },
+    },
+    MarketTab: {
+      screen: MarketTab,
+      path: '/market',
+      navigationOptions: {
+        tabBarLabel: 'Market',
+        title: 'Market',
+        tabBarIcon: ({ tintColor }) => (
+          <Image source={require('./images/market.png')} style={{ tintColor }} />
+        ),
+      },
+    },
+    MeTab: {
+      screen: MeTab,
+      path: '/me',
+      navigationOptions: {
+        tabBarLabel: 'Me',
+        tabBarIcon: ({ tintColor }) => (
+          <Image source={require('./images/me.png')} style={{ tintColor }} />
+        ),
+      },
+
+    },
+  },
+  {
+    tabBarPosition: 'bottom',
+    tabBarComponent: TabBarBottom,
+    initialRouteName: 'WalletTab',
+    animationEnabled: false,
+    swipeEnabled: true,
+    tabBarOptions: {
+      showIcon: true,
+      activeTintColor: 'rgb(89,139,246)',
+      inactiveTintColor: 'rgb(145,145,145)',
+      indicatorStyle: {
+        height: 0
+      },
+      iconStyle: {
+        marginTop: -2,
+      },
+      labelStyle: {
+        marginTop: 4,
+      },
+      style: {
+        backgroundColor: '#fff',
+        height: 54,
+      },
+      //activeTintColor: '#5589FF',
+    },
+  }
+);
+
 export default class Olympus extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true,
+      hasWallet: false,
+    };
+  }
+
+  componentWillMount() {
+    this.loadingWallet();
+    this.listener = EventRegister.addEventListener('hasWallet', (data) => {
+      console.log('[event] hasWallet');
+      this.setState({
+        hasWallet: data,
+      });
+    });
+  }
+
+  componentDidMount() {
+    this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
+      this.refs.toast.show(text, DURATION.LENGTH_LONG);
+    });
+  }
+
+  componentWillUnmount() {
+    EventRegister.removeEventListener(this.listener);
+    if (this.toastListener) {
+      this.toastListener.remove();
+    }
+  }
+
+  async loadingWallet() {
+    const isUsed = await AsyncStorage.getItem('used');
+    if (isUsed) {
+      const wallet = await WalletService.getInstance().getActiveWallet();
+      this.setState({ loading: false, hasWallet: wallet != null });
+    } else {
+      this.setState({ loading: false, hasWallet: null });
+    }
+  }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
+    if (this.state.loading) {
+      return <View />;
+    }
+
+    if (!this.state.hasWallet) {
+      return (<Welcome />);
+    } else {
+      return (
+        <View style={{ flex: 1, zIndex: 100 }}>
+          <Toast ref="toast" />
+          <Root />
+        </View>
+      );
+    }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
-
-AppRegistry.registerComponent('Olympus', () => Olympus); */
-'use strict';
+AppRegistry.registerComponent('Olympus', () => Olympus);
+/* 'use strict';
 
 import React, { Component } from 'react';
 import {
@@ -162,6 +254,6 @@ export default class Olympus extends Component {
       return (<Root />);
     }
   }
-}
+} 
 
-AppRegistry.registerComponent('Olympus', () => Olympus);
+AppRegistry.registerComponent('Olympus', () => Olympus);*/

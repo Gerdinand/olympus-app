@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, ViewPropTypes } from 'react-native';
+import { View, ViewPropTypes, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 
 export class Row extends PureComponent {
@@ -10,6 +10,7 @@ export class Row extends PureComponent {
     alignSelf: PropTypes.string,
     viewProps: ViewPropTypes,
     children: PropTypes.node,
+    onPress: PropTypes.func,
   };
 
   constructor(props) {
@@ -17,8 +18,10 @@ export class Row extends PureComponent {
   }
 
   render() {
+    const Tag = this.props.onPress ? TouchableOpacity : View;
     return (
-      <View
+      <Tag
+        onPress={this.props.onPress ? this.props.onPress.bind(this, arguments) : {}}
         style={[
           this.props.style,
           { flexDirection: 'row' }, // A row is a row anyway
@@ -29,7 +32,7 @@ export class Row extends PureComponent {
         {...this.props.viewProps}
       >
         {this.props.children}
-      </View>
+      </Tag>
     );
   }
 }

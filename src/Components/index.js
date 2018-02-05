@@ -1,3 +1,4 @@
 'use strict';
 
-export { default as WalletHeader } from './WalletHeader';
+export * from './WalletHeader';
+export * from './AddressModal';

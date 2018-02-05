@@ -6,6 +6,7 @@ import {
   View,
   Image,
   AsyncStorage,
+  DeviceEventEmitter,
 } from 'react-native';
 
 import { TabNavigator } from 'react-navigation';
@@ -14,6 +15,7 @@ import { EventRegister } from 'react-native-event-listeners';
 import { WalletTab, MarketTab, MeTab } from './src/Tabs';
 import { Welcome } from './src/Containers';
 import { WalletService } from './src/Services';
+import Toast, { DURATION } from 'react-native-easy-toast';
 
 const Root = TabNavigator(
   {
@@ -79,8 +81,17 @@ export default class Olympus extends Component {
     });
   }
 
+  componentDidMount() {
+    this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
+      this.refs.toast.show(text, DURATION.LENGTH_LONG);
+    });
+  }
+
   componentWillUnmount() {
     EventRegister.removeEventListener(this.listener);
+    if (this.toastListener) {
+      this.toastListener.remove();
+    }
   }
 
   async loadingWallet() {
@@ -101,7 +112,12 @@ export default class Olympus extends Component {
     if (!this.state.hasWallet) {
       return (<Welcome />);
     } else {
-      return (<Root />);
+      return (
+        <View style={{ flex: 1, zIndex: 100 }}>
+          <Toast ref="toast" />
+          <Root />
+        </View>
+      );
     }
   }
 }
