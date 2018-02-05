@@ -4,10 +4,14 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  DeviceEventEmitter,
 } from 'react-native';
 import {
   Text,
 } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Row } from '../Controls/index';
+import { AddressModal } from '../Components';
 
 let styles = StyleSheet.create({
   container: {
@@ -31,7 +35,7 @@ let styles = StyleSheet.create({
     fontSize: 13,
     color: 'white',
     marginLeft: 15,
-    marginRight: 15,
+    marginRight: 5,
     marginTop: 6,
   },
   tips: {
@@ -46,9 +50,12 @@ let styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: 6,
   },
+  icon: {
+    alignSelf: 'flex-end',
+  },
 });
 
-class WalletHeader extends Component {
+export class WalletHeader extends Component {
 
   static propTypes = {
     name: React.PropTypes.string.isRequired,
@@ -59,19 +66,44 @@ class WalletHeader extends Component {
     ]).isRequired,
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalVisible: false,
+    };
+  }
+
   render() {
     const { name, address, balance } = this.props;
     return (
       <View style={{ backgroundColor: 'transparent' }}>
         <View style={styles.container}>
           <Text style={styles.name}>{name}</Text>
-          <Text style={styles.address}>{address}</Text>
+          <Row
+            onPress={() => { this.setState({ modalVisible: true }); }}
+          >
+            <Text style={styles.address}> {address}</Text>
+            <Icon name="qrcode" color="white" size={22}
+              style={styles.icon}
+            />
+          </Row>
           <Text style={styles.tips}>BALANCE</Text>
           <Text style={styles.assets}>{balance}</Text>
         </View>
-      </View>
+
+        <AddressModal
+          title={'My Address'}
+          visible={this.state.modalVisible}
+          address={address}
+          onClose={(message) => {
+            this.setState({ modalVisible: false });
+            if (message) {
+              DeviceEventEmitter.emit('showToast', message);
+            }
+          }}
+        />
+      </View >
     );
   }
 }
 
-export default WalletHeader;

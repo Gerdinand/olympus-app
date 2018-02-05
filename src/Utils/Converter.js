@@ -57,6 +57,15 @@ export function toEther(number) {
   }
 }
 
+export function toEtherNumber(number) {
+  let bigNumber = new BigNumber(number);
+  if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
+    return 0;
+  } else {
+    return bigNumber.dividedBy(1000000000000000000);
+  }
+}
+
 export function gweiToWei(number) {
   let bigNumber = new BigNumber(number);
   if (bigNumber == 'NaN' || bigNumber == 'Infinity') {

@@ -6,10 +6,10 @@ import {
   View,
   ScrollView,
   Modal,
-  Clipboard,
-  //ActionSheetIOS,
   Alert,
-  FlatList,
+  Image,
+  Linking,
+  DeviceEventEmitter,
 } from 'react-native';
 import {
   List,
@@ -20,18 +20,20 @@ import {
   FormLabel,
   FormInput,
   FormValidationMessage,
+  Slider,
 } from 'react-native-elements';
 import { Text, Row } from '../Controls';
-import Icon from 'react-native-vector-icons/Feather';
+// import Icon from 'react-native-vector-icons/Feather';
 import ActionSheet from 'react-native-actionsheet';
-
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
 import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
-import QRCode from 'react-native-qrcode';
 import { EthereumService, WalletService } from '../Services';
 import PropTypes from 'prop-types';
+import { AddressModal } from '../Components';
+import Constants from '../Services/Constants';
+import { toEtherNumber } from '../Utils';
 
 class WalletDetailView extends Component {
   static propTypes = {
@@ -49,8 +51,11 @@ class WalletDetailView extends Component {
     super(props);
 
     this.state = {
-      options:[],
-      cancelButtonIndex:0,
+      value: 0.21,
+      amountPlaceHolder: '0',
+      gasFee: 0,
+      options: [],
+      cancelButtonIndex: 0,
       sendModalVisible: false,
       scanModalVisible: false,
       receiveModalVisible: false,
@@ -84,15 +89,39 @@ class WalletDetailView extends Component {
   componentWillMount() {
     this.walletListener = EventRegister.addEventListener('wallet.updated', this.reloadTxs);
     this.reloadTxs(WalletService.getInstance().wallet);
+    this.setState({
+      options: [`ETH -> ${this.state.token.symbol}`, `${this.state.token.symbol} -> ETH`, 'Cancel'],
+      cancelButtonIndex: 2,
+    });
+  }
+
+  async componentDidMount() {
+    await this.calcuateGasFee();
   }
 
   componentWillUnmount() {
     EventRegister.removeEventListener(this.walletListener);
   }
 
+  async calcuateGasFee(gasLimit = Constants.GAS_LIMIT) {
+    const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => { });
+    this.setState({
+      gasFee: toEtherNumber(gasLimit * gasPrice),
+    });
+  }
+
   reloadTxs(wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
-    const txs = wallet.txs.filter((tx) => tx.from === token.ownerAddress || tx.to === token.ownerAddress);
+    const txs = wallet.txs.filter((tx) => {
+      if (this.state.token.address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
+        // ETH shows all trading history
+        return tx.from === token.ownerAddress || tx.to === token.ownerAddress;
+      }
+
+      return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
+        && (typeof tx.input === 'object')
+        && (tx.input.srcToken.symbol === token.symbol || tx.input.destToken.symbol === token.symbol);
+    });
     this.setState({ token, txs, pendingTxHash: wallet.pendingTxHash });
   }
 
@@ -111,22 +140,7 @@ class WalletDetailView extends Component {
       return;
     }
 
-    let _ = this;
-    _.setState({
-      options:['ETH -> ' + _.state.token.symbol, _.state.token.symbol + ' -> ETH', 'Cancel'],
-      cancelButtonIndex: 2,
-    });
-    _.ActionSheet.show();
-    /* ActionSheetIOS.showActionSheetWithOptions({
-      options: [`ETH -> ${_.state.token.symbol}`, `${_.state.token.symbol} -> ETH`, 'Cancel'],
-      cancelButtonIndex: 2,
-    }, (buttonIndex) => {
-      if (0 == buttonIndex) {
-        _.setState({ exchangeType: 'BID', exchangeModalVisible: true });
-      } else if (1 == buttonIndex) {
-        _.setState({ exchangeType: 'ASK', exchangeModalVisible: true });
-      }
-    }); */
+    this.ActionSheet.show();
   }
 
   handlePress(buttonIndex) {
@@ -138,11 +152,15 @@ class WalletDetailView extends Component {
     }
   }
 
+  formatAddress(address) {
+    return address.replace(/(0x.{6}).{29}/, '$1****');
+  }
+
   render() {
     let _ = this;
 
     return (
-      <ScrollView style={{ backgroundColor: 'white' }}>
+      <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
         <Modal
           animationType={'fade'}
           transparent={true}
@@ -185,7 +203,10 @@ class WalletDetailView extends Component {
           onRequestClose={() => { this.setState({ sendModalVisible: false }); }}
         >
           <View style={styles.modelContainer}>
-            <Card title="SEND">
+            <Card
+              title={`SEND ${this.state.token.symbol}`}
+            >
+              <Image source={{ uri: this.state.token.icon }} style={styles.icon} />
               <FormLabel>To</FormLabel>
               <FormInput
                 multiline
@@ -202,9 +223,15 @@ class WalletDetailView extends Component {
               <FormLabel>Amount</FormLabel>
               <FormInput
                 inputStyle={{ width: '100%' }}
-                placeholder="0"
+                placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
                 onChangeText={(text) => this.setState({ sendAmount: Number(text) })}
+                onFocus={() => {
+                  this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(4)}` });
+                }}
+                onBlur={() => {
+                  this.setState({ amountPlaceHolder: '0' });
+                }}
               />
               {
                 this.state.sendAmountErrorMessage &&
@@ -225,14 +252,30 @@ class WalletDetailView extends Component {
                   {this.state.sendPasswordErrorMessage}
                 </FormValidationMessage>
               }
-              <View style={{
-                padding: 10,
-              }}
+              <FormLabel>Gas Fee: {this.state.gasFee.toFixed(8)} eth</FormLabel>
+              <Row style={{ alignItems: 'stretch', justifyContent: 'center' }}>
+                <Slider
+                  style={{ width: '88%', marginTop: 12 }}
+                  value={this.state.value}
+                  step={0.01}
+                  minimumTrackTintColor="#5589FF"
+                  thumbTintColor="#5589FF"
+                  onValueChange={(value) => {
+                    if (isNaN(value)) { return; }
+                    this.calcuateGasFee(value * 100000);
+                    this.setState({ value });
+                  }}
+                />
+              </Row>
+              <View
+                style={{
+                  padding: 10,
+                }}
               >
                 <Button
                   title={'Send'}
                   buttonStyle={styles.modalSendButton}
-                  raised
+                  // raised={true}
                   disabled={this.state.sendButtonDisable}
                   onPress={async () => {
                     console.log('send action');
@@ -247,7 +290,7 @@ class WalletDetailView extends Component {
                     // address validation
                     if (!EthereumService.getInstance().isValidateAddress(_.state.sendAddress)) {
                       isValidate = false;
-                      _.setState({ sendAddressErrorMessage: 'Invalidate address' });
+                      _.setState({ sendAddressErrorMessage: 'Invalid address' });
                     } else {
                       _.setState({ sendAddressErrorMessage: null });
                     }
@@ -255,7 +298,7 @@ class WalletDetailView extends Component {
                     // amount validation
                     if (_.state.token.balance < _.state.sendAmount || _.state.sendAmount == 0) {
                       isValidate = false;
-                      _.setState({ sendAmountErrorMessage: 'Wrong amount' });
+                      _.setState({ sendAmountErrorMessage: 'Insufficient balance' });
                     } else {
                       _.setState({ sendAmountErrorMessage: null });
                     }
@@ -264,7 +307,7 @@ class WalletDetailView extends Component {
                     const privateKey = await WalletService.getInstance().getSeed(_.state.password);
                     if (!privateKey) {
                       isValidate = false;
-                      _.setState({ sendPasswordErrorMessage: 'Wrong password' });
+                      _.setState({ sendPasswordErrorMessage: 'Invalid password' });
                     } else {
                       _.setState({ sendPasswordErrorMessage: null });
                     }
@@ -348,47 +391,17 @@ class WalletDetailView extends Component {
           </View>
         </Modal>
 
-        <Modal
-          animationType={'fade'}
-          transparent={true}
+        <AddressModal
+          title={'RECEIVE'}
           visible={this.state.receiveModalVisible}
-          onRequestClose={() => { this.setState({ receiveModalVisible: false }); }}
-        >
-          <View style={styles.modelContainer}>
-            <Card title="RECEIVE">
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <View style={{ flex: 1, maxWidth: 200, flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <QRCode
-                    value={this.state.token.ownerAddress}
-                    size={200}
-                    bgColor="black"
-                    fgColor="white"
-                  />
-                </View>
-              </View>
-              <Text style={{ color: 'black', fontSize: 12, textAlign: 'center', marginTop: 15 }}>{this.state.token.ownerAddress}</Text>
-              <View style={{
-                padding: 10,
-              }}
-              >
-                <Button
-                  title={'Copy address'}
-                  buttonStyle={styles.modalSendButton}
-                  raised
-                  onPress={() => {
-                    Clipboard.setString(this.state.token.ownerAddress);
-                    this.setState({ receiveModalVisible: false });
-                  }}
-                />
-                <Button buttonStyle={styles.modalCloseButton}
-                  title={'Cancel'}
-                  onPress={() => { this.setState({ receiveModalVisible: false }); }}
-                  color={'#4A4A4A'}
-                />
-              </View>
-            </Card>
-          </View>
-        </Modal>
+          address={this.state.token.ownerAddress}
+          onClose={(message) => {
+            this.setState({ receiveModalVisible: false });
+            if (message) {
+              DeviceEventEmitter.emit('showToast', message);
+            }
+          }}
+        />
 
         <Modal
           animationType={'fade'}
@@ -548,7 +561,7 @@ class WalletDetailView extends Component {
 
         <Card style={{ backgroundColor: 'transparent' }}>
           <Text style={styles.name}>{this.state.token.symbol}</Text>
-          <Text style={styles.balance}>{this.state.token.balance.toFixed(5)}</Text>
+          <Text style={styles.balance}>{this.state.token.balance.toFixed(6)}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup
@@ -574,7 +587,7 @@ class WalletDetailView extends Component {
               subtitle={'wait for a minute'}
             />
           }
-          {
+          {/* {
             <FlatList
               data={this.state.txs}
               keyExtractor={(x, i) => i}
@@ -607,37 +620,80 @@ class WalletDetailView extends Component {
                   </Row>);
               }}
             />
+          } */}
+          {
+            this.state.txs.map((l, i) => {
+              let isSending;
+              let amount;
+              let tokenAmount;
+              debugger;
+
+              if (l.logs && l.logs.length > 0) {
+                console.log(l);
+                const ethReceival = l.logs.find((log) => log.name === 'EtherReceival');
+                const trade = l.logs.find((log) => log.name === 'Trade');
+                const isETH = this.state.token.symbol === 'ETH';
+
+                if (ethReceival) {
+                  if (isETH) {
+                    isSending = false;
+                    tokenAmount = ethReceival.events.find((evt) => evt.name === 'amount').value;
+                  } else {
+                    isSending = true;
+                    tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
+                  }
+                } else if (trade) {
+                  let key;
+                  if (isETH) {
+                    isSending = l.input.srcToken.symbol === 'ETH';
+                  } else {
+                    isSending = l.input.srcToken.symbol === this.state.token.symbol;
+                  }
+                  key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
+                  tokenAmount = trade.events.find((evt) => evt.name === key).value;
+                }
+              } else {
+                isSending = l.from === this.state.token.ownerAddress;
+                tokenAmount = l.value;
+              }
+              amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
+              const dest = this.formatAddress(isSending ? l.to : l.from);
+              const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
+              let direction = isSending ? '-' : '+';
+
+              return (
+                <ListItem
+                  roundAvatar
+                  leftIcon={{
+                    name: isSending ? 'arrow-top-right' : 'arrow-bottom-right',
+                    type: 'material-community',
+                    color: 'rgb(89,139,246)',
+                  }}
+                  leftIconUnderlayColor="red"
+                  key={i}
+                  title={dest}
+                  subtitle={time}
+                  rightTitle={`${direction}${amount} ${this.state.token.symbol}`}
+                  rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
+                  onPress={() => {
+                    Linking.openURL(`https://ropsten.etherscan.io/tx/${l.hash}`);
+                  }}
+                />);
+            })
           }
-          {/* {
-						this.state.txs.map((l, i) => (
-							<ListItem
-								hideChevron={true}
-								key={i}
-								title={(l.from == this.state.token.ownerAddress) ? "SENT" : "RECEIVED"}
-								subtitle={(l.from == this.state.token.ownerAddress) ? l.to : l.from}
-								rightTitle={(new BigNumber(l.value)).div(1000000000000000000).toString()}
-								rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A' }}
-							/>
-						))
-					} */}
         </List>
         <ActionSheet
           ref={o => this.ActionSheet = o}
           options={this.state.options}
-          cancelButtonIndex={this.state.cancelButtonIndex }
+          cancelButtonIndex={this.state.cancelButtonIndex}
           onPress={this.handlePress.bind(this)}
         />
-      </ScrollView>
+      </ScrollView >
     );
   }
 }
 
 const styles = StyleSheet.create({
-  modelContainer: {
-    flex: 1,
-    paddingTop: 40,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
   name: {
     fontSize: 30,
     color: '#4A4A4A',
@@ -661,6 +717,18 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: 6,
   },
+  itemContainer: {
+    flexDirection: 'row',
+    height: 60,
+  },
+  truncatedText: {
+    maxWidth: 240,
+  },
+  modelContainer: {
+    flex: 1,
+    paddingTop: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
   modalSendButton: {
     marginTop: 30,
     backgroundColor: '#5589FF',
@@ -669,12 +737,12 @@ const styles = StyleSheet.create({
     marginTop: 15,
     backgroundColor: 'transparent',
   },
-  itemContainer: {
-    flexDirection: 'row',
-    height: 60,
-  },
-  truncatedText: {
-    maxWidth: 240,
+  icon: {
+    width: 24,
+    height: 24,
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
 });
 

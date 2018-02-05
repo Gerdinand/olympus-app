@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   View,
   AsyncStorage,
+  ScrollView,
 } from 'react-native';
 import {
   FormLabel,
@@ -59,7 +60,7 @@ class CreateWalletView extends Component {
 
   render() {
     return (
-      <View>
+      <ScrollView keyboardShouldPersistTaps={'handled'}>
         <FormLabel>Wallet Name</FormLabel>
         <FormInput
           placeholder="Give your wallet a name"
@@ -119,7 +120,7 @@ class CreateWalletView extends Component {
             }}
           />
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }
