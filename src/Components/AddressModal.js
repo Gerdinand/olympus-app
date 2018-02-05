@@ -60,7 +60,6 @@ export class AddressModal extends React.PureComponent {
               <Button
                 title={'Copy address'}
                 buttonStyle={styles.modalSendButton}
-                raised
                 onPress={() => {
                   Clipboard.setString(this.props.address);
                   this.close('Address copied to clipboard.');

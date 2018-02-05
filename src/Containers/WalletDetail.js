@@ -275,7 +275,6 @@ class WalletDetailView extends Component {
                 <Button
                   title={'Send'}
                   buttonStyle={styles.modalSendButton}
-                  // raised={true}
                   disabled={this.state.sendButtonDisable}
                   onPress={async () => {
                     console.log('send action');
@@ -457,7 +456,6 @@ class WalletDetailView extends Component {
                 <Button
                   title={'Trade'}
                   buttonStyle={styles.modalSendButton}
-                  raised
                   disabled={this.state.tradeButtonDisable}
                   onPress={async () => {
                     console.log('trade action');
