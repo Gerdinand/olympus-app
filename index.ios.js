@@ -114,8 +114,8 @@ export default class Olympus extends Component {
     } else {
       return (
         <View style={{ flex: 1, zIndex: 100 }}>
-          <Toast ref="toast" />
           <Root />
+          <Toast ref="toast" />          
         </View>
       );
     }

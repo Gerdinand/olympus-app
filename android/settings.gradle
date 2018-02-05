@@ -17,7 +17,5 @@ include ':react-native-fast-crypto'
 project(':react-native-fast-crypto').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fast-crypto/android')
 include ':react-native-camera'
 project(':react-native-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera/android')
-include ':@remobile/react-native-toast'
-project(':@remobile/react-native-toast').projectDir = new File(rootProject.projectDir, '../node_modules/@remobile/react-native-toast/android')
 
 include ':app'

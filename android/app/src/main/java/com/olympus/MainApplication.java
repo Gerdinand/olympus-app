@@ -11,7 +11,6 @@ import com.peel.react.rnos.RNOSModule;
 import com.oblador.keychain.KeychainPackage;
 import co.airbitz.fastcrypto.RNFastCryptoPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
-import com.remobile.toast.RCTToastPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -39,8 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNOSModule(),
             new KeychainPackage(),
             new RNFastCryptoPackage(),
-            new RCTCameraPackage(),
-            new RCTToastPackage()
+            new RCTCameraPackage()
       );
     }
   };
