@@ -35,6 +35,8 @@ import { AddressModal } from '../Components';
 import Constants from '../Services/Constants';
 import { toEtherNumber } from '../Utils';
 
+const minBalance=0.1;
+
 class WalletDetailView extends Component {
   static propTypes = {
     navigation: PropTypes.object,
@@ -63,6 +65,7 @@ class WalletDetailView extends Component {
       txs: [],
       pendingTxHash: null,
       token: this.props.navigation.state.params.token,
+      ETHBalance: 0,
       sendAddress: null, // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: 0.0,
       password: null,
@@ -112,6 +115,12 @@ class WalletDetailView extends Component {
 
   reloadTxs(wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
+    let ETHBalance;
+    wallet.tokens.map(toekn=>{
+      if(toekn.address=='0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'){
+        ETHBalance = toekn.balance;
+      }
+    });
     const txs = wallet.txs.filter((tx) => {
       if (this.state.token.address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
         // ETH shows all trading history
@@ -122,7 +131,8 @@ class WalletDetailView extends Component {
         && (typeof tx.input === 'object')
         && (tx.input.srcToken.symbol === token.symbol || tx.input.destToken.symbol === token.symbol);
     });
-    this.setState({ token, txs, pendingTxHash: wallet.pendingTxHash });
+    console.log(3333,ETHBalance);
+    this.setState({ token, txs, ETHBalance, pendingTxHash: wallet.pendingTxHash });
   }
 
   onSend() {
@@ -202,7 +212,7 @@ class WalletDetailView extends Component {
           visible={this.state.sendModalVisible}
           onRequestClose={() => { this.setState({ sendModalVisible: false }); }}
         >
-          <View style={styles.modelContainer}>
+          <ScrollView style={styles.modelContainer} keyboardShouldPersistTaps={'handled'}>
             <Card
               title={`SEND ${this.state.token.symbol}`}
             >
@@ -387,7 +397,7 @@ class WalletDetailView extends Component {
                 />
               </View>
             </Card>
-          </View>
+          </ScrollView>
         </Modal>
 
         <AddressModal
@@ -566,11 +576,24 @@ class WalletDetailView extends Component {
             textStyle={{ fontSize: 13 }}
             onPress={(selectedIndex) => {
               if (0 == selectedIndex) {
-                this.onSend();
+                if(_.state.ETHBalance<minBalance){
+                  return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
+                }
+                else if(_.state.token.balance<=0){
+                  return DeviceEventEmitter.emit('showToast', `your balance in ${_.state.token.symbol} is insufficient`);
+                }
+                else{
+                  this.onSend();
+                }
               } else if (1 == selectedIndex) {
                 this.onReceive();
               } else if (2 == selectedIndex) {
-                this.onExchange();
+                if(_.state.ETHBalance<minBalance){
+                  return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
+                }
+                else{
+                  this.onExchange();
+                }
               }
             }}
             buttons={this.state.token.address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
@@ -624,6 +647,7 @@ class WalletDetailView extends Component {
               let isSending;
               let amount;
               let tokenAmount;
+              let gasFee;
               debugger;
 
               if (l.logs && l.logs.length > 0) {
@@ -653,7 +677,10 @@ class WalletDetailView extends Component {
               } else {
                 isSending = l.from === this.state.token.ownerAddress;
                 tokenAmount = l.value;
+                
               }
+              gasFee=(new BigNumber((l.gasPrice*l.gasUsed))).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
+              console.log(gasFee);
               amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
               const dest = this.formatAddress(isSending ? l.to : l.from);
               const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
@@ -728,11 +755,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   modalSendButton: {
-    marginTop: 30,
+    // marginTop: 30,
+    marginTop: 0,
+    marginBottom: 15,
     backgroundColor: '#5589FF',
   },
   modalCloseButton: {
-    marginTop: 15,
+    marginTop: 0,
+    marginBottom: 15,
     backgroundColor: 'transparent',
   },
   icon: {

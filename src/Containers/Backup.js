@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
+  DeviceEventEmitter,
 } from 'react-native';
 import {
   FormLabel,
@@ -44,9 +45,12 @@ class BackupView extends Component {
             onPress={async () => {
               if (_.state.password != null && _.state.password.length != 0) {
                 const v3json = await EthereumWallet.getInstance().getWalletJson(_.state.password);
-                console.log(v3json);
+                // console.log(v3json);
                 if (v3json) {
                   this.setState({ walletJson: v3json });
+                }
+                else{
+                  DeviceEventEmitter.emit('showToast', 'Invalid password, please try agin.');
                 }
               }
             }}
