@@ -251,7 +251,7 @@ class EthereumService {
       gasPrice: this.rpc.toHex(await this.getGasPrice()),
       gasLimit: this.rpc.toHex(gasLimit),
       to: this.kyberAddress,
-      value: sourceToken == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? this.rpc.toHex(amount) : 0,
+      value: sourceToken == Constants.ETHER_ADDRESS ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
       chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
@@ -291,10 +291,10 @@ class EthereumService {
     const tx = await this.generateTradeTx(
       sourceToken,
       sourceAmount,
-      '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+      Constants.ETHER_ADDRESS,
       destAddress,
       (new BigNumber(2)).pow(255),
-      await this.getExpectedRate(sourceToken, '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'),
+      await this.getExpectedRate(sourceToken, Constants.ETHER_ADDRESS),
       Constants.KYBER_EXCHANGES.binance, // todo: use binance for now.
       true,
       1000000,
@@ -306,12 +306,12 @@ class EthereumService {
 
   async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress) {
     const tx = await this.generateTradeTx(
-      '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+      Constants.ETHER_ADDRESS,
       sourceAmount,
       destToken,
       destAddress,
       (new BigNumber(2)).pow(255),
-      await this.getExpectedRate('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', destToken),
+      await this.getExpectedRate(Constants.ETHER_ADDRESS, destToken),
       Constants.KYBER_EXCHANGES.binance, // todo: use binance for now.
       true,
       1000000,

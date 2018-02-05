@@ -122,7 +122,7 @@ class WalletDetailView extends Component {
       }
     });
     const txs = wallet.txs.filter((tx) => {
-      if (this.state.token.address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
+      if (this.state.token.address === Constants.ETHER_ADDRESS) {
         // ETH shows all trading history
         return tx.from === token.ownerAddress || tx.to === token.ownerAddress;
       }
@@ -146,7 +146,7 @@ class WalletDetailView extends Component {
   }
 
   onExchange() {
-    if (this.state.token.address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
+    if (this.state.token.address == Constants.ETHER_ADDRESS) {
       return;
     }
 
@@ -596,7 +596,7 @@ class WalletDetailView extends Component {
                 }
               }
             }}
-            buttons={this.state.token.address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
+            buttons={this.state.token.address == Constants.ETHER_ADDRESS ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
           />
         </View>
         <List>
