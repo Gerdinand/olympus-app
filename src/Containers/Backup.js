@@ -40,7 +40,6 @@ class BackupView extends Component {
         }}
         >
           <Button buttonStyle={{ backgroundColor: '#5589FF' }}
-            raised
             title={'Unlock'}
             onPress={async () => {
               if (_.state.password != null && _.state.password.length != 0) {

@@ -102,7 +102,6 @@ class CreateWalletView extends Component {
         }}
         >
           <Button buttonStyle={{ backgroundColor: '#5589FF' }}
-            raised
             title={'Create New Wallet'}
             onPress={async () => {
               if (this.isValidate()) {

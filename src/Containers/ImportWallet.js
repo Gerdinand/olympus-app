@@ -56,7 +56,6 @@ class ImportWalletView extends Component {
         }}
         >
           <Button buttonStyle={{ backgroundColor: '#5589FF' }}
-            raised
             title={'Import'}
             onPress={async () => {
               if (_.state.name != null &&

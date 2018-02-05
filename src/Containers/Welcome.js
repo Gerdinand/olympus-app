@@ -73,7 +73,6 @@ class WelcomeView extends Component {
         </View>
         <Button
           buttonStyle={styles.button1}
-          raised
           primary1={true}
           title={'Create new wallet'}
           onPress={() => navigate('CreateWallet')}
