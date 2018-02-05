@@ -153,7 +153,7 @@ import {
   AsyncStorage,
 } from 'react-native';
 
-import { TabNavigator } from 'react-navigation';
+import { TabNavigator,TabBarBottom } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
 import { WalletTab, MarketTab, MeTab } from './src/Tabs';
@@ -167,6 +167,7 @@ const Root = TabNavigator(
       path: '/wallet',
       navigationOptions: {
         tabBarLabel: 'Wallet',
+        title: 'Wallet',
         tabBarIcon: ({ tintColor }) => (
           <Image source={require('./images/wallet.png')} style={{ tintColor }} />
         ),
@@ -177,6 +178,7 @@ const Root = TabNavigator(
       path: '/market',
       navigationOptions: {
         tabBarLabel: 'Market',
+        title: 'Market',
         tabBarIcon: ({ tintColor }) => (
           <Image source={require('./images/market.png')} style={{ tintColor }} />
         ),
@@ -196,13 +198,27 @@ const Root = TabNavigator(
   },
   {
     tabBarPosition: 'bottom',
-    
+    tabBarComponent: TabBarBottom,
     initialRouteName: 'WalletTab',
     animationEnabled: false,
     swipeEnabled: true,
     tabBarOptions: {
       showIcon:true,
-      activeTintColor:'rgb(255,255,255)',
+      activeTintColor:'rgb(89,139,246)',
+      inactiveTintColor:'rgb(145,145,145)',
+      indicatorStyle:{
+        height:0
+      },
+      iconStyle:{
+        marginTop:-2,
+      },
+      labelStyle:{
+        marginTop:4,
+      },
+      style:{
+        backgroundColor:'#fff',
+        height:54
+      }
       //activeTintColor: '#5589FF',
     },
   }
