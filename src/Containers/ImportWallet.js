@@ -5,6 +5,7 @@ import {
   View,
   AsyncStorage,
   ScrollView,
+  DeviceEventEmitter,
 } from 'react-native';
 import {
   FormLabel,
@@ -65,12 +66,18 @@ class ImportWalletView extends Component {
                 _.state.json != null &&
                 _.state.json.length != 0) {
 
-                const done = await WalletService.getInstance().importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
-                if (done) {
+                try {
+                  const done = await WalletService.getInstance().importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
+
+                  if (!done) {
+                    throw new Error();
+                  }
                   // await AsyncStorage.setItem('used', 'true');
                   await WalletService.getInstance().getActiveWallet();
                   await AsyncStorage.setItem('used', 'true');
                   EventRegister.emit('hasWallet', true);
+                } catch (e) {
+                  DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
                 }
               }
             }}

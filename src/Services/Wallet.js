@@ -115,15 +115,16 @@ class WalletService {
       const info = [
         { address, name, v3: keyString },
       ];
-      const infoString = JSON.stringify(info);
 
-      this.wallet = { address, name };
-
-      await saveItem('wallets', infoString);
-      return true;
-    } else {
-      return false;
+      // check if address equals.
+      if (wallet.getAddressString() === `0x${json.address}`) {
+        const infoString = JSON.stringify(info);
+        this.wallet = { address, name };
+        await saveItem('wallets', infoString);
+        return true;
+      }
     }
+    return false;
   }
 
   async generateV3Wallet(name, passphrase, options) {
