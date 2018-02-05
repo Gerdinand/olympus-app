@@ -20,32 +20,32 @@ import PropTypes from 'prop-types';
 
 const list1 = [
   {
-    icon: <Image source={require('../../images/wallet.png')} />,
+    icon: { name: 'wallet', type: 'entypo' },
     title: 'Wallet Backup',
   },
 ];
 
 const list2 = [
   {
-    icon: <Image source={require('../../images/wallet.png')} />,
+    icon: { name: 'home' },
     title: 'Olympus Project',
   },
   {
-    icon: <Image source={require('../../images/wallet.png')} />,
+    icon: { name: 'ios-people', type: 'ionicon' },
     title: 'Team',
   },
 ];
 
 const list3 = [
   {
-    icon: <Image source={require('../../images/wallet.png')} />,
+    icon: { name: 'log-out', type: 'entypo' },
     title: 'Sign out',
   },
 ];
 
-const options=['Sign out', 'Cancel'];
-const CANCEL_INDEX=1;
-const destructiveButtonIndex=0;
+const options = ['Sign out', 'Cancel'];
+const CANCEL_INDEX = 1;
+const destructiveButtonIndex = 0;
 
 class MeView extends Component {
   static propTypes = {
@@ -104,7 +104,7 @@ class MeView extends Component {
             list1.map((l, i) => (
               <ListItem
                 key={i}
-                leftIcon={{ image: l.icon }}
+                leftIcon={l.icon}
                 title={l.title}
                 onPress={() => {
                   this.onPress(list1, i);
@@ -118,7 +118,7 @@ class MeView extends Component {
             list2.map((l, i) => (
               <ListItem
                 key={i}
-                leftIcon={{ image: l.icon }}
+                leftIcon={l.icon}
                 title={l.title}
                 onPress={() => {
                   this.onPress(list2, i);
@@ -132,7 +132,7 @@ class MeView extends Component {
             list3.map((l, i) => (
               <ListItem
                 key={i}
-                leftIcon={{ image: l.icon }}
+                leftIcon={l.icon}
                 title={l.title}
                 onPress={() => {
                   this.onPress(list3, i);
@@ -145,7 +145,7 @@ class MeView extends Component {
           ref={o => this.ActionSheet = o}
           title={''}
           options={options}
-          cancelButtonIndex={CANCEL_INDEX }
+          cancelButtonIndex={CANCEL_INDEX}
           destructiveButtonIndex={destructiveButtonIndex}
           onPress={this.handlePress.bind(this)}
         />
