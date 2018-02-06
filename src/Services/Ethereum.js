@@ -67,7 +67,7 @@ class EthereumService {
     console.log(`gas price: ${gasPrice} x 3`);
     console.log('limit: ', gasLimit);
 
-    let rawTx = {
+    const rawTx = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
       gasPrice: this.rpc.toHex(gasPrice * 3),
       gasLimit: this.rpc.toHex(gasLimit),
@@ -88,11 +88,11 @@ class EthereumService {
   async generateTokenTx(source, dest, value, decimals, contractAddress, gasLimit) {
     console.log(dest);
     const bigValue = new BigNumber(value);
-    let base = new BigNumber(10);
+    const base = new BigNumber(10);
     const amount = bigValue.times(base.pow(decimals));
     const contract = this.erc20Contract.at(contractAddress);
 
-    let rawTx = {
+    const rawTx = {
       from: source,
       nonce: this.rpc.toHex(await this.getNonce(source)),
       gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
@@ -108,7 +108,7 @@ class EthereumService {
   }
 
   async sendTx(tx) {
-    let serializedTx = tx.serialize();
+    const serializedTx = tx.serialize();
     const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction(`0x${serializedTx.toString('hex')}`, cb));
     WalletService.getInstance().wallet.pendingTxHash = hash;
     this.sync(WalletService.getInstance().wallet);
@@ -127,11 +127,11 @@ class EthereumService {
   }
 
   async getTokenBalance(address, ownerAddress, decimals) {
-    let instance = this.erc20Contract.at(address);
+    const instance = this.erc20Contract.at(address);
     const balance = await Promisify(cb => instance.balanceOf(ownerAddress, cb));
 
     const bigBalance = new BigNumber(balance);
-    let base = new BigNumber(10);
+    const base = new BigNumber(10);
     const readableBalance = bigBalance.div(base.pow(decimals)).toNumber();
 
     return readableBalance;
@@ -169,8 +169,8 @@ class EthereumService {
     console.log('USD: ', balanceInUSD);
 
     for (let i = 1; i < wallet.tokens.length; i++) {
-      let token = wallet.tokens[i];
-      let tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
+      const token = wallet.tokens[i];
+      const tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
       token.balance = tokenBalance;
 
       const priceInWei = await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address);
@@ -248,7 +248,7 @@ class EthereumService {
       // 0
     );
 
-    let rawTx = {
+    const rawTx = {
       nonce: this.rpc.toHex(nonce),
       gasPrice: this.rpc.toHex(await this.getGasPrice()),
       gasLimit: this.rpc.toHex(gasLimit),

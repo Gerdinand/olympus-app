@@ -19,11 +19,11 @@ class GenWallet extends Component {
     };
   }
   generateWallet() {
-    let seed = bip39.mnemonicToSeed(this.state.mnemonic.trim(), this.state.pass);
-    let wallet = hdkey.fromMasterSeed(seed).derivePath(this.state.hardPath);
+    const seed = bip39.mnemonicToSeed(this.state.mnemonic.trim(), this.state.pass);
+    const wallet = hdkey.fromMasterSeed(seed).derivePath(this.state.hardPath);
 
-    let priv = wallet._hdkey.privateKey.toString('hex');
-    let addr = `0x${ethW.fromPrivateKey(wallet._hdkey.privateKey).getAddress().toString('hex')}`;
+    const priv = wallet._hdkey.privateKey.toString('hex');
+    const addr = `0x${ethW.fromPrivateKey(wallet._hdkey.privateKey).getAddress().toString('hex')}`;
     this.setState({
       privKey: priv,
       addr,

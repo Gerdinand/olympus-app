@@ -9,8 +9,8 @@ function decipherBuffer(decipher, data) {
 
 export function addressFromJSONString(jsonString) {
   try {
-    let keyObj = JSON.parse(jsonString);
-    let address = keyObj.address;
+    const keyObj = JSON.parse(jsonString);
+    const address = keyObj.address;
     if (address == undefined || address == '') {
       throw new Error('Invalid keystore format');
     }
@@ -21,7 +21,7 @@ export function addressFromJSONString(jsonString) {
 }
 
 export function unlock(input, password, nonStrict) {
-  let json = (typeof input === 'object') ? input : JSON.parse(nonStrict ? input.toLowerCase() : input);
+  const json = (typeof input === 'object') ? input : JSON.parse(nonStrict ? input.toLowerCase() : input);
   if (json.version !== 3) {
     throw new Error('Not a V3 wallet');
   }
@@ -36,15 +36,15 @@ export function unlock(input, password, nonStrict) {
   } else {
     throw new Error('Unsupported key derivation scheme');
   }
-  let ciphertext = new Buffer(json.crypto.ciphertext, 'hex');
-  let mac = ethUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), ciphertext]));
+  const ciphertext = new Buffer(json.crypto.ciphertext, 'hex');
+  const mac = ethUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), ciphertext]));
   if (mac.toString('hex') !== json.crypto.mac) {
     throw new Error('Key derivation failed - possibly wrong passphrase');
   }
-  let decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'));
+  const decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'));
   let seed = decipherBuffer(decipher, ciphertext, 'hex');
   while (seed.length < 32) {
-    let nullBuff = new Buffer([0x00]);
+    const nullBuff = new Buffer([0x00]);
     seed = Buffer.concat([nullBuff, seed]);
   }
 

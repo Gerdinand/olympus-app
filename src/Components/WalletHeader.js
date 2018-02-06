@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Row } from '../Controls/index';
 import { AddressModal } from '../Components';
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     marginRight: 10,
     marginLeft: 10,

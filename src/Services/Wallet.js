@@ -41,7 +41,7 @@ class WalletService {
 
       // TODO: select different wallet
       // 1. build basic wallet
-      let wallet = {
+      const wallet = {
         address: info[0].address,
         name: info[0].name,
         balance: 0,

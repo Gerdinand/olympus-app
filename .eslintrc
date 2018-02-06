@@ -50,6 +50,7 @@
       "error",
       "single"
     ],
+    "prefer-const": "error",
     "require-yield": "error",
     "semi": "error",
     "generator-star-spacing": "warn",

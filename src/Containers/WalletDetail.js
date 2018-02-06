@@ -158,7 +158,7 @@ class WalletDetailView extends Component {
   }
 
   handlePress(buttonIndex) {
-    let _ = this;
+    const _ = this;
     const ETHBalance = this.state.ETHBalance;
     const token = this.state.token;
     let balance;
@@ -198,7 +198,7 @@ class WalletDetailView extends Component {
   }
 
   render() {
-    let _ = this;
+    const _ = this;
 
     return (
       <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
@@ -590,7 +590,7 @@ class WalletDetailView extends Component {
                       } else {
                         // token -> eth
                         // send approve tx
-                        let approveTx = await EthereumService.getInstance().generateApproveTokenTx(
+                        const approveTx = await EthereumService.getInstance().generateApproveTokenTx(
                           _.state.token.address,
                           sourceAmount,
                           _.state.token.ownerAddress
@@ -695,7 +695,6 @@ class WalletDetailView extends Component {
           {
             this.state.txs.map((l, i) => {
               let isSending;
-              let amount;
               let tokenAmount;
               //let gasFee;
 
@@ -713,13 +712,12 @@ class WalletDetailView extends Component {
                     tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
                   }
                 } else if (trade) {
-                  let key;
                   if (isETH) {
                     isSending = l.input.srcToken.symbol === 'ETH';
                   } else {
                     isSending = l.input.srcToken.symbol === this.state.token.symbol;
                   }
-                  key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
+                  const key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
                   tokenAmount = trade.events.find((evt) => evt.name === key).value;
                 }
               } else {
@@ -729,10 +727,10 @@ class WalletDetailView extends Component {
               }
               // gasFee = (new BigNumber((l.gasPrice * l.gasUsed))).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
               //console.log(gasFee);
-              amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
+              const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
               const dest = this.formatAddress(isSending ? l.to : l.from);
               const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
-              let direction = isSending ? '-' : '+';
+              const direction = isSending ? '-' : '+';
 
               return (
                 <ListItem

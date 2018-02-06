@@ -21,7 +21,7 @@ function acceptableTyping(number) {
 }
 
 export function toTWei(number) {
-  let bigNumber = new BigNumber(number);
+  const bigNumber = new BigNumber(number);
   if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
     return number;
   } else if (acceptableTyping(number)) {
@@ -32,7 +32,7 @@ export function toTWei(number) {
 }
 
 export function toT(number, precision) {
-  let bigNumber = new BigNumber(number);
+  const bigNumber = new BigNumber(number);
   let result;
   if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
     return number;
@@ -49,7 +49,7 @@ export function toT(number, precision) {
 }
 
 export function toEther(number) {
-  let bigNumber = new BigNumber(number);
+  const bigNumber = new BigNumber(number);
   if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
     return '0';
   } else {
@@ -58,7 +58,7 @@ export function toEther(number) {
 }
 
 export function toEtherNumber(number) {
-  let bigNumber = new BigNumber(number.toPrecision(15));
+  const bigNumber = new BigNumber(number.toPrecision(15));
   if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
     return 0;
   } else {
@@ -67,7 +67,7 @@ export function toEtherNumber(number) {
 }
 
 export function gweiToWei(number) {
-  let bigNumber = new BigNumber(number);
+  const bigNumber = new BigNumber(number);
   if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
     return number;
   } else if (acceptableTyping(number)) {
@@ -78,7 +78,7 @@ export function gweiToWei(number) {
 }
 
 export function weiToGwei(number) {
-  let bigNumber = new BigNumber(number);
+  const bigNumber = new BigNumber(number);
   if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
     return number;
   } else if (acceptableTyping(number)) {

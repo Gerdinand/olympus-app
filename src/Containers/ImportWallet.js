@@ -33,7 +33,7 @@ class ImportWalletView extends Component {
   }
 
   render() {
-    let _ = this;
+    const _ = this;
 
     return (
       <ScrollView keyboardShouldPersistTaps={'handled'}>
