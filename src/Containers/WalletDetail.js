@@ -696,12 +696,15 @@ class WalletDetailView extends Component {
             this.state.txs.map((l, i) => {
               let isSending;
               let tokenAmount;
-              //let gasFee;
+              let isExchange = false;
 
               if (l.logs && l.logs.length > 0) {
                 const ethReceival = l.logs.find((log) => log.name === 'EtherReceival');
                 const trade = l.logs.find((log) => log.name === 'Trade');
                 const isETH = this.state.token.symbol === 'ETH';
+
+                // Must be an exchange if we have one of those methods invoked so far.
+                isExchange = trade || ethReceival;
 
                 if (ethReceival) {
                   if (isETH) {
@@ -725,8 +728,6 @@ class WalletDetailView extends Component {
                 tokenAmount = l.value;
 
               }
-              // gasFee = (new BigNumber((l.gasPrice * l.gasUsed))).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
-              //console.log(gasFee);
               const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
               const dest = this.formatAddress(isSending ? l.to : l.from);
               const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
@@ -736,8 +737,8 @@ class WalletDetailView extends Component {
                 <ListItem
                   roundAvatar
                   leftIcon={{
-                    name: isSending ? 'arrow-top-right' : 'arrow-bottom-right',
-                    type: 'material-community',
+                    name: isExchange ? 'exchange' : (isSending ? 'arrow-top-right' : 'arrow-bottom-right'),
+                    type: isExchange ? 'font-awesome' : 'material-community',
                     color: 'rgb(89,139,246)',
                   }}
                   leftIconUnderlayColor="red"
