@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import {
   ScrollView,
-  Image,
   Linking,
   //ActionSheetIOS,
 } from 'react-native';
