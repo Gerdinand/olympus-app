@@ -2,3 +2,4 @@
 
 export * from './WalletHeader';
 export * from './AddressModal';
+export * from './inputModal';
