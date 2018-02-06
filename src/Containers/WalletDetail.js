@@ -117,12 +117,7 @@ class WalletDetailView extends Component {
   reloadTxs(wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
     const exchangeType = this.state.exchangeType;
-    let ETHBalance, balance;
-    wallet.tokens.map(token => {
-      if (token.address == Constants.ETHER_ADDRESS) {
-        ETHBalance = token.balance;
-      }
-    });
+    const ETHBalance = wallet.tokens.find(token => token.address == Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
       if (this.state.token.address === Constants.ETHER_ADDRESS) {
         // ETH shows all trading history
@@ -130,9 +125,10 @@ class WalletDetailView extends Component {
       }
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
-        && (typeof tx.input === 'object')
+        && (typeof tx.input === 'object') 
         && (tx.input.srcToken.symbol === token.symbol || tx.input.destToken.symbol === token.symbol);
     });
+    let balance;
     if (exchangeType == 'BID' || token.address == Constants.ETHER_ADDRESS) { balance = ETHBalance; }
     else { balance = token.balance; }
     this.setState({ token, txs, ETHBalance, balance, pendingTxHash: wallet.pendingTxHash });
@@ -281,7 +277,7 @@ class WalletDetailView extends Component {
                 keyboardType={'numeric'}
                 onChangeText={(text) => this.setState({ sendAmount: text })}
                 onFocus={() => {
-                  this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(4)}` });
+                  this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(6)}` });
                 }}
                 onBlur={() => {
                   this.setState({ amountPlaceHolder: '0' });
@@ -469,7 +465,7 @@ class WalletDetailView extends Component {
                 keyboardType={'numeric'}
                 value={this.state.sourceAmount}
                 onChangeText={(text) => {
-                  const sourceAmount = Number(text);
+                  let sourceAmount = Number(text);
                   let destAmount = 0;
                   if (this.state.exchangeType == 'BID') {
                     destAmount = sourceAmount * this.state.token.price;
@@ -477,13 +473,14 @@ class WalletDetailView extends Component {
                     destAmount = sourceAmount * (1.0 / this.state.token.price);
                   }
 
-                  destAmount = destAmount.toFixed(4);
+                  sourceAmount = sourceAmount.toString();
+                  destAmount = destAmount.toFixed(6);
 
                   this.setState({ sourceAmount, destAmount });
                 }}
                 onFocus={() => {
                   const balance = this.state.exchangeType == 'BID' ? this.state.ETHBalance : this.state.token.balance;
-                  this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(4)}` });
+                  this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(6)}` });
                 }}
                 onBlur={() => {
                   this.setState({ amountPlaceHolder: '0' });
@@ -499,7 +496,7 @@ class WalletDetailView extends Component {
                       destAmount = sourceAmount * (1.0 / this.state.token.price);
                     }
 
-                    destAmount = destAmount.toFixed(4);
+                    destAmount = destAmount.toFixed(6);
                     sourceAmount = sourceAmount.toString();
                   }
                   this.setState({ sourceAmount, destAmount });
