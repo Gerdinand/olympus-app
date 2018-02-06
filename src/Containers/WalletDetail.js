@@ -125,7 +125,7 @@ class WalletDetailView extends Component {
       }
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
-        && (typeof tx.input === 'object') 
+        && (typeof tx.input === 'object')
         && (tx.input.srcToken.symbol === token.symbol || tx.input.destToken.symbol === token.symbol);
     });
     let balance;
@@ -146,7 +146,7 @@ class WalletDetailView extends Component {
   }
 
   onExchange() {
-    if (this.state.token.address == Constants.ETHER_ADDRESS) {
+    if (this.state.token.address === Constants.ETHER_ADDRESS) {
       return;
     }
 
@@ -818,9 +818,6 @@ const styles = StyleSheet.create({
   },
   inputButton: {
     color: 'rgb(85,137,255)',
-    position: 'absolute',
-    right: 20,
-    top: 10,
     alignSelf: 'flex-end',
   },
 });
