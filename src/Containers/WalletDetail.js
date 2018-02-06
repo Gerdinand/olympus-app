@@ -483,8 +483,20 @@ class WalletDetailView extends Component {
                 sendAmount={_.state.sourceAmount}  
                 sendAmountErrorMessage={_.state.tradeAmountErrorMessage}  
                 onTextPress={()=>{
-                  const sourceAmount=(this.getMaxBalance()).toString();
-                  this.setState({ sourceAmount});
+                  let  sourceAmount=this.getMaxBalance();
+                  let destAmount = 0;
+                  if(Number(sourceAmount)){
+                    sourceAmount = Number(sourceAmount);
+                    if (this.state.exchangeType == 'BID') {
+                      destAmount = sourceAmount * this.state.token.price;
+                    } else {
+                      destAmount = sourceAmount * (1.0 / this.state.token.price);
+                    }
+
+                    destAmount = destAmount.toFixed(4);
+                    sourceAmount=sourceAmount.toString();
+                  }
+                  this.setState({ sourceAmount,destAmount});
                 }}  
                 onInputChangeText={(text) => {
                   let max=this.getMaxBalance();
