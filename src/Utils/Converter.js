@@ -58,7 +58,7 @@ export function toEther(number) {
 }
 
 export function toEtherNumber(number) {
-  let bigNumber = new BigNumber(number);
+  let bigNumber = new BigNumber(number.toPrecision(15));
   if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
     return 0;
   } else {

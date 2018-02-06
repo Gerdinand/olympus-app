@@ -52,3 +52,7 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 git-rewrite-author.sh
+
+android/gradle.properties
+*.keystore
+*.apk
