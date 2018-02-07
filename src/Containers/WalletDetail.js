@@ -275,7 +275,16 @@ class WalletDetailView extends Component {
                 value={this.state.sendAmount}
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
-                onChangeText={(text) => this.setState({ sendAmount: text })}
+                onChangeText={(text) => {
+                  let sendAmount=text;
+                  if(Number(text)){
+                    sendAmount=Number(text);
+                    const max=_.getMaxBalance();
+                    if(sendAmount>max) sendAmount=max;
+                    sendAmount=sendAmount.toString();
+                  }
+                  this.setState({ sendAmount });
+                }}
                 onFocus={() => {
                   this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(6)}` });
                 }}
@@ -465,17 +474,21 @@ class WalletDetailView extends Component {
                 keyboardType={'numeric'}
                 value={this.state.sourceAmount}
                 onChangeText={(text) => {
-                  let sourceAmount = Number(text);
+                  let sourceAmount = text;
                   let destAmount = 0;
-                  if (this.state.exchangeType == 'BID') {
-                    destAmount = sourceAmount * this.state.token.price;
-                  } else {
-                    destAmount = sourceAmount * (1.0 / this.state.token.price);
+                  if(Number(text)){
+                    sourceAmount = Number(text);
+                    const maxBalance = this.getMaxBalance();
+                    if(sourceAmount>maxBalance) sourceAmount=maxBalance;
+                    if (this.state.exchangeType == 'BID') {
+                      destAmount = sourceAmount * this.state.token.price;
+                    } else {
+                      destAmount = sourceAmount * (1.0 / this.state.token.price);
+                    }
+  
+                    sourceAmount = sourceAmount.toString();
+                    destAmount = destAmount.toFixed(6);
                   }
-
-                  sourceAmount = sourceAmount.toString();
-                  destAmount = destAmount.toFixed(6);
-
                   this.setState({ sourceAmount, destAmount });
                 }}
                 onFocus={() => {
