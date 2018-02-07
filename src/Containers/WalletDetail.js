@@ -509,7 +509,7 @@ class WalletDetailView extends Component {
                 <FormValidationMessage>
                   {this.state.tradeAmountErrorMessage}
                 </FormValidationMessage>
-              } */}
+              }
               <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType == 'BID' ? this.state.token.symbol : 'ETH'}</FormLabel>
               <FormLabel>Password</FormLabel>
               <FormInput
