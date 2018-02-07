@@ -13,7 +13,6 @@ import PropTypes from 'prop-types';
 const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
-    color: 'rgb(85,137,255)',
     zIndex: 200,
     right: 20,
     top: 12,
@@ -44,6 +43,7 @@ export class FormInputWithButton extends React.PureComponent {
         />
         <TouchableOpacity
           style={styles.buttonContainer}
+          activeOpacity={0.5}
           onPress={() => {
             this.props.onButtonPress && this.props.onButtonPress(this.refs.input);
           }}
