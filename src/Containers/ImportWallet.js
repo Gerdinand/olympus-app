@@ -29,6 +29,8 @@ class ImportWalletView extends Component {
       name: null,
       password: null,
       json: null,
+      importDisable:false,
+      importBtnName:'Import',
     };
   }
 
@@ -48,8 +50,8 @@ class ImportWalletView extends Component {
         />
         <FormLabel>Paste wallet json</FormLabel>
         <FormInput
-          multiline
-          inputStyle={{ width: '100%' }}
+          multiline={true}
+          inputStyle={{ width: '100%',height:150 }}
           onChangeText={(json) => this.setState({ json })}
         />
         <View style={{
@@ -57,18 +59,21 @@ class ImportWalletView extends Component {
         }}
         >
           <Button buttonStyle={{ backgroundColor: '#5589FF' }}
-            title={'Import'}
+            title={_.state.importBtnName}
+            disabled={_.state.importDisable}
             onPress={async () => {
+              _.setState({
+                importBtnName:'Importing...',
+                importDisable:true,
+              });
               if (_.state.name != null &&
                 _.state.name.length != 0 &&
                 _.state.password != null &&
                 _.state.password.length != 0 &&
                 _.state.json != null &&
                 _.state.json.length != 0) {
-
                 try {
                   const done = await WalletService.getInstance().importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
-
                   if (!done) {
                     throw new Error();
                   }
@@ -77,8 +82,13 @@ class ImportWalletView extends Component {
                   await AsyncStorage.setItem('used', 'true');
                   EventRegister.emit('hasWallet', true);
                 } catch (e) {
+                  setTimeout(()=>{_.setState({importBtnName:'Import',importDisable:false});},10);
                   DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
                 }
+              }
+              else{
+                setTimeout(()=>{_.setState({importBtnName:'Import',importDisable:false});},10);
+                DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
               }
             }}
           />
