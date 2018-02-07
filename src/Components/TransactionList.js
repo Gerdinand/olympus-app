@@ -25,6 +25,65 @@ export class TransactionList extends PureComponent {
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
+  renderLine(tx) {
+    let isSending;
+    let tokenAmount;
+    let isExchange = false;
+
+    if (tx.logs && tx.logs.length > 0) {
+      const ethReceival = tx.logs.find((log) => log.name === 'EtherReceival');
+      const trade = tx.logs.find((log) => log.name === 'Trade');
+      const isETH = this.props.token.symbol === 'ETH';
+
+      // Must be an exchange if we have one of those methods invoked so far.
+      isExchange = trade || ethReceival;
+
+      if (ethReceival) {
+        if (isETH) {
+          isSending = false;
+          tokenAmount = ethReceival.events.find((evt) => evt.name === 'amount').value;
+        } else {
+          isSending = true;
+          tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
+        }
+      } else if (trade) {
+        if (isETH) {
+          isSending = tx.input.srcToken.symbol === 'ETH';
+        } else {
+          isSending = tx.input.srcToken.symbol === this.props.token.symbol;
+        }
+        const key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
+        tokenAmount = trade.events.find((evt) => evt.name === key).value;
+      }
+    } else {
+      isSending = tx.from === this.props.token.ownerAddress;
+      tokenAmount = tx.value;
+    }
+    const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
+    const dest = this.formatAddress(isSending ? tx.to : tx.from);
+    const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
+    const direction = isSending ? '-' : '+';
+
+    return (
+      <ListItem
+        roundAvatar
+        leftIcon={{
+          name: isExchange ? 'exchange' : (isSending ? 'arrow-top-right' : 'arrow-bottom-right'),
+          type: isExchange ? 'font-awesome' : 'material-community',
+          color: 'rgb(89,139,246)',
+        }}
+        leftIconUnderlayColor="red"
+        key={tx.hash}
+        title={dest}
+        subtitle={time}
+        rightTitle={`${direction}${amount}`}
+        rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
+        onPress={() => {
+          this.props.onListItemPress && this.props.onListItemPress(tx.hash);
+        }}
+      />);
+  }
+
   render() {
     return (
       <List>
@@ -41,67 +100,7 @@ export class TransactionList extends PureComponent {
             subtitle={'wait for a minute...'}
           />
         }
-        {
-          this.props.txs.map((l, i) => {
-            let isSending;
-            let tokenAmount;
-            let isExchange = false;
-
-            if (l.logs && l.logs.length > 0) {
-              const ethReceival = l.logs.find((log) => log.name === 'EtherReceival');
-              const trade = l.logs.find((log) => log.name === 'Trade');
-              const isETH = this.props.token.symbol === 'ETH';
-
-              // Must be an exchange if we have one of those methods invoked so far.
-              isExchange = trade || ethReceival;
-
-              if (ethReceival) {
-                if (isETH) {
-                  isSending = false;
-                  tokenAmount = ethReceival.events.find((evt) => evt.name === 'amount').value;
-                } else {
-                  isSending = true;
-                  tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
-                }
-              } else if (trade) {
-                if (isETH) {
-                  isSending = l.input.srcToken.symbol === 'ETH';
-                } else {
-                  isSending = l.input.srcToken.symbol === this.props.token.symbol;
-                }
-                const key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
-                tokenAmount = trade.events.find((evt) => evt.name === key).value;
-              }
-            } else {
-              isSending = l.from === this.props.token.ownerAddress;
-              tokenAmount = l.value;
-
-            }
-            const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
-            const dest = this.formatAddress(isSending ? l.to : l.from);
-            const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
-            const direction = isSending ? '-' : '+';
-
-            return (
-              <ListItem
-                roundAvatar
-                leftIcon={{
-                  name: isExchange ? 'exchange' : (isSending ? 'arrow-top-right' : 'arrow-bottom-right'),
-                  type: isExchange ? 'font-awesome' : 'material-community',
-                  color: 'rgb(89,139,246)',
-                }}
-                leftIconUnderlayColor="red"
-                key={i}
-                title={dest}
-                subtitle={time}
-                rightTitle={`${direction}${amount}`}
-                rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
-                onPress={() => {
-                  this.props.onListItemPress && this.props.onListItemPress(l.hash);
-                }}
-              />);
-          })
-        }
+        {this.props.txs.map((tx, i) => this.renderLine(tx, i))}
       </List>
     );
   }
