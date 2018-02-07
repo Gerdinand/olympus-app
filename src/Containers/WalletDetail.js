@@ -31,7 +31,7 @@ import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../Services';
 import PropTypes from 'prop-types';
-import { AddressModal, FormInputWithButton } from '../Components';
+import { AddressModal, FormInputWithButton, TransactionList } from '../Components';
 import Constants from '../Services/Constants';
 import { toEtherNumber } from '../Utils';
 
@@ -693,7 +693,15 @@ class WalletDetailView extends Component {
             buttons={this.state.token.address == Constants.ETHER_ADDRESS ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
           />
         </View>
-        <List>
+        <TransactionList 
+          token={_.state.token}
+          pendingTxHash={_.state.pendingTxHash}
+          txs={_.state.txs}
+          onListItemPress={(hash)=>{
+            Linking.openURL(`https://ropsten.etherscan.io/tx/${hash}`);
+          }}
+        />
+        {/* <List>
           {this.state.pendingTxHash &&
             <ListItem
               hideChevron={true}
@@ -763,7 +771,7 @@ class WalletDetailView extends Component {
                 />);
             })
           }
-        </List>
+        </List> */}
         <ActionSheet
           ref={o => this.ActionSheet = o}
           options={this.state.options}
