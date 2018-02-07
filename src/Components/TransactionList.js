@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import BigNumber from 'bignumber.js';
 import Moment from 'moment';
 
-export class TransactionList extends PureComponent{
+export class TransactionList extends PureComponent {
   static propTypes = {
     children: PropTypes.node,
     onListItemPress: PropTypes.func,
@@ -25,15 +25,20 @@ export class TransactionList extends PureComponent{
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
-  render(){
+  render() {
     return (
       <List>
         {this.props.pendingTxHash &&
           <ListItem
+            leftIcon={{
+              name: 'lan-pending',
+              type: 'material-community',
+              color: 'rgb(89,139,246)',
+            }}
             hideChevron={true}
             key={-1}
             title={'PENDING'}
-            subtitle={'wait for a minute'}
+            subtitle={'wait for a minute...'}
           />
         }
         {
@@ -92,7 +97,7 @@ export class TransactionList extends PureComponent{
                 rightTitle={`${direction}${amount}`}
                 rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
                 onPress={() => {
-                  this.props.onListItemPress&&this.props.onListItemPress(l.hash);
+                  this.props.onListItemPress && this.props.onListItemPress(l.hash);
                 }}
               />);
           })
