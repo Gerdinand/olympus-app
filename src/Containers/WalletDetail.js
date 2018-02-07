@@ -12,8 +12,6 @@ import {
   DeviceEventEmitter,
 } from 'react-native';
 import {
-  List,
-  ListItem,
   Card,
   ButtonGroup,
   Button,
@@ -27,7 +25,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ActionSheet from 'react-native-actionsheet';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
-import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../Services';
 import PropTypes from 'prop-types';
@@ -276,12 +273,12 @@ class WalletDetailView extends Component {
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
                 onChangeText={(text) => {
-                  let sendAmount=text;
-                  if(Number(text)){
-                    sendAmount=Number(text);
-                    const max=_.getMaxBalance();
-                    if(sendAmount>max) sendAmount=max;
-                    sendAmount=sendAmount.toString();
+                  let sendAmount = text;
+                  if (Number(text)) {
+                    sendAmount = Number(text);
+                    const max = _.getMaxBalance();
+                    if (sendAmount > max) sendAmount = max;
+                    sendAmount = sendAmount.toString();
                   }
                   this.setState({ sendAmount });
                 }}
@@ -476,16 +473,16 @@ class WalletDetailView extends Component {
                 onChangeText={(text) => {
                   let sourceAmount = text;
                   let destAmount = 0;
-                  if(Number(text)){
+                  if (Number(text)) {
                     sourceAmount = Number(text);
                     const maxBalance = this.getMaxBalance();
-                    if(sourceAmount>maxBalance) sourceAmount=maxBalance;
+                    if (sourceAmount > maxBalance) sourceAmount = maxBalance;
                     if (this.state.exchangeType == 'BID') {
                       destAmount = sourceAmount * this.state.token.price;
                     } else {
                       destAmount = sourceAmount * (1.0 / this.state.token.price);
                     }
-  
+
                     sourceAmount = sourceAmount.toString();
                     destAmount = destAmount.toFixed(6);
                   }
@@ -693,85 +690,14 @@ class WalletDetailView extends Component {
             buttons={this.state.token.address == Constants.ETHER_ADDRESS ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
           />
         </View>
-        <TransactionList 
+        <TransactionList
           token={_.state.token}
           pendingTxHash={_.state.pendingTxHash}
           txs={_.state.txs}
-          onListItemPress={(hash)=>{
+          onListItemPress={(hash) => {
             Linking.openURL(`https://ropsten.etherscan.io/tx/${hash}`);
           }}
         />
-        {/* <List>
-          {this.state.pendingTxHash &&
-            <ListItem
-              hideChevron={true}
-              key={-1}
-              title={'PENDING'}
-              subtitle={'wait for a minute'}
-            />
-          }
-          {
-            this.state.txs.map((l, i) => {
-              let isSending;
-              let tokenAmount;
-              let isExchange = false;
-
-              if (l.logs && l.logs.length > 0) {
-                const ethReceival = l.logs.find((log) => log.name === 'EtherReceival');
-                const trade = l.logs.find((log) => log.name === 'Trade');
-                const isETH = this.state.token.symbol === 'ETH';
-
-                // Must be an exchange if we have one of those methods invoked so far.
-                isExchange = trade || ethReceival;
-
-                if (ethReceival) {
-                  if (isETH) {
-                    isSending = false;
-                    tokenAmount = ethReceival.events.find((evt) => evt.name === 'amount').value;
-                  } else {
-                    isSending = true;
-                    tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
-                  }
-                } else if (trade) {
-                  if (isETH) {
-                    isSending = l.input.srcToken.symbol === 'ETH';
-                  } else {
-                    isSending = l.input.srcToken.symbol === this.state.token.symbol;
-                  }
-                  const key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
-                  tokenAmount = trade.events.find((evt) => evt.name === key).value;
-                }
-              } else {
-                isSending = l.from === this.state.token.ownerAddress;
-                tokenAmount = l.value;
-
-              }
-              const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
-              const dest = this.formatAddress(isSending ? l.to : l.from);
-              const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
-              const direction = isSending ? '-' : '+';
-
-              return (
-                <ListItem
-                  roundAvatar
-                  leftIcon={{
-                    name: isExchange ? 'exchange' : (isSending ? 'arrow-top-right' : 'arrow-bottom-right'),
-                    type: isExchange ? 'font-awesome' : 'material-community',
-                    color: 'rgb(89,139,246)',
-                  }}
-                  leftIconUnderlayColor="red"
-                  key={i}
-                  title={dest}
-                  subtitle={time}
-                  rightTitle={`${direction}${amount}`}
-                  rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
-                  onPress={() => {
-                    Linking.openURL(`https://ropsten.etherscan.io/tx/${l.hash}`);
-                  }}
-                />);
-            })
-          }
-        </List> */}
         <ActionSheet
           ref={o => this.ActionSheet = o}
           options={this.state.options}
