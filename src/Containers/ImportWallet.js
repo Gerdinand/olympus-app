@@ -59,36 +59,42 @@ class ImportWalletView extends Component {
         }}
         >
           <Button buttonStyle={{ backgroundColor: '#5589FF' }}
-            title={_.state.importBtnName}
-            disabled={_.state.importDisable}
-            onPress={async () => {
+            title={this.state.importBtnName}
+            disabled={this.state.importDisable}
+            onPress={() => {
               _.setState({
                 importBtnName:'Importing...',
                 importDisable:true,
               });
+              console.log(1111);
               if (_.state.name != null &&
                 _.state.name.length != 0 &&
                 _.state.password != null &&
                 _.state.password.length != 0 &&
                 _.state.json != null &&
                 _.state.json.length != 0) {
-                try {
-                  const done = await WalletService.getInstance().importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
-                  if (!done) {
-                    throw new Error();
+                setTimeout(async ()=>{
+                  try {
+                    const done = await WalletService.getInstance().importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
+                    if (!done) {
+                      throw new Error();
+                    }
+                    // await AsyncStorage.setItem('used', 'true');
+                    await WalletService.getInstance().getActiveWallet();
+                    await AsyncStorage.setItem('used', 'true');
+                    EventRegister.emit('hasWallet', true);
+                  } catch (e) {
+                    _.setState({importBtnName:'Import',importDisable:false});
+                    DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
                   }
-                  // await AsyncStorage.setItem('used', 'true');
-                  await WalletService.getInstance().getActiveWallet();
-                  await AsyncStorage.setItem('used', 'true');
-                  EventRegister.emit('hasWallet', true);
-                } catch (e) {
-                  setTimeout(()=>{_.setState({importBtnName:'Import',importDisable:false});},10);
-                  DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
-                }
+                },100);
               }
               else{
-                setTimeout(()=>{_.setState({importBtnName:'Import',importDisable:false});},10);
-                DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
+                console.log(_.state);
+                setTimeout(()=>{
+                  _.setState({importBtnName:'Import',importDisable:false});
+                  DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
+                },1000);
               }
             }}
           />
