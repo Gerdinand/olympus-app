@@ -29,7 +29,7 @@ class BackupView extends Component {
   }
 
   render() {
-    let _ = this;
+    const _ = this;
 
     return (
       <View>

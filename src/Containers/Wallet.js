@@ -35,7 +35,7 @@ class WalletView extends Component {
   }
 
   componentWillMount() {
-    let _ = this;
+    const _ = this;
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
       if (_.state.wallet.length && wallet.txs.length != _.state.wallet.length) {
         DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');

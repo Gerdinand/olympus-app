@@ -23,15 +23,15 @@ class SendTx extends Component {
     };
   }
   unlockAddress() {
-    let unlockAddr = `0x${ethW.fromPrivateKey(Buffer(this.state.privKey, 'hex')).getAddress().toString('hex')}`;
+    const unlockAddr = `0x${ethW.fromPrivateKey(Buffer(this.state.privKey, 'hex')).getAddress().toString('hex')}`;
     this.setState({ unlockAddr });
   }
   genreateTx() {
-    let nonce = web3.eth.getTransactionCount(this.state.unlockAddr);
-    let gasPrice = web3.eth.getGasPrice();
-    let _ = this;
+    const nonce = web3.eth.getTransactionCount(this.state.unlockAddr);
+    const gasPrice = web3.eth.getGasPrice();
+    const _ = this;
     new Promise.all([nonce, gasPrice]).then((results) => {
-      let rawTx = {
+      const rawTx = {
         nonce: web3.utils.numberToHex(results[0]),
         gasPrice: web3.utils.numberToHex(results[1]),
         gasLimit: web3.utils.numberToHex(_.state.gasLimit),
@@ -40,9 +40,9 @@ class SendTx extends Component {
         data: '',
         chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
       };
-      let tx = new Tx(rawTx);
+      const tx = new Tx(rawTx);
       tx.sign(Buffer(_.state.privKey, 'hex'));
-      let serializedTx = tx.serialize();
+      const serializedTx = tx.serialize();
       web3.eth.sendSignedTransaction(`0x${serializedTx.toString('hex')}`)
         .on('receipt', function (data) {
           console.log(data.transactionHash);

@@ -23,7 +23,7 @@ import {
   Slider,
 } from 'react-native-elements';
 import { Text, Row } from '../Controls';
-// import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/Ionicons';
 import ActionSheet from 'react-native-actionsheet';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
@@ -31,7 +31,7 @@ import Moment from 'moment';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../Services';
 import PropTypes from 'prop-types';
-import { AddressModal,InputModal } from '../Components';
+import { AddressModal, FormInputWithButton } from '../Components';
 import Constants from '../Services/Constants';
 import { toEtherNumber } from '../Utils';
 
@@ -51,7 +51,6 @@ class WalletDetailView extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       value: 0.21,
       amountPlaceHolder: '0',
@@ -65,7 +64,7 @@ class WalletDetailView extends Component {
       txs: [],
       pendingTxHash: null,
       token: this.props.navigation.state.params.token,
-      balance:0,
+      balance: 0,
       ETHBalance: WalletService.getInstance().wallet.balance,
       sendAddress: null, // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
       sendAmount: '',
@@ -95,7 +94,7 @@ class WalletDetailView extends Component {
     this.setState({
       options: [`ETH -> ${this.state.token.symbol}`, `${this.state.token.symbol} -> ETH`, 'Cancel'],
       cancelButtonIndex: 2,
-      ETHBalance:WalletService.getInstance().wallet.balance,
+      ETHBalance: WalletService.getInstance().wallet.balance,
     });
   }
 
@@ -117,13 +116,8 @@ class WalletDetailView extends Component {
 
   reloadTxs(wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
-    const exchangeType=this.state.exchangeType;
-    let ETHBalance,balance;
-    wallet.tokens.map(token => {
-      if (token.address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
-        ETHBalance = token.balance;
-      }
-    });
+    const exchangeType = this.state.exchangeType;
+    const ETHBalance = wallet.tokens.find(token => token.address == Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
       if (this.state.token.address === Constants.ETHER_ADDRESS) {
         // ETH shows all trading history
@@ -134,15 +128,16 @@ class WalletDetailView extends Component {
         && (typeof tx.input === 'object')
         && (tx.input.srcToken.symbol === token.symbol || tx.input.destToken.symbol === token.symbol);
     });
-    if(exchangeType=='BID'||token.address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'){balance=ETHBalance;}
-    else{balance=token.balance;}
+    let balance;
+    if (exchangeType == 'BID' || token.address == Constants.ETHER_ADDRESS) { balance = ETHBalance; }
+    else { balance = token.balance; }
     this.setState({ token, txs, ETHBalance, balance, pendingTxHash: wallet.pendingTxHash });
   }
 
   onSend() {
     console.log('send modal');
-    const balance=this.state.token.balance;
-    this.setState({ sendModalVisible: true,balance });
+    const balance = this.state.token.balance;
+    this.setState({ sendModalVisible: true, balance });
   }
 
   onReceive() {
@@ -151,7 +146,7 @@ class WalletDetailView extends Component {
   }
 
   onExchange() {
-    if (this.state.token.address == Constants.ETHER_ADDRESS) {
+    if (this.state.token.address === Constants.ETHER_ADDRESS) {
       return;
     }
 
@@ -159,16 +154,16 @@ class WalletDetailView extends Component {
   }
 
   handlePress(buttonIndex) {
-    let _ = this;
-    const ETHBalance=this.state.ETHBalance;
-    const token=this.state.token;
+    const _ = this;
+    const ETHBalance = this.state.ETHBalance;
+    const token = this.state.token;
     let balance;
     if (0 == buttonIndex) {
-      balance=ETHBalance;
-      _.setState({ exchangeType: 'BID', exchangeModalVisible: true,balance });
+      balance = ETHBalance;
+      _.setState({ exchangeType: 'BID', exchangeModalVisible: true, balance });
     } else if (1 == buttonIndex) {
-      balance=token.balance;
-      _.setState({ exchangeType: 'ASK', exchangeModalVisible: true,balance });
+      balance = token.balance;
+      _.setState({ exchangeType: 'ASK', exchangeModalVisible: true, balance });
     }
   }
 
@@ -176,29 +171,30 @@ class WalletDetailView extends Component {
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
-  onTapMax(e){
-    const sendAmount=(this.getMaxBalance()).toString();
-    this.setState({ sendAmount});
+  onTapMax(e) {
+    const sendAmount = (this.getMaxBalance()).toString();
+    this.setState({ sendAmount });
   }
 
-  getMaxBalance(){
-    let _=this;
-    const token = _.state.token;
-    const exchangeType = _.state.exchangeType;
-    const fee= new BigNumber(_.state.gasFee);
-    const balance=new BigNumber(_.state.ETHBalance);
+  getMaxBalance() {
+    BigNumber.config({ ERRORS: false });
+
+    const token = this.state.token;
+    const exchangeType = this.state.exchangeType;
+    const fee = new BigNumber(this.state.gasFee.toPrecision(15));
+    const balance = new BigNumber(this.state.ETHBalance.toPrecision(15));
     let sendAmount;
-    if(token.address=='0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'||exchangeType=='BID'){
-      sendAmount=balance.minus(fee).toNumber();
+    if (token.address == Constants.ETHER_ADDRESS || exchangeType == 'BID') {
+      sendAmount = balance.minus(fee).toNumber();
     }
-    else{
-      sendAmount=Number(token.balance);
+    else {
+      sendAmount = Number(token.balance);
     }
-    return sendAmount;
+    return sendAmount.toFixed(6);
   }
 
   render() {
-    let _ = this;
+    const _ = this;
 
     return (
       <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
@@ -251,12 +247,22 @@ class WalletDetailView extends Component {
             >
               <Image source={{ uri: this.state.token.icon }} style={styles.icon} />
               <FormLabel>To</FormLabel>
-              <FormInput
+              <FormInputWithButton
                 multiline
                 inputStyle={{ width: '100%' }}
                 value={this.state.sendAddress}
                 onChangeText={(sendAddress) => this.setState({ sendAddress })}
-              />
+                onButtonPress={() => {
+                  this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
+                  if (this.scanner) {
+                    this.scanner.reactivate();
+                  }
+                }}
+              >
+                <Icon name="md-qr-scanner" size={24} style={styles.inputButton}
+                  disabled={this.state.scanButtonDisable}
+                />
+              </FormInputWithButton>
               {
                 this.state.sendAddressErrorMessage &&
                 <FormValidationMessage>
@@ -264,46 +270,31 @@ class WalletDetailView extends Component {
                 </FormValidationMessage>
               }
               <FormLabel>Amount</FormLabel>
-              <InputModal balance={_.state.balance} 
-                sendAmount={_.state.sendAmount}  
-                sendAmountErrorMessage={_.state.sendAmountErrorMessage}  
-                onTextPress={this.onTapMax.bind(this)}  
-                onInputChangeText={(text) => {
-                  let max=this.getMaxBalance();
-                  if(Number(text)){
-                    if(Number(text)>max){text=max.toString();}
-                  }
-                  this.setState({ sendAmount: text });
-                }}  
-              />
-              {/* <View style={{flex:1}}>
-                <Text style={{position: 'relative',top:30,left:'85%',color:'rgb(85,137,255)',zIndex:101}} onPress={this.onTapMax.bind(this)}>max</Text>
-                <FormInput
-                  inputStyle={{ width: '100%' }}
-                  placeholder={this.state.amountPlaceHolder}
-                  // keyboardType={'numeric'}
-                  value={this.state.sendAmount}
-                  onChangeText={(text) => {
-                    let max=this.getMaxBalance();
-                    if(Number(text)){
-                      if(Number(text)>max){text=max.toString();}
-                    }
-                    this.setState({ sendAmount: text });
-                  }}
-                  onFocus={() => {
-                    this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(4)}` });
-                  }}
-                  onBlur={() => {
-                    this.setState({ amountPlaceHolder: '0' });
-                  }}
-                />
-                {
-                  this.state.sendAmountErrorMessage &&
-                  <FormValidationMessage>
-                    {this.state.sendAmountErrorMessage}
-                  </FormValidationMessage>
-                }
-              </View> */}
+              <FormInputWithButton
+                inputStyle={{ width: '100%' }}
+                value={this.state.sendAmount}
+                placeholder={this.state.amountPlaceHolder}
+                keyboardType={'numeric'}
+                onChangeText={(text) => this.setState({ sendAmount: text })}
+                onFocus={() => {
+                  this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(6)}` });
+                }}
+                onBlur={() => {
+                  this.setState({ amountPlaceHolder: '0' });
+                }}
+                onButtonPress={(input) => {
+                  const max = this.getMaxBalance();
+                  this.setState({ sendAmount: max });
+                }}
+              >
+                <Text style={styles.inputButton}> Max </Text>
+              </FormInputWithButton>
+              {
+                this.state.sendAmountErrorMessage &&
+                <FormValidationMessage>
+                  {this.state.sendAmountErrorMessage}
+                </FormValidationMessage>
+              }
               <FormLabel>Password</FormLabel>
               <FormInput
                 inputStyle={{ width: '100%' }}
@@ -359,10 +350,10 @@ class WalletDetailView extends Component {
                     } else {
                       _.setState({ sendAddressErrorMessage: null });
                     }
-                    const sendAmount =Number(_.state.sendAmount);
+                    const sendAmount = Number(_.state.sendAmount);
 
                     // amount validation
-                    if (_.state.token.balance < sendAmount || sendAmount == 0||!sendAmount) {
+                    if (_.state.token.balance < sendAmount || sendAmount == 0 || !sendAmount) {
                       isValidate = false;
                       _.setState({ sendAmountErrorMessage: 'Insufficient balance' });
                     } else {
@@ -436,17 +427,6 @@ class WalletDetailView extends Component {
                   }}
                 />
                 <Button buttonStyle={styles.modalCloseButton}
-                  title={'Scan'}
-                  disabled={this.state.scanButtonDisable}
-                  onPress={() => {
-                    this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
-                    if (this.scanner) {
-                      this.scanner.reactivate();
-                    }
-                  }}
-                  color={'#4A4A4A'}
-                />
-                <Button buttonStyle={styles.modalCloseButton}
                   title={'Cancel'}
                   disabled={this.state.sendCancelButtonDisable}
                   onPress={() => { this.setState({ sendModalVisible: false, sendAmount: '', password: null, sendAddress: null }); }}
@@ -474,55 +454,18 @@ class WalletDetailView extends Component {
           transparent={true}
           visible={this.state.exchangeModalVisible}
           onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
-          onRequestClose={() => { this.setState({ exchangeModalVisible: false,exchangeType:'', amountPlaceHolder: '0' }); }}
+          onRequestClose={() => { this.setState({ exchangeModalVisible: false, exchangeType: '', amountPlaceHolder: '0' }); }}
         >
           <View style={styles.modelContainer}>
             <Card title={this.state.exchangeType == 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
               <FormLabel>Exchange</FormLabel>
-              <InputModal balance={_.state.balance} 
-                sendAmount={_.state.sourceAmount}  
-                sendAmountErrorMessage={_.state.tradeAmountErrorMessage}  
-                onTextPress={()=>{
-                  let  sourceAmount=this.getMaxBalance();
-                  let destAmount = 0;
-                  if(Number(sourceAmount)){
-                    sourceAmount = Number(sourceAmount);
-                    if (this.state.exchangeType == 'BID') {
-                      destAmount = sourceAmount * this.state.token.price;
-                    } else {
-                      destAmount = sourceAmount * (1.0 / this.state.token.price);
-                    }
-
-                    destAmount = destAmount.toFixed(4);
-                    sourceAmount=sourceAmount.toString();
-                  }
-                  this.setState({ sourceAmount,destAmount});
-                }}  
-                onInputChangeText={(text) => {
-                  let max=this.getMaxBalance();
-                  let destAmount = 0;
-                  let sourceAmount = text;
-                  if(Number(text)){
-                    if(Number(text)>max){sourceAmount=max.toString();}
-                    sourceAmount = Number(text);
-                    if (this.state.exchangeType == 'BID') {
-                      destAmount = sourceAmount * this.state.token.price;
-                    } else {
-                      destAmount = sourceAmount * (1.0 / this.state.token.price);
-                    }
-
-                    destAmount = destAmount.toFixed(4);
-                    sourceAmount=sourceAmount.toString();
-                  }
-                  this.setState({ sourceAmount, destAmount });
-                }}  
-              />
-              {/* <FormInput
+              <FormInputWithButton
                 inputStyle={{ width: '100%' }}
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
+                value={this.state.sourceAmount}
                 onChangeText={(text) => {
-                  const sourceAmount = Number(text);
+                  let sourceAmount = Number(text);
                   let destAmount = 0;
                   if (this.state.exchangeType == 'BID') {
                     destAmount = sourceAmount * this.state.token.price;
@@ -530,18 +473,37 @@ class WalletDetailView extends Component {
                     destAmount = sourceAmount * (1.0 / this.state.token.price);
                   }
 
-                  destAmount = destAmount.toFixed(4);
+                  sourceAmount = sourceAmount.toString();
+                  destAmount = destAmount.toFixed(6);
 
                   this.setState({ sourceAmount, destAmount });
                 }}
                 onFocus={() => {
                   const balance = this.state.exchangeType == 'BID' ? this.state.ETHBalance : this.state.token.balance;
-                  this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(4)}` });
+                  this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(6)}` });
                 }}
                 onBlur={() => {
                   this.setState({ amountPlaceHolder: '0' });
                 }}
-              />
+                onButtonPress={(input) => {
+                  let sourceAmount = this.getMaxBalance();
+                  let destAmount = 0;
+                  if (Number(sourceAmount)) {
+                    sourceAmount = Number(sourceAmount);
+                    if (this.state.exchangeType == 'BID') {
+                      destAmount = sourceAmount * this.state.token.price;
+                    } else {
+                      destAmount = sourceAmount * (1.0 / this.state.token.price);
+                    }
+
+                    destAmount = destAmount.toFixed(6);
+                    sourceAmount = sourceAmount.toString();
+                  }
+                  this.setState({ sourceAmount, destAmount });
+                }}
+              >
+                <Text style={styles.inputButton}> Max </Text>
+              </FormInputWithButton>
               {
                 this.state.tradeAmountErrorMessage &&
                 <FormValidationMessage>
@@ -593,7 +555,7 @@ class WalletDetailView extends Component {
                     });
 
                     const etherBlance = WalletService.getInstance().wallet.balance;
-                    const sourceAmount=Number(_.state.sourceAmount);
+                    const sourceAmount = Number(_.state.sourceAmount);
                     let isValidate = true;
 
                     // amount validation
@@ -625,7 +587,7 @@ class WalletDetailView extends Component {
                       } else {
                         // token -> eth
                         // send approve tx
-                        let approveTx = await EthereumService.getInstance().generateApproveTokenTx(
+                        const approveTx = await EthereumService.getInstance().generateApproveTokenTx(
                           _.state.token.address,
                           sourceAmount,
                           _.state.token.ownerAddress
@@ -648,7 +610,7 @@ class WalletDetailView extends Component {
                         await EthereumService.getInstance().sendTx(tx);
                         _.setState({
                           exchangeModalVisible: false,
-                          exchangeType:'',
+                          exchangeType: '',
                           password: null,
                           sourceAmount: '',
                           destAmount: 0.0,
@@ -677,7 +639,7 @@ class WalletDetailView extends Component {
                   title="Cancel"
                   disabled={this.state.tradeCancelButtonDisable}
                   onPress={() => {
-                    this.setState({ exchangeModalVisible: false,exchangeType:'',sourceAmount: '', password: null, exchangeAmount: 0.0 });
+                    this.setState({ exchangeModalVisible: false, exchangeType: '', sourceAmount: '', password: null, exchangeAmount: 0.0 });
                   }}
                   color={'#4A4A4A'}
                 />
@@ -730,14 +692,16 @@ class WalletDetailView extends Component {
           {
             this.state.txs.map((l, i) => {
               let isSending;
-              let amount;
               let tokenAmount;
-              //let gasFee;
+              let isExchange = false;
 
               if (l.logs && l.logs.length > 0) {
                 const ethReceival = l.logs.find((log) => log.name === 'EtherReceival');
                 const trade = l.logs.find((log) => log.name === 'Trade');
                 const isETH = this.state.token.symbol === 'ETH';
+
+                // Must be an exchange if we have one of those methods invoked so far.
+                isExchange = trade || ethReceival;
 
                 if (ethReceival) {
                   if (isETH) {
@@ -748,13 +712,12 @@ class WalletDetailView extends Component {
                     tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
                   }
                 } else if (trade) {
-                  let key;
                   if (isETH) {
                     isSending = l.input.srcToken.symbol === 'ETH';
                   } else {
                     isSending = l.input.srcToken.symbol === this.state.token.symbol;
                   }
-                  key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
+                  const key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
                   tokenAmount = trade.events.find((evt) => evt.name === key).value;
                 }
               } else {
@@ -762,19 +725,17 @@ class WalletDetailView extends Component {
                 tokenAmount = l.value;
 
               }
-              // gasFee = (new BigNumber((l.gasPrice * l.gasUsed))).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
-              //console.log(gasFee);
-              amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
+              const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.state.token.decimals)).toFixed(6);
               const dest = this.formatAddress(isSending ? l.to : l.from);
               const time = Moment(Number(`${l.timeStamp}000`)).fromNow();
-              let direction = isSending ? '-' : '+';
+              const direction = isSending ? '-' : '+';
 
               return (
                 <ListItem
                   roundAvatar
                   leftIcon={{
-                    name: isSending ? 'arrow-top-right' : 'arrow-bottom-right',
-                    type: 'material-community',
+                    name: isExchange ? 'exchange' : (isSending ? 'arrow-top-right' : 'arrow-bottom-right'),
+                    type: isExchange ? 'font-awesome' : 'material-community',
                     color: 'rgb(89,139,246)',
                   }}
                   leftIconUnderlayColor="red"
@@ -854,6 +815,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
+  },
+  inputButton: {
+    color: 'rgb(85,137,255)',
+    alignSelf: 'flex-end',
   },
 });
 

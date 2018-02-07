@@ -16,7 +16,7 @@ import ImportWalletView from './ImportWallet';
 import PropTypes from 'prop-types';
 
 // Style
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 50,

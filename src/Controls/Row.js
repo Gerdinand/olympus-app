@@ -1,14 +1,14 @@
 import React, { PureComponent } from 'react';
-import { View, ViewPropTypes, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 
 export class Row extends PureComponent {
   static propTypes = {
     justifyContent: PropTypes.string,
-    style: ViewPropTypes.style,
+    style: View.propTypes.style,
     alignItems: PropTypes.string,
     alignSelf: PropTypes.string,
-    viewProps: ViewPropTypes,
+    viewProps: PropTypes.any,
     children: PropTypes.node,
     onPress: PropTypes.func,
   };

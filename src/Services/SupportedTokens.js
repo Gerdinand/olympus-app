@@ -1,4 +1,4 @@
-let TOKENS = [
+const TOKENS = [
   // Kyber supported tokens
   {
     name: 'Ethereum',

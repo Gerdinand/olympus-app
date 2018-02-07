@@ -6,6 +6,8 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "postinstall": "node_modules/.bin/rn-nodeify --install crypto --hack",
+    "run-on-device": "react-native run-android --variant=release",
+    "build-apk": "cd android && ./gradlew assembleRelease",
     "lint": "eslint src"
   },
   "dependencies": {
