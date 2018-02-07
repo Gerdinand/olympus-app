@@ -7,6 +7,7 @@ import {
   Image,
   AsyncStorage,
   DeviceEventEmitter,
+  StatusBar,
 } from 'react-native';
 
 import { TabNavigator, TabBarBottom } from 'react-navigation';
@@ -128,6 +129,10 @@ export default class Olympus extends Component {
   render() {
     return (
       <View style={{ flex: 1, zIndex: 100 }}>
+        <StatusBar
+          backgroundColor="white"
+          barStyle="dark-content"
+        />
         {this.state.loading && <View />}
         {!this.state.loading && this.state.hasWallet && <Root />}
         {!this.state.loading && !this.state.hasWallet && <Welcome />}
