@@ -66,7 +66,6 @@ class ImportWalletView extends Component {
                 importBtnName:'Importing...',
                 importDisable:true,
               });
-              console.log(1111);
               if (_.state.name != null &&
                 _.state.name.length != 0 &&
                 _.state.password != null &&
@@ -90,7 +89,6 @@ class ImportWalletView extends Component {
                 },100);
               }
               else{
-                console.log(_.state);
                 setTimeout(()=>{
                   _.setState({importBtnName:'Import',importDisable:false});
                   DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');

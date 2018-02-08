@@ -13,9 +13,10 @@ import PropTypes from 'prop-types';
 const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
+    padding: 10,
     zIndex: 200,
-    right: 20,
-    top: 12,
+    right: 10,
+    top: 2,
     alignItems: 'flex-end',
     alignSelf: 'flex-end',
   },

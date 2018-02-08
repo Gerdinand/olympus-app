@@ -210,11 +210,22 @@ class WalletDetailView extends Component {
                     ref={(node) => { this.scanner = node; }}
                     cameraStyle={{ width: 300, height: 300 }}
                     onRead={(e) => {
-                      const data = e.data;
+                      let data = e.data;
+                      const reg = /^iban:/;
                       console.log('read: ', data);
                       if (EthereumService.getInstance().isValidateAddress(data)) {
                         console.log('is an address');
                         this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: data });
+                      } else if (reg.test(data)) {
+                        data = `0x${(data.replace(reg,'')||'')}`;
+                        console.log(data);
+                        if (EthereumService.getInstance().isValidateAddress(data)) {
+                          console.log('is an address');
+                          this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: data });
+                        } else {
+                          console.log('is not an address');
+                          this.scanner.reactivate();
+                        }
                       } else {
                         console.log('is not an address');
                         this.scanner.reactivate();
@@ -246,7 +257,7 @@ class WalletDetailView extends Component {
               <FormLabel>To</FormLabel>
               <FormInputWithButton
                 multiline
-                inputStyle={{ width: '100%' }}
+                inputStyle={{ width: '100%', fontSize:9.5 }}
                 value={this.state.sendAddress}
                 onChangeText={(sendAddress) => this.setState({ sendAddress })}
                 onButtonPress={() => {
