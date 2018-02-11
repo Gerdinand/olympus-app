@@ -119,6 +119,7 @@ class EthereumService {
     try {
       const balanceInWei = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
       const balance = this.rpc.fromWei(balanceInWei, 'ether');
+      console.log("Balance: ", balance.toNumber());
 
       return balance.toNumber();
     } catch (e) {
@@ -174,17 +175,21 @@ class EthereumService {
       token.balance = tokenBalance;
 
       const priceInWei = await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address);
+      console.log("Expected rate: ", priceInWei.toNumber());
 
       const tokenPrice = this.rpc.fromWei(priceInWei, 'ether').toFixed(2);
       token.price = tokenPrice;
 
-      balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
+      if (tokenPrice != 0) {
+          balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
+      }
 
       console.log(`${token.symbol} price: ${token.price}`);
       console.log(`${token.symbol} balance: ${token.balance}`);
     }
 
-    wallet.balanceInUSD = balanceInUSD.toFixed(2);
+    wallet.balanceInUSD = balanceInUSD != 0 ? balanceInUSD.toFixed(2) : 0;
+    console.log('USD1: ', wallet.balanceInUSD);
 
     const url = `https://ropsten.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
     const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
