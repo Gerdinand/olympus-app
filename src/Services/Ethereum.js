@@ -175,13 +175,13 @@ class EthereumService {
       token.balance = tokenBalance;
 
       const priceInWei = await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address);
-      console.log("Expected rate: ", priceInWei.toNumber());
+      console.log('Expected rate: ', priceInWei.toNumber());
 
       const tokenPrice = this.rpc.fromWei(priceInWei, 'ether').toFixed(2);
       token.price = tokenPrice;
 
       if (tokenPrice != 0) {
-          balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
+        balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
       }
 
       console.log(`${token.symbol} price: ${token.price}`);

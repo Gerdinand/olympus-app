@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   address: {
-    fontSize: 13,
+    fontSize: 12,
     color: 'white',
     marginLeft: 15,
     marginRight: 5,
