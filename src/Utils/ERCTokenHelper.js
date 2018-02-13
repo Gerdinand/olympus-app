@@ -7,9 +7,9 @@ import Tokens from '../Services/SupportedTokens';
 abiDecoder.addABI(Constants.KYBER_ABI);
 export const decodeTx = async (tx) => {
   if (!tx.logs) {
-    const { logs } = await EthereumService.getInstance().getTransactionReceipt(tx.hash);
-    if (logs) {
-      tx.logs = abiDecoder.decodeLogs(logs).filter((log) => log);
+    const receipt = await EthereumService.getInstance().getTransactionReceipt(tx.hash);
+    if (receipt && receipt.logs) {
+      tx.logs = abiDecoder.decodeLogs(receipt.logs).filter((log) => log);
     }
   }
   tx.input = decodeInput(tx.input);

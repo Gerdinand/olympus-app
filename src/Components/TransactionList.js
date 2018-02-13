@@ -48,9 +48,9 @@ export class TransactionList extends PureComponent {
         }
       } else if (trade) {
         if (isETH) {
-          isSending = tx.input.srcToken.symbol === 'ETH';
+          isSending = (tx.input.srcToken && tx.input.srcToken.symbol === 'ETH');
         } else {
-          isSending = tx.input.srcToken.symbol === this.props.token.symbol;
+          isSending = (tx.input.srcToken && tx.input.srcToken.symbol === this.props.token.symbol);
         }
         const key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
         tokenAmount = trade.events.find((evt) => evt.name === key).value;

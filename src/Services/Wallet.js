@@ -76,8 +76,6 @@ class WalletService {
 
       try {
         const seed = unlock(info[0].v3, password, true);
-        console.log('seed: ', seed);
-
         return seed;
       } catch (e) {
         return null;

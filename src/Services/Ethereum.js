@@ -15,7 +15,7 @@ let BigNumber;
 
 class EthereumService {
   constructor() {
-    this.rpc = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/xiNNVkYQ6V3IsiPWTTNT', 9000));
+    this.rpc = new Web3(new Web3.providers.HttpProvider(`https://${Constants.CHAIN_NAME}.infura.io/xiNNVkYQ6V3IsiPWTTNT`, 9000));
     BigNumber = this.rpc.BigNumber;
     BigNumber.config({ ERRORS: false });
 
@@ -64,12 +64,11 @@ class EthereumService {
 
   async generateTx(from, to, value, gasLimit, txData = '') {
     const gasPrice = await this.getGasPrice();
-    console.log(`gas price: ${gasPrice} x 3`);
     console.log('limit: ', gasLimit);
 
     const rawTx = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
-      gasPrice: this.rpc.toHex(gasPrice * 3),
+      gasPrice: this.rpc.toHex(gasPrice * 2),
       gasLimit: this.rpc.toHex(gasLimit),
       to,
       value: this.rpc.toHex(this.rpc.toWei(value, 'ether')),
@@ -95,8 +94,8 @@ class EthereumService {
     const rawTx = {
       from: source,
       nonce: this.rpc.toHex(await this.getNonce(source)),
-      gasPrice: this.rpc.toHex(await this.getGasPrice() * 30),
-      gasLimit: this.rpc.toHex(gasLimit * 2),
+      gasPrice: this.rpc.toHex(await this.getGasPrice() * 2),
+      gasLimit: this.rpc.toHex(gasLimit),
       to: contractAddress,
       value: '0x0',
       data: contract.transfer.getData(dest, amount),
@@ -119,7 +118,7 @@ class EthereumService {
     try {
       const balanceInWei = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
       const balance = this.rpc.fromWei(balanceInWei, 'ether');
-      console.log("Balance: ", balance.toNumber());
+      console.log('Balance: ', balance.toNumber());
 
       return balance.toNumber();
     } catch (e) {
@@ -191,7 +190,7 @@ class EthereumService {
     wallet.balanceInUSD = balanceInUSD != 0 ? balanceInUSD.toFixed(2) : 0;
     console.log('USD1: ', wallet.balanceInUSD);
 
-    const url = `https://ropsten.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
+    const url = `https://${Constants.CHAIN_NAME}.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
     const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
     wallet.txs = response ? (await response.json()).result : [];
     await Promise.all(wallet.txs.map(decodeTx));
@@ -255,7 +254,7 @@ class EthereumService {
 
     const rawTx = {
       nonce: this.rpc.toHex(nonce),
-      gasPrice: this.rpc.toHex(await this.getGasPrice()),
+      gasPrice: this.rpc.toHex((await this.getGasPrice()) * 2),
       gasLimit: this.rpc.toHex(gasLimit),
       to: this.kyberAddress,
       value: sourceToken == Constants.ETHER_ADDRESS ? this.rpc.toHex(amount) : 0,
@@ -280,7 +279,7 @@ class EthereumService {
 
     const rawTx = {
       nonce: this.rpc.toHex(await this.newNonce(destAddress)),
-      gasPrice: this.rpc.toHex(await this.getGasPrice()),
+      gasPrice: this.rpc.toHex((await this.getGasPrice()) * 2),
       gasLimit: this.rpc.toHex(300000),
       to: sourceToken,
       value: 0,
@@ -302,7 +301,7 @@ class EthereumService {
       destAddress,
       (new BigNumber(2)).pow(255),
       await this.getExpectedRate(sourceToken, Constants.ETHER_ADDRESS),
-      Constants.KYBER_EXCHANGES.binance, // todo: use binance for now.
+      '0x0', // todo: use 0 for test, mainnet should apply to kyber.
       true,
       1000000,
       await this.newNonce(destAddress) + 1,
@@ -319,7 +318,7 @@ class EthereumService {
       destAddress,
       (new BigNumber(2)).pow(255),
       await this.getExpectedRate(Constants.ETHER_ADDRESS, destToken),
-      Constants.KYBER_EXCHANGES.binance, // todo: use binance for now.
+      '0x0', // 0 for testnet, mainnet should apply to kyber.
       true,
       1000000,
       await this.newNonce(destAddress),

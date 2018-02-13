@@ -105,10 +105,11 @@ class WalletDetailView extends Component {
 
   async calcuateGasFee(gasLimit = Constants.GAS_LIMIT) {
     const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => { });
+    const value = gasLimit * gasPrice * 2;
     this.setState({
-      gasFee: toEtherNumber(gasLimit * gasPrice),
+      gasFee: toEtherNumber(value),
     });
-    return toEtherNumber(gasLimit * gasPrice);
+    return toEtherNumber(value);
   }
 
   reloadTxs(wallet) {
@@ -123,7 +124,8 @@ class WalletDetailView extends Component {
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
         && (typeof tx.input === 'object')
-        && (tx.input.srcToken.symbol === token.symbol || tx.input.destToken.symbol === token.symbol);
+        && ((tx.input.srcToken && tx.input.srcToken.symbol === token.symbol)
+          || (tx.input.destToken && tx.input.destToken.symbol === token.symbol));
     });
     let balance;
     if (exchangeType == 'BID' || token.address == Constants.ETHER_ADDRESS) { balance = ETHBalance; }
@@ -217,7 +219,7 @@ class WalletDetailView extends Component {
                         console.log('is an address');
                         this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: data });
                       } else if (reg.test(data)) {
-                        data = `0x${(data.replace(reg,'')||'')}`;
+                        data = `0x${(data.replace(reg, '') || '')}`;
                         console.log(data);
                         if (EthereumService.getInstance().isValidateAddress(data)) {
                           console.log('is an address');
@@ -257,7 +259,7 @@ class WalletDetailView extends Component {
               <FormLabel>To</FormLabel>
               <FormInputWithButton
                 multiline
-                inputStyle={{ width: '100%', fontSize:9.5 }}
+                inputStyle={{ width: '100%', fontSize: 12 }}
                 value={this.state.sendAddress}
                 onChangeText={(sendAddress) => this.setState({ sendAddress })}
                 onButtonPress={() => {
@@ -333,7 +335,7 @@ class WalletDetailView extends Component {
                   step={0.01}
                   minimumTrackTintColor="#5589FF"
                   thumbTintColor="#5589FF"
-                  onValueChange={async (value) => {
+                  onValueChange={(value) => {
                     if (isNaN(value)) { return; }
                     this.calcuateGasFee(value * 100000);
                     this.setState({ value });
@@ -398,14 +400,14 @@ class WalletDetailView extends Component {
                           sendAmount,
                           token.decimals,
                           token.address,
-                          '40000'
+                          (this.state.value * 100000).toString(),
                         );
                       } else {
                         tx = await EthereumService.getInstance().generateTx(
                           token.ownerAddress,
                           _.state.sendAddress,
                           sendAmount,
-                          '40000'
+                          (this.state.value * 100000).toString(),
                         );
                       }
 
@@ -706,7 +708,7 @@ class WalletDetailView extends Component {
           pendingTxHash={_.state.pendingTxHash}
           txs={_.state.txs}
           onListItemPress={(hash) => {
-            Linking.openURL(`https://ropsten.etherscan.io/tx/${hash}`);
+            Linking.openURL(`https://${Constants.CHAIN_NAME}.etherscan.io/tx/${hash}`);
           }}
         />
         <ActionSheet
