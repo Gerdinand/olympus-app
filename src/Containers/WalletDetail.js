@@ -49,7 +49,7 @@ class WalletDetailView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0.21,
+      value: Constants.MINIMUM_GAS_LIMIT,
       amountPlaceHolder: '0',
       gasFee: 0,
       options: [],
@@ -96,14 +96,14 @@ class WalletDetailView extends Component {
   }
 
   async componentDidMount() {
-    await this.calcuateGasFee();
+    await this.calcuateGasFee(this.state.value);
   }
 
   componentWillUnmount() {
     EventRegister.removeEventListener(this.walletListener);
   }
 
-  async calcuateGasFee(gasLimit = Constants.GAS_LIMIT) {
+  async calcuateGasFee(gasLimit = Constants.MINIMUM_GAS_LIMIT) {
     const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => { });
     const value = gasLimit * gasPrice * 2;
     this.setState({
@@ -332,12 +332,14 @@ class WalletDetailView extends Component {
                 <Slider
                   style={{ width: '88%', marginTop: 12 }}
                   value={this.state.value}
-                  step={0.01}
+                  step={1000}
+                  minimumValue={0}
+                  maximumValue={WalletService.getInstance().wallet.gasLimit}
                   minimumTrackTintColor="#5589FF"
                   thumbTintColor="#5589FF"
                   onValueChange={(value) => {
                     if (isNaN(value)) { return; }
-                    this.calcuateGasFee(value * 100000);
+                    this.calcuateGasFee(value);
                     this.setState({ value });
                   }}
                 />
@@ -400,14 +402,14 @@ class WalletDetailView extends Component {
                           sendAmount,
                           token.decimals,
                           token.address,
-                          (this.state.value * 100000).toString(),
+                          (this.state.value * 2).toString(),
                         );
                       } else {
                         tx = await EthereumService.getInstance().generateTx(
                           token.ownerAddress,
                           _.state.sendAddress,
                           sendAmount,
-                          (this.state.value * 100000).toString(),
+                          (this.state.value * 2).toString(),
                         );
                       }
 
@@ -605,7 +607,8 @@ class WalletDetailView extends Component {
                         tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
                           sourceAmount,
                           _.state.token.address,
-                          _.state.token.ownerAddress
+                          _.state.token.ownerAddress,
+                          (this.state.value * 2).toString(),
                         );
                       } else {
                         // token -> eth
@@ -613,7 +616,8 @@ class WalletDetailView extends Component {
                         const approveTx = await EthereumService.getInstance().generateApproveTokenTx(
                           _.state.token.address,
                           sourceAmount,
-                          _.state.token.ownerAddress
+                          _.state.token.ownerAddress,
+                          (this.state.value * 2).toString(),
                         );
                         approveTx.sign(privateKey);
                         await EthereumService.getInstance().sendTx(approveTx);
@@ -621,7 +625,8 @@ class WalletDetailView extends Component {
                         tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
                           _.state.token.address,
                           sourceAmount,
-                          _.state.token.ownerAddress
+                          _.state.token.ownerAddress,
+                          (this.state.value * 2).toString(),
                         );
                       }
 

@@ -12,6 +12,7 @@ import { addressFromJSONString, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
 import SupportedTokens from './SupportedTokens';
 import Token from './Token';
+import Constants from './Constants.js';
 
 class WalletService {
 
@@ -46,6 +47,7 @@ class WalletService {
         name: info[0].name,
         balance: 0,
         balanceInUSD: 0,
+        gasLimit: Constants.MINIMUM_GAS_LIMIT,
         ethPrice: 0,
         tokens: [],
         txs: [],

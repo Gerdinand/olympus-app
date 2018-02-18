@@ -18,7 +18,7 @@ class SendTx extends Component {
       privKey: 'f7c3f2f28e93bda1f16e5e716dcbcac525c72843b4d0415fc12d27ced1f52a7f',
       unlockAddr: '0xD68FFEd5a8757B83130FD18D0a5A814B04974cbC',
       addr: '0x82A739B9c0da0462ddb0e087521693ab1aE48D32',
-      gasLimit: Constants.GAS_LIMIT.toString(),
+      gasLimit: Constants.MINIMUM_GAS_LIMIT.toString(),
       value: '0.01',
     };
   }
