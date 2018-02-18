@@ -54,6 +54,9 @@ export class TransactionList extends PureComponent {
         }
         const key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
         tokenAmount = trade.events.find((evt) => evt.name === key).value;
+      } else {
+        isSending = tx.from === this.props.token.ownerAddress;
+        tokenAmount = tx.input.amount;
       }
     } else {
       isSending = tx.from === this.props.token.ownerAddress;
