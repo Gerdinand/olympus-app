@@ -205,7 +205,7 @@ class EthereumService {
     wallet.balanceInUSD = balanceInUSD != 0 ? balanceInUSD.toFixed(2) : 0;
     console.log('USD1: ', wallet.balanceInUSD);
 
-    const url = `https://${Constants.CHAIN_NAME}.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
+    const url = `https://api-${Constants.CHAIN_NAME}.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
     const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
     wallet.txs = response ? (await response.json()).result : [];
     await Promise.all(wallet.txs.map(decodeTx));
