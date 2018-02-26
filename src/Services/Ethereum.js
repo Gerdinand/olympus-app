@@ -71,12 +71,6 @@ class EthereumService {
 
   async generateTx(from, to, value, gasLimit = 0, txData = '') {
     const gasPrice = await this.getGasPrice();
-    const networkGasLimit = await this.getGasLimit();
-
-    if (gasLimit < networkGasLimit) {
-      throw new Error('Gas limit is too low');
-    }
-    console.log('limit: ', gasLimit);
 
     const rawTx = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
@@ -124,6 +118,8 @@ class EthereumService {
     WalletService.getInstance().wallet.pendingTxHash = hash;
     this.sync(WalletService.getInstance().wallet);
     console.log(`tx hash: ${hash}`);
+
+    return hash;
   }
 
   async getBalance(address) {

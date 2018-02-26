@@ -49,12 +49,7 @@ export function toT(number, precision) {
 }
 
 export function toEther(number) {
-  const bigNumber = new BigNumber(number);
-  if (bigNumber == 'NaN' || bigNumber == 'Infinity') {
-    return '0';
-  } else {
-    return bigNumber.dividedBy(1000000000000000000).toString();
-  }
+  return toEtherNumber(number).toString();
 }
 
 export function toEtherNumber(number) {
