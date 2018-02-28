@@ -26,7 +26,8 @@ import {
 } from '../Controls';
 // import Icon from 'react-native-vector-icons/Ionicons';
 import ActionSheet from 'react-native-actionsheet';
-import QRCodeScanner from 'react-native-qrcode-scanner';
+// import QRCodeScanner from 'react-native-qrcode-scanner';
+import Barcode from 'react-native-smart-barcode';
 import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../Services';
@@ -217,7 +218,7 @@ class WalletDetailView extends Component {
             <Card title="SCAN">
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <View style={{ flex: 1, maxWidth: 300, flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <QRCodeScanner
+                  {/* <QRCodeScanner
                     ref={(node) => { this.scanner = node; }}
                     cameraStyle={{ width: 300, height: 300 }}
                     onRead={(e) => {
@@ -240,6 +241,45 @@ class WalletDetailView extends Component {
                       } else {
                         console.log('is not an address');
                         this.scanner.reactivate();
+                      }
+                    }}
+                  /> */}
+                  <Barcode
+                    ref={(node) => { this.scanner = node; }}
+                    style={{width: 300, height: 300 }}
+                    onBarCodeRead={(e) => {
+                      console.log(`e.nativeEvent.data.type = ${e.nativeEvent.data.type}, e.nativeEvent.data.code = ${e.nativeEvent.data.code}`);
+                      const data = e.nativeEvent.data;
+                      console.log('read: ', data);
+                      if (data.type == 'QR_CODE') {
+                        const reg = /^iban:/;
+                        let address = data.code;
+                        if (EthereumService.getInstance().isValidateAddress(address)) {
+                          console.log('is an address');
+                          this.scanner.stopScan();
+                          this.scanner.startScan();
+                          this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: address });
+                        } else if (reg.test(address)) {
+                          address = `0x${(address.replace(reg, '') || '')}`;
+                          console.log(address);
+                          if (EthereumService.getInstance().isValidateAddress(address)) {
+                            console.log('is an address');
+                            this.scanner.stopScan();
+                            this.scanner.startScan();
+                            this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: address });
+                          } else {
+                            console.log('is not an address');
+                            this.scanner.stopScan();
+                            this.scanner.startScan();
+                          }
+                        } else {
+                          console.log('is not an address');
+                          this.scanner.stopScan();
+                          this.scanner.startScan();
+                        }
+                      } else {
+                        this.scanner.stopScan();
+                        this.scanner.startScan();
                       }
                     }}
                   />
@@ -280,7 +320,8 @@ class WalletDetailView extends Component {
               onToPress={() => {
                 this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
                 if (this.scanner) {
-                  this.scanner.reactivate();
+                  this.scanner.stopScan();
+                  this.scanner.startScan();
                 }
               }}
               onAmountChange={(text) => {
