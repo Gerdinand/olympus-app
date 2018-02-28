@@ -7,7 +7,7 @@ import {
   ScrollView,
   Modal,
   Alert,
-  Image,
+  // Image,
   Linking,
   DeviceEventEmitter,
 } from 'react-native';
@@ -15,20 +15,29 @@ import {
   Card,
   ButtonGroup,
   Button,
-  FormLabel,
-  FormInput,
-  FormValidationMessage,
-  Slider,
+  // FormLabel,
+  // FormInput,
+  // FormValidationMessage,
+  // Slider,
 } from 'react-native-elements';
-import { Text, Row } from '../Controls';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  Text,
+  // Row,
+} from '../Controls';
+// import Icon from 'react-native-vector-icons/Ionicons';
 import ActionSheet from 'react-native-actionsheet';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../Services';
 import PropTypes from 'prop-types';
-import { AddressModal, FormInputWithButton, TransactionList } from '../Components';
+import {
+  AddressModal,
+  // FormInputWithButton,
+  TransactionList,
+  SendCard,
+  ExchangeCard,
+} from '../Components';
 import Constants from '../Services/Constants';
 import { toEtherNumber } from '../Utils';
 
@@ -67,7 +76,7 @@ class WalletDetailView extends Component {
       sendAmount: '',
       password: null,
       sourceAmount: '',
-      destAmount: 0.0,
+      destAmount: '0',
       sendAddressErrorMessage: null,
       sendAmountErrorMessage: null,
       sendPasswordErrorMessage: null,
@@ -252,7 +261,147 @@ class WalletDetailView extends Component {
           onRequestClose={() => { this.setState({ sendModalVisible: false, amountPlaceHolder: '0' }); }}
         >
           <ScrollView style={styles.modelContainer} keyboardShouldPersistTaps={'handled'}>
-            <Card
+            <SendCard
+              cardTitle={`SEND ${this.state.token.symbol}`}
+              iconPath={this.state.token.icon}
+              sendAddress={this.state.sendAddress}
+              sendAddressErrorMessage={this.state.sendAddressErrorMessage}
+              sendAmount={this.state.sendAmount}
+              sendAmountErrorMessage={this.state.sendAmountErrorMessage}
+              sendPasswordErrorMessage={this.state.sendPasswordErrorMessage}
+              gasFee={this.state.gasFee.toFixed(8)}
+              gasLimit={WalletService.getInstance().wallet.gasLimit}
+              gasValue={this.state.value}
+              scanButtonDisable={this.state.scanButtonDisable}
+              sendButtonDisable={this.state.sendButtonDisable}
+              sendCancelButtonDisable={this.state.sendCancelButtonDisable}
+              token={this.state.token}
+              onToChange={(sendAddress) => this.setState({ sendAddress })}
+              onToPress={() => {
+                this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
+                if (this.scanner) {
+                  this.scanner.reactivate();
+                }
+              }}
+              onAmountChange={(text) => {
+                let sendAmount = text;
+                if (Number(text)) {
+                  sendAmount = Number(text);
+                  const max = _.getMaxBalance();
+                  if (sendAmount > max) sendAmount = max;
+                  sendAmount = sendAmount.toString();
+                }
+                this.setState({ sendAmount });
+              }}
+              onAmountPress={(input) => {
+                const max = this.getMaxBalance();
+                this.setState({ sendAmount: max });
+              }}
+              onPasswordChange={(password) => this.setState({ password })}
+              onGasValueChange={(value) => {
+                if (isNaN(value)) { return; }
+                this.calcuateGasFee(value);
+                this.setState({ value });
+              }}
+              onCancelButtonPress={() => {
+                this.calcuateGasFee(Constants.MINIMUM_GAS_LIMIT);
+                this.setState({ sendModalVisible: false, sendAmount: '', password: null, sendAddress: null, value: Constants.MINIMUM_GAS_LIMIT});
+              }}
+              onSendButtonPress={async () => {
+                console.log('send action');
+                _.setState({
+                  scanButtonDisable: true,
+                  sendButtonDisable: true,
+                  sendCancelButtonDisable: true,
+                });
+
+                let isValidate = true;
+
+                // address validation
+                if (!EthereumService.getInstance().isValidateAddress(_.state.sendAddress)) {
+                  isValidate = false;
+                  _.setState({ sendAddressErrorMessage: 'Invalid address' });
+                } else {
+                  _.setState({ sendAddressErrorMessage: null });
+                }
+                const sendAmount = Number(_.state.sendAmount);
+
+                // amount validation
+                if (_.state.token.balance < sendAmount || sendAmount == 0 || !sendAmount) {
+                  isValidate = false;
+                  _.setState({ sendAmountErrorMessage: 'Insufficient balance' });
+                } else {
+                  _.setState({ sendAmountErrorMessage: null });
+                }
+
+                // password validation
+                const privateKey = await WalletService.getInstance().getSeed(_.state.password);
+                if (!privateKey) {
+                  isValidate = false;
+                  _.setState({ sendPasswordErrorMessage: 'Invalid password' });
+                } else {
+                  _.setState({ sendPasswordErrorMessage: null });
+                }
+
+                console.log('validate end');
+                if (isValidate) {
+                  const token = _.state.token;
+                  let tx = null;
+                  if (token.symbol != 'ETH') {
+                    // token from, to, value, decimals, contractAddress, gasLimit
+                    tx = await EthereumService.getInstance().generateTokenTx(
+                      token.ownerAddress,
+                      _.state.sendAddress,
+                      sendAmount,
+                      token.decimals,
+                      token.address,
+                      (this.state.value * 2).toString(),
+                    );
+                  } else {
+                    tx = await EthereumService.getInstance().generateTx(
+                      token.ownerAddress,
+                      _.state.sendAddress,
+                      sendAmount,
+                      (this.state.value * 2).toString(),
+                    );
+                  }
+
+                  // sign tx
+                  tx.sign(privateKey);
+
+                  // send tx
+                  try {
+                    const hash = await EthereumService.getInstance().sendTx(tx);
+                    _.setState({
+                      sendModalVisible: false,
+                      sendAmount: '',
+                      password: null,
+                      sendAddress: null,
+                      sendAddressErrorMessage: null,
+                      sendAmountErrorMessage: null,
+                      sendPasswordErrorMessage: null,
+                      pendingTxHash: hash,
+                    });
+                  } catch (e) {
+                    // console.error(e);
+                    Alert.alert(
+                      'Failed to send',
+                      e.message,
+                      [
+                        { text: 'Cancel', style: 'cancel' },
+                      ]
+                    );
+                  }
+                }
+
+                _.setState({
+                  scanButtonDisable: false,
+                  sendButtonDisable: false,
+                  sendCancelButtonDisable: false,
+                });
+              }}
+            />
+            {/* <Card
               title={`SEND ${this.state.token.symbol}`}
             >
               <Image source={{ uri: this.state.token.icon }} style={styles.icon} />
@@ -455,7 +604,7 @@ class WalletDetailView extends Component {
                   color={'#4A4A4A'}
                 />
               </View>
-            </Card>
+            </Card> */}
           </ScrollView>
         </Modal>
 
@@ -479,7 +628,158 @@ class WalletDetailView extends Component {
           onRequestClose={() => { this.setState({ exchangeModalVisible: false, exchangeType: '', amountPlaceHolder: '0' }); }}
         >
           <View style={styles.modelContainer}>
-            <Card title={this.state.exchangeType == 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
+            <ExchangeCard
+              cardTitle={this.state.exchangeType == 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}
+              ETHBalance={this.state.ETHBalance}
+              balance={this.state.token.balance}
+              exchangeType={this.state.exchangeType}
+              tradeAmountErrorMessage={this.state.tradeAmountErrorMessage}
+              sourceAmount={this.state.sourceAmount}
+              destAmount={this.state.destAmount}
+              tradePasswordErrorMessage={this.state.tradePasswordErrorMessage}
+              gasFee={this.state.gasFee.toFixed(8)}
+              gasLimit={WalletService.getInstance().wallet.gasLimit}
+              gasValue={this.state.value}
+              tradeButtonDisable={this.state.tradeButtonDisable}
+              tradeCancelButtonDisable={this.state.tradeCancelButtonDisable}
+              token={this.state.token}
+              onAmountChange={(text) => {
+                let sourceAmount = text;
+                let destAmount = '0';
+                if (Number(text)) {
+                  sourceAmount = Number(text);
+                  const maxBalance = this.getMaxBalance();
+                  if (sourceAmount > maxBalance) sourceAmount = maxBalance;
+                  if (this.state.exchangeType == 'BID') {
+                    destAmount = sourceAmount * this.state.token.price;
+                  } else {
+                    destAmount = sourceAmount * (1.0 / this.state.token.price);
+                  }
+
+                  sourceAmount = sourceAmount.toString();
+                  destAmount = destAmount.toFixed(6);
+                }
+                this.setState({ sourceAmount, destAmount });
+              }}
+              onAmountPress={(input) => {
+                let sourceAmount = this.getMaxBalance();
+                let destAmount = '0';
+                if (Number(sourceAmount)) {
+                  sourceAmount = Number(sourceAmount);
+                  if (this.state.exchangeType == 'BID') {
+                    destAmount = sourceAmount * this.state.token.price;
+                  } else {
+                    destAmount = sourceAmount * (1.0 / this.state.token.price);
+                  }
+
+                  destAmount = destAmount.toFixed(6);
+                  sourceAmount = sourceAmount.toString();
+                }
+                this.setState({ sourceAmount, destAmount });
+              }}
+              onPasswordChange={(password) => this.setState({ password })}
+              onGasValueChange={(value) => {
+                if (isNaN(value)) { return; }
+                this.calcuateGasFee(value);
+                this.setState({ value });
+              }}
+              onCancelButtonPress={() => {
+                this.calcuateGasFee(Constants.MINIMUM_GAS_LIMIT);
+                this.setState({ exchangeModalVisible: false, exchangeType: '', sourceAmount: '', password: null, destAmount: '0', value: Constants.MINIMUM_GAS_LIMIT });
+              }}
+              onTradeButtonPress={async () => {
+                console.log('trade action');
+                _.setState({
+                  tradeButtonDisable: true,
+                  tradeCancelButtonDisable: true,
+                });
+
+                const etherBlance = WalletService.getInstance().wallet.balance;
+                const sourceAmount = Number(_.state.sourceAmount);
+                let isValidate = true;
+
+                // amount validation
+                if (!sourceAmount || _.state.exchangeType == 'BID' && sourceAmount > etherBlance ||
+                  _.state.exchangeType == 'ASK' && sourceAmount > _.state.token.balance) {
+                  isValidate = false;
+                  _.setState({ tradeAmountErrorMessage: 'Not enough to trade' });
+                }
+
+                // password validation
+                const privateKey = await WalletService.getInstance().getSeed(_.state.password);
+                if (privateKey == null) {
+                  isValidate = false;
+                  _.setState({ tradePasswordErrorMessage: 'Wrong password' });
+                }
+
+                console.log('validate end');
+                if (isValidate) {
+                  // generate tx
+                  // const token = _.state.token;
+                  let tx = null;
+                  if (_.state.exchangeType == 'BID') {
+                    // eth -> token
+                    tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
+                      sourceAmount,
+                      _.state.token.address,
+                      _.state.token.ownerAddress,
+                      (this.state.value * 2).toString(),
+                    );
+                  } else {
+                    // token -> eth
+                    // send approve tx
+                    const approveTx = await EthereumService.getInstance().generateApproveTokenTx(
+                      _.state.token.address,
+                      sourceAmount,
+                      _.state.token.ownerAddress,
+                      (this.state.value * 2).toString(),
+                    );
+                    approveTx.sign(privateKey);
+                    await EthereumService.getInstance().sendTx(approveTx);
+
+                    tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
+                      _.state.token.address,
+                      sourceAmount,
+                      _.state.token.ownerAddress,
+                      (this.state.value * 2).toString(),
+                    );
+                  }
+
+                  // sign tx
+                  tx.sign(privateKey);
+
+                  try {
+                    // send tx
+                    const hash = await EthereumService.getInstance().sendTx(tx);
+                    _.setState({
+                      exchangeModalVisible: false,
+                      exchangeType: '',
+                      password: null,
+                      sourceAmount: '',
+                      destAmount: '0',
+                      tradeAmountErrorMessage: null,
+                      tradePasswordErrorMessage: null,
+                      pendingTxHash: hash,
+                    });
+                  } catch (e) {
+                    // console.error(e);
+                    Alert.alert(
+                      'Failed to trade',
+                      e.message,
+                      [
+                        { text: 'Cancel', style: 'cancel' },
+                      ]
+                    );
+                  }
+                }
+
+                _.setState({
+                  tradeButtonDisable: false,
+                  tradeCancelButtonDisable: false,
+                });
+              }}
+            />
+            {/* <Card title={this.state.exchangeType == 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
               <FormLabel>Exchange</FormLabel>
               <FormInputWithButton
                 inputStyle={{ width: '100%' }}
@@ -676,7 +976,7 @@ class WalletDetailView extends Component {
                   color={'#4A4A4A'}
                 />
               </View>
-            </Card>
+            </Card> */}
           </View>
         </Modal>
 
@@ -767,18 +1067,18 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
-  modalSendButton: {
+  /* modalSendButton: {
     // marginTop: 30,
     marginTop: 0,
     marginBottom: 15,
     backgroundColor: '#5589FF',
-  },
+  }, */
   modalCloseButton: {
     marginTop: 0,
     marginBottom: 15,
     backgroundColor: 'transparent',
   },
-  icon: {
+  /* icon: {
     width: 24,
     height: 24,
     position: 'absolute',
@@ -788,7 +1088,7 @@ const styles = StyleSheet.create({
   inputButton: {
     color: 'rgb(85,137,255)',
     alignSelf: 'flex-end',
-  },
+  }, */
 });
 
 export default WalletDetailView;
