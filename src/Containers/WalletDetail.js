@@ -350,7 +350,7 @@ class WalletDetailView extends Component {
                 }}
               >
                 <Button
-                  title={'Send'}
+                  title={this.state.sendButtonDisable ? 'Sending...' : 'Send'}
                   buttonStyle={styles.modalSendButton}
                   //raised={true}
                   disabled={this.state.sendButtonDisable}
@@ -418,7 +418,7 @@ class WalletDetailView extends Component {
 
                       // send tx
                       try {
-                        await EthereumService.getInstance().sendTx(tx);
+                        const hash = await EthereumService.getInstance().sendTx(tx);
                         _.setState({
                           sendModalVisible: false,
                           sendAmount: '',
@@ -427,6 +427,7 @@ class WalletDetailView extends Component {
                           sendAddressErrorMessage: null,
                           sendAmountErrorMessage: null,
                           sendPasswordErrorMessage: null,
+                          pendingTxHash: hash,
                         });
                       } catch (e) {
                         // console.error(e);
@@ -554,12 +555,14 @@ class WalletDetailView extends Component {
                 <Slider
                   style={{ width: '88%', marginTop: 12 }}
                   value={this.state.value}
-                  step={0.01}
+                  step={1000}
+                  minimumValue={0}
+                  maximumValue={WalletService.getInstance().wallet.gasLimit}
                   minimumTrackTintColor="#5589FF"
                   thumbTintColor="#5589FF"
                   onValueChange={(value) => {
                     if (isNaN(value)) { return; }
-                    this.calcuateGasFee(value * 100000);
+                    this.calcuateGasFee(value);
                     this.setState({ value });
                   }}
                 />
@@ -569,7 +572,7 @@ class WalletDetailView extends Component {
               }}
               >
                 <Button
-                  title={'Trade'}
+                  title={this.state.tradeButtonDisable ? 'Trading...' : 'Trade'}
                   buttonStyle={styles.modalSendButton}
                   disabled={this.state.tradeButtonDisable}
                   onPress={async () => {
@@ -635,7 +638,7 @@ class WalletDetailView extends Component {
 
                       try {
                         // send tx
-                        await EthereumService.getInstance().sendTx(tx);
+                        const hash = await EthereumService.getInstance().sendTx(tx);
                         _.setState({
                           exchangeModalVisible: false,
                           exchangeType: '',
@@ -644,6 +647,7 @@ class WalletDetailView extends Component {
                           destAmount: 0.0,
                           tradeAmountErrorMessage: null,
                           tradePasswordErrorMessage: null,
+                          pendingTxHash: hash,
                         });
                       } catch (e) {
                         // console.error(e);
