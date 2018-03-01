@@ -10,6 +10,7 @@ import {
   // Image,
   Linking,
   DeviceEventEmitter,
+  AppState,
 } from 'react-native';
 import {
   Card,
@@ -93,6 +94,7 @@ class WalletDetailView extends Component {
 
     // bind methods
     this.reloadTxs = this.reloadTxs.bind(this);
+    this._handleAppStateChange = this._handleAppStateChange.bind(this);
   }
 
   componentWillMount() {
@@ -106,11 +108,26 @@ class WalletDetailView extends Component {
   }
 
   async componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
     await this.calcuateGasFee(this.state.value);
   }
 
   componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
     EventRegister.removeEventListener(this.walletListener);
+    if (this.scanner) {
+      this.scanner.stopScan();
+    }
+  }
+
+  _handleAppStateChange(nextAppState) {
+    const scanModalVisible = this.state.scanModalVisible;
+    if (scanModalVisible && nextAppState == 'background') {
+      if (this.scanner) {
+        this.scanner.stopScan();
+      }
+      this.setState({ sendModalVisible: true, scanModalVisible: false });
+    }
   }
 
   async calcuateGasFee(gasLimit = Constants.MINIMUM_GAS_LIMIT) {
@@ -251,34 +268,28 @@ class WalletDetailView extends Component {
                       console.log(`e.nativeEvent.data.type = ${e.nativeEvent.data.type}, e.nativeEvent.data.code = ${e.nativeEvent.data.code}`);
                       const data = e.nativeEvent.data;
                       console.log('read: ', data);
+                      this.scanner.stopScan();
                       if (data.type == 'QR_CODE') {
                         const reg = /^iban:/;
                         let address = data.code;
                         if (EthereumService.getInstance().isValidateAddress(address)) {
                           console.log('is an address');
-                          this.scanner.stopScan();
-                          this.scanner.startScan();
                           this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: address });
                         } else if (reg.test(address)) {
                           address = `0x${(address.replace(reg, '') || '')}`;
                           console.log(address);
                           if (EthereumService.getInstance().isValidateAddress(address)) {
                             console.log('is an address');
-                            this.scanner.stopScan();
-                            this.scanner.startScan();
                             this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: address });
                           } else {
                             console.log('is not an address');
-                            this.scanner.stopScan();
                             this.scanner.startScan();
                           }
                         } else {
                           console.log('is not an address');
-                          this.scanner.stopScan();
                           this.scanner.startScan();
                         }
                       } else {
-                        this.scanner.stopScan();
                         this.scanner.startScan();
                       }
                     }}
@@ -287,7 +298,12 @@ class WalletDetailView extends Component {
               </View>
               <Button buttonStyle={styles.modalCloseButton}
                 title={'Cancel'}
-                onPress={() => { this.setState({ sendModalVisible: true, scanModalVisible: false }); }}
+                onPress={() => {
+                  if (this.scanner) {
+                    this.scanner.stopScan();
+                  }
+                  this.setState({ sendModalVisible: true, scanModalVisible: false });
+                }}
                 color={'#4A4A4A'}
               />
             </Card>
@@ -320,7 +336,8 @@ class WalletDetailView extends Component {
               onToPress={() => {
                 this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
                 if (this.scanner) {
-                  this.scanner.stopScan();
+                  // this.scanner.reactivate();
+                  // this.scanner.stopScan();
                   this.scanner.startScan();
                 }
               }}
