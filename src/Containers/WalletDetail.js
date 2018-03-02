@@ -10,12 +10,15 @@ import {
   // Image,
   Linking,
   DeviceEventEmitter,
-  AppState,
+  Animated,
+  // AppState,
+  // Easing,
+  // Image,
 } from 'react-native';
 import {
   Card,
   ButtonGroup,
-  Button,
+  // Button,
   // FormLabel,
   // FormInput,
   // FormValidationMessage,
@@ -28,7 +31,7 @@ import {
 // import Icon from 'react-native-vector-icons/Ionicons';
 import ActionSheet from 'react-native-actionsheet';
 // import QRCodeScanner from 'react-native-qrcode-scanner';
-import Barcode from 'react-native-smart-barcode';
+// import Barcode from 'react-native-smart-barcode';
 import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../Services';
@@ -39,6 +42,7 @@ import {
   TransactionList,
   SendCard,
   ExchangeCard,
+  ScanCode,
 } from '../Components';
 import Constants from '../Services/Constants';
 import { toEtherNumber } from '../Utils';
@@ -61,6 +65,8 @@ class WalletDetailView extends Component {
     super(props);
     this.state = {
       value: Constants.MINIMUM_GAS_LIMIT,
+      top: new Animated.Value(0),
+      isShowScanBar: false,
       amountPlaceHolder: '0',
       gasFee: 0,
       options: [],
@@ -94,7 +100,7 @@ class WalletDetailView extends Component {
 
     // bind methods
     this.reloadTxs = this.reloadTxs.bind(this);
-    this._handleAppStateChange = this._handleAppStateChange.bind(this);
+    // this._handleAppStateChange = this._handleAppStateChange.bind(this);
   }
 
   componentWillMount() {
@@ -108,27 +114,43 @@ class WalletDetailView extends Component {
   }
 
   async componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange);
+    // AppState.addEventListener('change', this._handleAppStateChange);
+    // this.scannerLineMove();
     await this.calcuateGasFee(this.state.value);
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
+    // AppState.removeEventListener('change', this._handleAppStateChange);
     EventRegister.removeEventListener(this.walletListener);
     if (this.scanner) {
-      this.scanner.stopScan();
+      // this.scanner.stopScan();
     }
   }
 
-  _handleAppStateChange(nextAppState) {
-    const scanModalVisible = this.state.scanModalVisible;
-    if (scanModalVisible && nextAppState == 'background') {
-      if (this.scanner) {
-        this.scanner.stopScan();
-      }
-      this.setState({ sendModalVisible: true, scanModalVisible: false });
-    }
-  }
+  // _handleAppStateChange(nextAppState) {
+  //   const scanModalVisible = this.state.scanModalVisible;
+  //   if (scanModalVisible && nextAppState == 'background') {
+  //     if (this.scanner) {
+  //       this.scanner.stopScan();
+  //     }
+  //     this.setState({ sendModalVisible: true, scanModalVisible: false });
+  //   }
+  // }
+
+  // _renderScanBar() {
+  //   if(!this.state.isShowScanBar) return;
+  //   return <Image style={{resizeMode: 'contain', width: '100%'}} source={require('../../images/scanBar.png')} />;
+  // }
+
+  // scannerLineMove() {
+  //   this.state.top.setValue(0);  //重置Rotate动画值为0
+  //   Animated.timing(this.state.top, {
+  //     toValue: 240,
+  //     duration: 2000,
+  //     // useNativeDriver: true,
+  //     easing: Easing.linear,
+  //   }).start(() => this.scannerLineMove());
+  // }
 
   async calcuateGasFee(gasLimit = Constants.MINIMUM_GAS_LIMIT) {
     const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => { });
@@ -244,12 +266,44 @@ class WalletDetailView extends Component {
           onRequestClose={() => { this.setState({ scanModalVisible: false, amountPlaceHolder: '0' }); }}
         >
           <View style={styles.modelContainer}>
-            <Card title="SCAN">
+            <ScanCode
+              isShowScanBar={this.state.isShowScanBar}
+              animateTime={2500}
+              onCancelPress={() => {this.setState({ sendModalVisible: true, scanModalVisible: false, isShowScanBar:false });}}
+              onScannerChange={(node) => { this.scanner = node; }}
+              onScanRead={(e) => {
+                let data = e.data;
+                const reg = /^iban:/;
+                console.log('read: ', data);
+                this.setState({ isShowScanBar:false });
+                if (EthereumService.getInstance().isValidateAddress(data)) {
+                  console.log('is an address');
+                  this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: data });
+                } else if (reg.test(data)) {
+                  data = `0x${(data.replace(reg, '') || '')}`;
+                  console.log(data);
+                  if (EthereumService.getInstance().isValidateAddress(data)) {
+                    console.log('is an address');
+                    this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: data });
+                  } else {
+                    console.log('is not an address');
+                    this.setState({ isShowScanBar: true });
+                    this.scanner.reactivate();
+                  }
+                } else {
+                  console.log('is not an address');
+                  this.setState({ isShowScanBar: true });
+                  this.scanner.reactivate();
+                }
+              }}
+            />
+            {/* <Card title="SCAN">
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <View style={{ flex: 1, maxWidth: 300, flexDirection: 'row', justifyContent: 'space-between' }}>
-                  {/* <QRCodeScanner
+                  <QRCodeScanner
                     ref={(node) => { this.scanner = node; }}
                     cameraStyle={{ width: 300, height: 300 }}
+                    showMarker={true}
                     onRead={(e) => {
                       let data = e.data;
                       const reg = /^iban:/;
@@ -272,7 +326,23 @@ class WalletDetailView extends Component {
                         this.scanner.reactivate();
                       }
                     }}
-                  /> */}
+                  />
+                  <View style={{ position: 'absolute', left: '10%', right: '10%', top: '10%', bottom: 0 }}>
+                    <Animated.View style={{ width: '100%',
+                      height: 2,
+                      // zIndex: 300,
+                      //backgroundColor: 'rgb(93,255,93)',
+                      transform: [{
+                        // translateY: this.state.top.interpolate({
+                        //   inputRange: [0, 1],
+                        //   outputRange: [0, 240],
+                        // }),
+                        translateY: this.state.top,
+                      }]}}
+                    >
+                      {this._renderScanBar()}
+                    </Animated.View>
+                  </View>
                   <Barcode
                     ref={(node) => { this.scanner = node; }}
                     style={{width: 300, height: 300 }}
@@ -312,13 +382,13 @@ class WalletDetailView extends Component {
                 title={'Cancel'}
                 onPress={() => {
                   if (this.scanner) {
-                    this.scanner.stopScan();
+                    // this.scanner.stopScan();
                   }
-                  this.setState({ sendModalVisible: true, scanModalVisible: false });
+                  this.setState({ sendModalVisible: true, scanModalVisible: false, isShowScanBar:false });
                 }}
                 color={'#4A4A4A'}
               />
-            </Card>
+            </Card> */}
           </View>
         </Modal>
         <Modal
@@ -346,11 +416,10 @@ class WalletDetailView extends Component {
               token={this.state.token}
               onToChange={(sendAddress) => this.setState({ sendAddress })}
               onToPress={() => {
-                this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
+                this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null, isShowScanBar:true });
                 if (this.scanner) {
-                  // this.scanner.reactivate();
-                  // this.scanner.stopScan();
-                  this.scanner.startScan();
+                  this.scanner.reactivate();
+                  // this.scanner.startScan();
                 }
               }}
               onAmountChange={(text) => {
