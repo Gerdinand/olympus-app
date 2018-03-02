@@ -219,6 +219,18 @@ class WalletDetailView extends Component {
     return sendAmount.toFixed(6);
   }
 
+  checkIsNumber(text) {
+    const positions = [];
+    let pos = text.indexOf('.');
+    while(pos>-1){
+      positions.push(pos);
+      pos = text.indexOf('.',pos+1);
+    }
+    if(positions.length<2)
+      return false;
+    return true;
+  }
+
   render() {
     const _ = this;
 
@@ -343,11 +355,13 @@ class WalletDetailView extends Component {
               }}
               onAmountChange={(text) => {
                 let sendAmount = text;
-                if (Number(text)) {
+                if (text && text[text.length-1] != '.' && Number(text)) {
                   sendAmount = Number(text);
                   const max = _.getMaxBalance();
                   if (sendAmount > max) sendAmount = max;
                   sendAmount = sendAmount.toString();
+                } else if (text && this.checkIsNumber(text)) {
+                  sendAmount = this.state.sendAmount;
                 }
                 this.setState({ sendAmount });
               }}
@@ -704,7 +718,7 @@ class WalletDetailView extends Component {
               onAmountChange={(text) => {
                 let sourceAmount = text;
                 let destAmount = '0';
-                if (Number(text)) {
+                if (text && text[text.length-1] != '.' && Number(text)) {
                   sourceAmount = Number(text);
                   const maxBalance = this.getMaxBalance();
                   if (sourceAmount > maxBalance) sourceAmount = maxBalance;
@@ -716,6 +730,9 @@ class WalletDetailView extends Component {
 
                   sourceAmount = sourceAmount.toString();
                   destAmount = destAmount.toFixed(6);
+                } else if (text && this.checkIsNumber(text)) {
+                  sourceAmount = this.state.sourceAmount;
+                  destAmount = this.state.destAmount;
                 }
                 this.setState({ sourceAmount, destAmount });
               }}
