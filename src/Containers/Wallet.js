@@ -5,6 +5,7 @@ import {
   ScrollView,
   RefreshControl,
   DeviceEventEmitter,
+  AsyncStorage,
 } from 'react-native';
 import {
   List,
@@ -34,16 +35,32 @@ class WalletView extends Component {
     this.fetchData = this.fetchData.bind(this);
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     const _ = this;
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
       if (_.state.wallet.length && wallet.txs.length != _.state.wallet.length) {
         DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');
       }
       _.setState({ wallet, refreshing: false });
+      AsyncStorage.setItem('buckupWallet', JSON.stringify(wallet));
     });
 
-    this.setState({ wallet: WalletService.getInstance().wallet });
+    let newWallet = WalletService.getInstance().wallet;
+    this.setState({ wallet: newWallet });
+
+    const buckupWallet = await AsyncStorage.getItem('buckupWallet');
+    if (buckupWallet) {
+      try {
+        const buckupWalletJson = JSON.parse(buckupWallet);
+        if(buckupWalletJson.address == newWallet.address &&newWallet.tokens[1].balance == 0 &&
+           newWallet.tokens[1].price == 0 && buckupWalletJson.tokens.length > 0) {
+          newWallet = buckupWalletJson;
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    this.setState({ wallet: newWallet });
     console.log(JSON.stringify(WalletService.getInstance().wallet));
 
     this.fetchData();

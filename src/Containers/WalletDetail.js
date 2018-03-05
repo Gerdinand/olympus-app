@@ -11,6 +11,7 @@ import {
   Linking,
   DeviceEventEmitter,
   Animated,
+  AsyncStorage,
   // AppState,
   // Easing,
   // Image,
@@ -183,6 +184,7 @@ class WalletDetailView extends Component {
     let balance;
     if (exchangeType == 'BID' || token.address == Constants.ETHER_ADDRESS) { balance = ETHBalance; }
     else { balance = token.balance; }
+    AsyncStorage.setItem('buckupWallet', JSON.stringify(wallet));
     this.setState({ token, txs, ETHBalance, balance, pendingTxHash: wallet.pendingTxHash });
   }
 
