@@ -55,6 +55,7 @@
 		B6E53EF6942346389C37AF19 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9B8DF2B428864FA8A7E535B3 /* Octicons.ttf */; };
 		E3B5820742D04159A05CE93A /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDBC35990EE8428383123860 /* libRCTCamera.a */; };
 		031F720A7A0942058954E9F3 /* libRCTBarcode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C565F6A5CB2A4F5FA7052044 /* libRCTBarcode.a */; };
+		EEA7437559B64277B05C38D3 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E0D76194BC74548A405F715 /* libRNShare.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -361,6 +362,8 @@
 		FE8F4D7276C548CABEE87935 /* libUdpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libUdpSockets.a; sourceTree = "<group>"; };
 		3BB4F7F01D1F47FD9BC7ABCE /* RCTBarCode.xcodeproj */ = {isa = PBXFileReference; name = "RCTBarCode.xcodeproj"; path = "../node_modules/react-native-smart-barcode/ios/RCTBarcode/RCTBarCode.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		C565F6A5CB2A4F5FA7052044 /* libRCTBarcode.a */ = {isa = PBXFileReference; name = "libRCTBarcode.a"; path = "libRCTBarcode.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		89800127D23243B99AAC0BE8 /* RNShare.xcodeproj */ = {isa = PBXFileReference; name = "RNShare.xcodeproj"; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		0E0D76194BC74548A405F715 /* libRNShare.a */ = {isa = PBXFileReference; name = "libRNShare.a"; path = "libRNShare.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -396,6 +399,7 @@
 				0533AFEA9E3A4D72BB318B3F /* libUdpSockets.a in Frameworks */,
 				3E9B9A158ACC4AC9AF5C4CAD /* libRNVectorIcons.a in Frameworks */,
 				031F720A7A0942058954E9F3 /* libRCTBarcode.a in Frameworks */,
+				EEA7437559B64277B05C38D3 /* libRNShare.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -670,6 +674,7 @@
 				268398B21D2843FC9E718662 /* UdpSockets.xcodeproj */,
 				792612EF518349399E38197C /* RNVectorIcons.xcodeproj */,
 				3BB4F7F01D1F47FD9BC7ABCE /* RCTBarCode.xcodeproj */,
+				89800127D23243B99AAC0BE8 /* RNShare.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1303,12 +1308,14 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-smart-barcode\ios\RCTBarcode\RCTBarcode",
+					"$(SRCROOT)\..\node_modules\react-native-share\ios",
 				);
 				INFOPLIST_FILE = OlympusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1347,12 +1354,14 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-smart-barcode\ios\RCTBarcode\RCTBarcode",
+					"$(SRCROOT)\..\node_modules\react-native-share\ios",
 				);
 				INFOPLIST_FILE = OlympusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1393,6 +1402,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-smart-barcode\ios\RCTBarcode\RCTBarcode",
+					"$(SRCROOT)\..\node_modules\react-native-share\ios",
 				);
 				INFOPLIST_FILE = Olympus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1425,6 +1435,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-smart-barcode\ios\RCTBarcode\RCTBarcode",
+					"$(SRCROOT)\..\node_modules\react-native-share\ios",
 				);
 				INFOPLIST_FILE = Olympus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1462,11 +1473,13 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-smart-barcode\ios\RCTBarcode\RCTBarcode",
+					"$(SRCROOT)\..\node_modules\react-native-share\ios",
 				);
 				INFOPLIST_FILE = "Olympus-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1514,11 +1527,13 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-smart-barcode\ios\RCTBarcode\RCTBarcode",
+					"$(SRCROOT)\..\node_modules\react-native-share\ios",
 				);
 				INFOPLIST_FILE = "Olympus-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1569,6 +1584,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Olympus-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1593,6 +1609,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

@@ -13,6 +13,7 @@ import {
 import { Text } from '../Controls';
 import PropTypes from 'prop-types';
 import QRCode from 'react-native-qrcode';
+import Share from 'react-native-share';
 
 export class AddressModal extends React.PureComponent {
   static propTypes = {
@@ -65,6 +66,17 @@ export class AddressModal extends React.PureComponent {
                   this.close('Address copied to clipboard.');
                 }}
               />
+              <Button
+                title={'Share'}
+                buttonStyle={styles.modalSendButton}
+                onPress={() => {
+                  Share.open({ message: this.props.address, url: '' }).then(() => {
+
+                  }).catch(err => {
+                    console.error(err);
+                  });
+                }}
+              />
               <Button buttonStyle={styles.modalCloseButton}
                 title={'Cancel'}
                 onPress={() => { this.close(); }}
@@ -86,7 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   modalSendButton: {
-    marginTop: 30,
+    marginTop: 15,
     backgroundColor: '#5589FF',
   },
   modalCloseButton: {

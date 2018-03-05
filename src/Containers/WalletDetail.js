@@ -45,9 +45,10 @@ import {
   ScanCode,
 } from '../Components';
 import Constants from '../Services/Constants';
-import { toEtherNumber } from '../Utils';
+import { toEtherNumber, gweiToWei } from '../Utils';
 
 const minBalance = 0.1;
+const defaultGasPrice = 9;
 
 class WalletDetailView extends Component {
   static propTypes = {
@@ -64,11 +65,12 @@ class WalletDetailView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: Constants.MINIMUM_GAS_LIMIT,
+      value: defaultGasPrice,
       top: new Animated.Value(0),
       isShowScanBar: false,
       amountPlaceHolder: '0',
       gasFee: 0,
+      maxGasPrice: 100,
       options: [],
       cancelButtonIndex: 0,
       sendModalVisible: false,
@@ -152,8 +154,10 @@ class WalletDetailView extends Component {
   //   }).start(() => this.scannerLineMove());
   // }
 
-  async calcuateGasFee(gasLimit = Constants.MINIMUM_GAS_LIMIT) {
-    const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => { });
+  async calcuateGasFee(gasPrice) {
+    const gasLimit = Constants.MINIMUM_GAS_LIMIT;
+    gasPrice = Number(gweiToWei(gasPrice));
+    // const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => { });
     const value = gasLimit * gasPrice * 2;
     this.setState({
       gasFee: toEtherNumber(value),
@@ -408,7 +412,7 @@ class WalletDetailView extends Component {
               sendAmountErrorMessage={this.state.sendAmountErrorMessage}
               sendPasswordErrorMessage={this.state.sendPasswordErrorMessage}
               gasFee={this.state.gasFee.toFixed(8)}
-              gasLimit={WalletService.getInstance().wallet.gasLimit}
+              maxGasPrice={this.state.maxGasPrice}
               gasValue={this.state.value}
               scanButtonDisable={this.state.scanButtonDisable}
               sendButtonDisable={this.state.sendButtonDisable}
@@ -445,7 +449,7 @@ class WalletDetailView extends Component {
                 this.setState({ value });
               }}
               onCancelButtonPress={() => {
-                this.calcuateGasFee(Constants.MINIMUM_GAS_LIMIT);
+                this.calcuateGasFee(defaultGasPrice);
                 this.setState({ sendModalVisible: false, sendAmount: '', password: null, sendAddress: null, value: Constants.MINIMUM_GAS_LIMIT});
               }}
               onSendButtonPress={async () => {
@@ -779,7 +783,7 @@ class WalletDetailView extends Component {
               destAmount={this.state.destAmount}
               tradePasswordErrorMessage={this.state.tradePasswordErrorMessage}
               gasFee={this.state.gasFee.toFixed(8)}
-              gasLimit={WalletService.getInstance().wallet.gasLimit}
+              maxGasPrice={this.state.maxGasPrice}
               gasValue={this.state.value}
               tradeButtonDisable={this.state.tradeButtonDisable}
               tradeCancelButtonDisable={this.state.tradeCancelButtonDisable}
@@ -828,7 +832,7 @@ class WalletDetailView extends Component {
                 this.setState({ value });
               }}
               onCancelButtonPress={() => {
-                this.calcuateGasFee(Constants.MINIMUM_GAS_LIMIT);
+                this.calcuateGasFee(defaultGasPrice);
                 this.setState({ exchangeModalVisible: false, exchangeType: '', sourceAmount: '', password: null, destAmount: '0', value: Constants.MINIMUM_GAS_LIMIT });
               }}
               onTradeButtonPress={async () => {

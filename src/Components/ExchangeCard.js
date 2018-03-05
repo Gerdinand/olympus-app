@@ -45,7 +45,7 @@ export class ExchangeCard extends React.PureComponent {
     destAmount: PropTypes.string,
     tradePasswordErrorMessage: PropTypes.string,
     gasFee: PropTypes.string,
-    gasLimit: PropTypes.number,
+    maxGasPrice: PropTypes.number,
     gasValue: PropTypes.number,
     tradeButtonDisable: PropTypes.bool,
     tradeCancelButtonDisable: PropTypes.bool,
@@ -111,9 +111,9 @@ export class ExchangeCard extends React.PureComponent {
           <Slider
             style={{ width: '88%', marginTop: 12 }}
             value={this.props.gasValue}
-            step={1000}
-            minimumValue={0}
-            maximumValue={this.props.gasLimit}
+            step={1}
+            minimumValue={8}
+            maximumValue={this.props.maxGasPrice}
             minimumTrackTintColor="#5589FF"
             thumbTintColor="#5589FF"
             onValueChange={(value) => this.props.onGasValueChange && this.props.onGasValueChange(value)}

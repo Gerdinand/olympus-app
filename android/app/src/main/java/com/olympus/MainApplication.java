@@ -3,6 +3,7 @@ package com.olympus;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import cl.json.RNSharePackage;
 import com.reactnativecomponent.barcode.RCTCapturePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.tradle.react.UdpSocketsModule;
@@ -32,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSharePackage(),
             new RCTCapturePackage(),
             new VectorIconsPackage(),
             new UdpSocketsModule(),
