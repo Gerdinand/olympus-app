@@ -22,9 +22,12 @@ const styles = StyleSheet.create({
   },
 });
 
+let isActive = true;
+
 export class ScanCode extends React.PureComponent {
   static propTypes = {
     isShowScanBar: PropTypes.bool,
+    isAnimatedActive: PropTypes.bool,
     animateTime: PropTypes.number,
     onCancelPress: PropTypes.func,
     onScanRead: PropTypes.func,
@@ -35,12 +38,18 @@ export class ScanCode extends React.PureComponent {
     super(props);
     this.state={
       top: new Animated.Value(0),
+      isActive: true,
     };
     this.scannerLineMove = this.scannerLineMove.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    isActive = true;
     this.scannerLineMove();
+  }
+
+  componentWillUnmount() {
+    isActive = false;
   }
 
   _renderScanBar() {
@@ -49,14 +58,14 @@ export class ScanCode extends React.PureComponent {
   }
 
   scannerLineMove() {
-    this.state.top.setValue(0);  //重置Rotate动画值为0
-    // this.setState({ top: 0});
+    this.state.top.setValue(0);//重置动画值为0
+    console.log('scanLine animated start...');
     Animated.timing(this.state.top, {
       toValue: 240,
       duration: this.props.animateTime||2500,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(() => this.scannerLineMove());
+    }).start(() => isActive ? this.scannerLineMove() : null );
   }
 
   render() {

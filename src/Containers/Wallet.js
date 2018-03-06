@@ -60,7 +60,7 @@ class WalletView extends Component {
         console.error(e);
       }
     }
-    this.setState({ wallet: newWallet });
+    this.setState({ wallet: newWallet, refreshing: true });
     console.log(JSON.stringify(WalletService.getInstance().wallet));
 
     this.fetchData();
