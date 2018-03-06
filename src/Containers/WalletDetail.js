@@ -502,14 +502,16 @@ class WalletDetailView extends Component {
                       sendAmount,
                       token.decimals,
                       token.address,
-                      (this.state.value * 2).toString(),
+                      // (this.state.value * 2).toString(),
+                      (gweiToWei(this.state.value)).toString(),
                     );
                   } else {
                     tx = await EthereumService.getInstance().generateTx(
                       token.ownerAddress,
                       _.state.sendAddress,
                       sendAmount,
-                      (this.state.value * 2).toString(),
+                      // (this.state.value * 2).toString(),
+                      (gweiToWei(this.state.value)).toString(),
                     );
                   }
 
@@ -873,7 +875,8 @@ class WalletDetailView extends Component {
                       sourceAmount,
                       _.state.token.address,
                       _.state.token.ownerAddress,
-                      (this.state.value * 2).toString(),
+                      // (this.state.value * 2).toString(),
+                      (gweiToWei(this.state.value)).toString(),
                     );
                   } else {
                     // token -> eth
@@ -882,17 +885,34 @@ class WalletDetailView extends Component {
                       _.state.token.address,
                       sourceAmount,
                       _.state.token.ownerAddress,
-                      (this.state.value * 2).toString(),
+                      // (this.state.value * 2).toString(),
+                      (gweiToWei(this.state.value)).toString(),
                     );
                     approveTx.sign(privateKey);
-                    await EthereumService.getInstance().sendTx(approveTx);
+                    try {
+                      await EthereumService.getInstance().sendTx(approveTx);
 
-                    tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
-                      _.state.token.address,
-                      sourceAmount,
-                      _.state.token.ownerAddress,
-                      (this.state.value * 2).toString(),
-                    );
+                      tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
+                        _.state.token.address,
+                        sourceAmount,
+                        _.state.token.ownerAddress,
+                        // (this.state.value * 2).toString(),
+                        (gweiToWei(this.state.value)).toString(),
+                      );
+                    }  catch (e) {
+                      // console.error(e);
+                      _.setState({
+                        tradeButtonDisable: false,
+                        tradeCancelButtonDisable: false,
+                      });
+                      return Alert.alert(
+                        'Failed to trade',
+                        e.message,
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                        ]
+                      );
+                    }
                   }
 
                   // sign tx
