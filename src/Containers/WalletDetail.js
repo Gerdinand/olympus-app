@@ -1184,6 +1184,7 @@ class WalletDetailView extends Component {
         </View>
         <TransactionList
           token={_.state.token}
+          wallet={WalletService.getInstance().wallet}
           pendingTxHash={_.state.pendingTxHash}
           txs={_.state.txs}
           onListItemPress={(hash) => {
