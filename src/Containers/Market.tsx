@@ -51,7 +51,7 @@ export default class MarketView extends React.Component<InternalProps> {
                 avatar={l.icon}
                 title={l.title}
                 onPress={() => {
-                  if (i == 0) {
+                  if (i === 0) {
                     navigation.navigate('MarketIndex');
                   }
                 }}

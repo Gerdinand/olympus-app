@@ -99,7 +99,7 @@ export default class WalletView extends React.Component<InternalProps, InternalS
                 key={i}
                 title={t.symbol}
                 subtitle={t.name}
-                rightTitle={(0 == i || t.price == 0) ? t.balance.toFixed(6).toString() : `${t.balance.toFixed(6).toString()}\n1 ETH = ${t.price} ${t.symbol}`}
+                rightTitle={(0 === i || t.price === 0) ? t.balance.toFixed(6).toString() : `${t.balance.toFixed(6).toString()}\n1 ETH = ${t.price} ${t.symbol}`}
                 rightTitleNumberOfLines={2}
                 rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A', textAlign: 'right' }}
                 onPress={() => {

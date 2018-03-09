@@ -59,21 +59,21 @@ export default class MeView extends React.Component<InternalProps> {
   }
 
   onPress(list, index) {
-    if (list == list1) {
-      if (index == 0) {
+    if (list === list1) {
+      if (index === 0) {
         // backup
         this.props.navigation.navigate('Backup');
       }
-    } else if (list == list2) {
-      if (index == 0) {
+    } else if (list === list2) {
+      if (index === 0) {
         // homepage
         Linking.openURL('https://olympuslabs.io');
-      } else if (index == 1) {
+      } else if (index === 1) {
         // homepage#team
         Linking.openURL('https://olympuslabs.io/web/team');
       }
-    } else if (list == list3) {
-      if (index == 0) {
+    } else if (list === list3) {
+      if (index === 0) {
         // sign out
         // let _ = this;
         this.refs.actionSheet.show();
@@ -82,7 +82,7 @@ export default class MeView extends React.Component<InternalProps> {
           destructiveButtonIndex: 0,
           cancelButtonIndex: 1,
         }, (buttonIndex) => {
-          if (0 == buttonIndex) {
+          if (0 === buttonIndex) {
             EthereumService.getInstance().invalidateTimer();
             WalletService.getInstance().resetActiveWallet();
             removeItem('wallets');
@@ -94,7 +94,7 @@ export default class MeView extends React.Component<InternalProps> {
   }
 
   public handlePress(buttonIndex) {
-    if (0 == buttonIndex) {
+    if (0 === buttonIndex) {
       EthereumService.getInstance().invalidateTimer();
       WalletService.getInstance().resetActiveWallet();
       removeItem('wallets');

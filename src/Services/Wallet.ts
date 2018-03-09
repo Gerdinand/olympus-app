@@ -26,7 +26,7 @@ export default class WalletService {
   private static myInstance = null;
 
   public static getInstance() {
-    if (this.myInstance == null) {
+    if (this.myInstance === null) {
       this.myInstance = new WalletService();
     }
 

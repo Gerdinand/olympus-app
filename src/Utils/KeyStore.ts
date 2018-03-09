@@ -9,7 +9,7 @@ export async function saveItem(key, value) {
 
 export async function readItem(key) {
   const json = await Keychain.getGenericPassword();
-  if (typeof (json) !== 'boolean' && json.username == key) {
+  if (typeof (json) !== 'boolean' && json.username === key) {
     return json.password;
   } else {
     return null;

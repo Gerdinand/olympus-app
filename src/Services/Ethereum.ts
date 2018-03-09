@@ -39,7 +39,7 @@ export default class EthereumService {
   private static myInstance = null;
 
   public static getInstance() {
-    if (this.myInstance == null) {
+    if (this.myInstance === null) {
       this.myInstance = new EthereumService();
     }
 
@@ -216,7 +216,7 @@ export default class EthereumService {
     if (wallet.pendingTxHash) {
       let hasPacked = false;
       for (let i = 0; i < wallet.txs.length; i++) {
-        if (wallet.txs[i].hash == wallet.pendingTxHash) {
+        if (wallet.txs[i].hash === wallet.pendingTxHash) {
           hasPacked = true;
           break;
         }
@@ -275,7 +275,7 @@ export default class EthereumService {
       gasPrice: this.rpc.toHex((await this.getGasPrice())),
       gasLimit: this.rpc.toHex(gasLimit),
       to: this.kyberAddress,
-      value: sourceToken == Constants.ETHER_ADDRESS ? this.rpc.toHex(amount) : 0,
+      value: sourceToken === Constants.ETHER_ADDRESS ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
       chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };

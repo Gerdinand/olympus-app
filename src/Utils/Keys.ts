@@ -11,7 +11,7 @@ export function addressFromJSONString(jsonString) {
   try {
     const keyObj = JSON.parse(jsonString);
     const address = keyObj.address;
-    if (address == undefined || address == '') {
+    if (address === undefined || address === '') {
       throw new Error('Invalid keystore format');
     }
     return `0x${address}`;

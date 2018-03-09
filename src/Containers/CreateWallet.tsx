@@ -49,11 +49,11 @@ export default class CreateWalletView extends React.Component<null, InternalStat
   isValidate() {
     this.setState({ nameErrorMessage: null, passwordErrorMessage1: null, passwordErrorMessage2: null });
 
-    if (this.state.name == null || this.state.name.length == 0) {
+    if (this.state.name === null || this.state.name.length === 0) {
       this.setState({ nameErrorMessage: 'Name required' });
-    } else if (this.state.password1 == null || this.state.password1.length == 0) {
+    } else if (this.state.password1 === null || this.state.password1.length === 0) {
       this.setState({ passwordErrorMessage1: 'Password required' });
-    } else if (this.state.password2 == null || this.state.password2.length == 0) {
+    } else if (this.state.password2 === null || this.state.password2.length === 0) {
       this.setState({ passwordErrorMessage2: 'Please retype password' });
     } else if (this.state.password1 != this.state.password2) {
       this.setState({ passwordErrorMessage2: 'Password is different' });

@@ -4,15 +4,15 @@ import BigNumber from 'bignumber.js';
 
 function acceptableTyping(number) {
   // ends with a dot
-  if (number.length > 0 && number[number.length - 1] == '.') {
+  if (number.length > 0 && number[number.length - 1] === '.') {
     return true;
   }
 
   // TODO refactor format
   // zero suffixed with real number
-  // if (number.length > 0 && number[number.length - 1] == "0") {
+  // if (number.length > 0 && number[number.length - 1] === "0") {
   //   for (var i = 0; i < number.length; i++) {
-  //     if (number[i] == ".") {
+  //     if (number[i] === ".") {
   //       return true
   //     }
   //   }

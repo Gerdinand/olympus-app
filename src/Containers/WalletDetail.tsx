@@ -158,7 +158,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private reloadTxs(wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
     const exchangeType = this.state.exchangeType;
-    const ETHBalance = wallet.tokens.find(token => token.address == Constants.ETHER_ADDRESS).balance;
+    const ETHBalance = wallet.tokens.find(token => token.address === Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
       if (this.state.token.address === Constants.ETHER_ADDRESS) {
         // ETH shows all trading history
@@ -171,7 +171,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           || (tx.input.destToken && tx.input.destToken.symbol === token.symbol));
     });
     let balance;
-    if (exchangeType == 'BID' || token.address == Constants.ETHER_ADDRESS) { balance = ETHBalance; }
+    if (exchangeType === 'BID' || token.address === Constants.ETHER_ADDRESS) { balance = ETHBalance; }
     else { balance = token.balance; }
     this.setState({ token, txs, ETHBalance, balance, pendingTxHash: wallet.pendingTxHash });
   }
@@ -200,10 +200,10 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     const ETHBalance = this.state.ETHBalance;
     const token = this.state.token;
     let balance;
-    if (0 == buttonIndex) {
+    if (0 === buttonIndex) {
       balance = ETHBalance;
       _.setState({ exchangeType: 'BID', exchangeModalVisible: true, balance });
-    } else if (1 == buttonIndex) {
+    } else if (1 === buttonIndex) {
       balance = token.balance;
       _.setState({ exchangeType: 'ASK', exchangeModalVisible: true, balance });
     }
@@ -226,7 +226,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     const fee = new BigNumber(this.state.gasFee.toPrecision(15));
     const balance = new BigNumber(this.state.ETHBalance.toPrecision(15));
     let sendAmount;
-    if (token.address == Constants.ETHER_ADDRESS || exchangeType == 'BID') {
+    if (token.address === Constants.ETHER_ADDRESS || exchangeType === 'BID') {
       sendAmount = balance.minus(fee).toNumber();
     }
     else {
@@ -244,7 +244,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       sourceAmount = Number(text);
       const maxBalance = this.getMaxBalance();
       if (sourceAmount > maxBalance) sourceAmount = maxBalance;
-      if (this.state.exchangeType == 'BID') {
+      if (this.state.exchangeType === 'BID') {
         destAmount = sourceAmount * this.state.token.price;
       } else {
         destAmount = sourceAmount * (1.0 / this.state.token.price);
@@ -261,7 +261,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     let destAmount: any = 0; // TODO This is a text and string
     if (Number(sourceAmount)) {
       sourceAmount = Number(sourceAmount);
-      if (this.state.exchangeType == 'BID') {
+      if (this.state.exchangeType === 'BID') {
         destAmount = sourceAmount * this.state.token.price;
       } else {
         destAmount = sourceAmount * (1.0 / this.state.token.price);
@@ -285,15 +285,15 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     let isValidate = true;
 
     // amount validation
-    if (!sourceAmount || this.state.exchangeType == 'BID' && sourceAmount > etherBlance ||
-      this.state.exchangeType == 'ASK' && sourceAmount > this.state.token.balance) {
+    if (!sourceAmount || this.state.exchangeType === 'BID' && sourceAmount > etherBlance ||
+      this.state.exchangeType === 'ASK' && sourceAmount > this.state.token.balance) {
       isValidate = false;
       this.setState({ tradeAmountErrorMessage: 'Not enough to trade' });
     }
 
     // password validation
     const privateKey = await WalletService.getInstance().getSeed(this.state.password);
-    if (privateKey == null) {
+    if (privateKey === null) {
       isValidate = false;
       this.setState({ tradePasswordErrorMessage: 'Wrong password' });
     }
@@ -303,7 +303,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       // generate tx
       // const token = _.state.token;
       let tx = null;
-      if (this.state.exchangeType == 'BID') {
+      if (this.state.exchangeType === 'BID') {
         // eth -> token
         tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
           sourceAmount,
@@ -385,7 +385,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     const sendAmount = Number(this.state.sendAmount);
 
     // amount validation
-    if (this.state.token.balance < sendAmount || sendAmount == 0 || !sendAmount) {
+    if (this.state.token.balance < sendAmount || sendAmount === 0 || !sendAmount) {
       isValidate = false;
       this.setState({ sendAmountErrorMessage: 'Insufficient balance' });
     } else {
@@ -461,7 +461,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
 
   private onActionsButtonPress(selectedIndex: number) {
     this.setState({ buttonGroupSelectedIndex: selectedIndex });
-    if (0 == selectedIndex) {
+    if (0 === selectedIndex) {
       if (this.state.ETHBalance < minBalance) {
         return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
       }
@@ -471,9 +471,9 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       else {
         this.onSend();
       }
-    } else if (1 == selectedIndex) {
+    } else if (1 === selectedIndex) {
       this.onReceive();
-    } else if (2 == selectedIndex) {
+    } else if (2 === selectedIndex) {
       if (this.state.ETHBalance < minBalance) {
         return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
       }
@@ -678,7 +678,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           onRequestClose={() => { this.setState({ exchangeModalVisible: false, exchangeType: '', amountPlaceHolder: '0' }); }}
         >
           <View style={styles.modelContainer}>
-            <Card title={this.state.exchangeType == 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
+            <Card title={this.state.exchangeType === 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
               <FormLabel>Exchange</FormLabel>
               <FormInputWithButton
                 inputStyle={{ width: '100%' }}
@@ -687,7 +687,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 value={this.state.sourceAmount}
                 onChangeText={(text) => this.onExchangeTextChanged(text)}
                 onFocus={() => {
-                  const balance = this.state.exchangeType == 'BID' ? this.state.ETHBalance : this.state.token.balance;
+                  const balance = this.state.exchangeType === 'BID' ? this.state.ETHBalance : this.state.token.balance;
                   this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(6)}` });
                 }}
                 onBlur={() => {
@@ -703,7 +703,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   {this.state.tradeAmountErrorMessage}
                 </FormValidationMessage>
               }
-              <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType == 'BID' ? this.state.token.symbol : 'ETH'}</FormLabel>
+              <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType === 'BID' ? this.state.token.symbol : 'ETH'}</FormLabel>
               <FormLabel>Password</FormLabel>
               <FormInput
                 inputStyle={{ width: '100%' }}
@@ -766,7 +766,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
             textStyle={{ fontSize: 13 }}
             selectedIndex={this.state.buttonGroupSelectedIndex}
             onPress={(selectedIndex) => this.onActionsButtonPress(selectedIndex)}
-            buttons={this.state.token.address == Constants.ETHER_ADDRESS ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
+            buttons={this.state.token.address === Constants.ETHER_ADDRESS ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
           />
         </View>
         <TransactionList
