@@ -242,9 +242,17 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   }
 
   private onExchangeTextChanged(text: string) {
+    text = text.replace(/[^(\d.)]*/ig,'')
     // TODO this is behaving as number and as text
     let sourceAmount: any = text;
     let destAmount: any = 0;
+
+    if(/^\./.test(text))
+      return this.setState({ sourceAmount: '', destAmount })
+    if(/\.\d*\./.test(text))
+      return this.setState({ sourceAmount: text.split('.').slice(0,2).join('.'), destAmount })
+    if(/\d+\.$/.test(text))
+      return this.setState({ sourceAmount, destAmount })
 
     if (Number(text)) {
       sourceAmount = Number(text);
