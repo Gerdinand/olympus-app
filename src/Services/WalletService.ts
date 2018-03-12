@@ -2,8 +2,9 @@
 
 import '../../shim.js';
 
-// import { asyncRandomBytes } from 'react-native-secure-randombytes';
-// window.randomBytes = asyncRandomBytes;
+import { asyncRandomBytes } from 'react-native-secure-randombytes';
+declare var window: any;
+window.randomBytes = asyncRandomBytes;
 
 import EthJs from 'ethereumjs-wallet-react-native';
 
