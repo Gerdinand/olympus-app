@@ -1,0 +1,27 @@
+image: "elviejokike/react-native-android"
+
+cache:
+  paths:
+    - node_modules/
+
+# Create the link so certain modules can be setup with node from inside npm
+before_script:
+  - npm install
+
+stages:
+  - build
+  - check
+
+typecheck:
+  stage: build
+  script:
+    - npm run build
+  tags:
+    - linux
+
+checkstyle:
+  stage: check
+  script:
+    - npm run checkstyle
+  tags:
+    - linux
