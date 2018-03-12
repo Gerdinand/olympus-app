@@ -585,12 +585,12 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   // Filtering non digital and dot characters
                   text = text.replace(/[^(\d.)]*/ig,'')
                   let sendAmount: any = text
-                  if(/\d+\.$/.test(text))
-                    return this.setState({ sendAmount })
                   if(/^\./.test(text))
                     return this.setState({ sendAmount:'' })
                   if(/\.\d*\./.test(text))
                     return this.setState({ sendAmount:text.split('.').slice(0,2).join('.') })
+                  if(/\d+\.$/.test(text))
+                    return this.setState({ sendAmount })
 
                   let numberValue = Number(text);
                   if (numberValue) {
