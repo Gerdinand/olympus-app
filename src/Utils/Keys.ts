@@ -40,7 +40,7 @@ export function unlock(input, password, nonStrict) {
   const ciphertext = new Buffer(json.crypto.ciphertext, 'hex');
   const mac = ethUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), ciphertext]));
   if (mac.toString('hex') !== json.crypto.mac) {
-    throw new Error('Key derivation failed - possibly wrong passphrase');
+    throw new Error('Key derivation failed - possibly wrong password');
   }
   const decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16),
     new Buffer(json.crypto.cipherparams.iv, 'hex'));
