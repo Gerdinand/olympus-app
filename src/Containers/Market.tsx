@@ -34,9 +34,9 @@ interface InternalProps {
 }
 
 export default class MarketView extends React.Component<InternalProps> {
-  static propTypes = {
+  public static propTypes = {
     navigation: PropTypes.object.isRequired,
-  }
+  };
 
   public render() {
     const { navigation } = this.props;
@@ -63,4 +63,3 @@ export default class MarketView extends React.Component<InternalProps> {
     );
   }
 }
-

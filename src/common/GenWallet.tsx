@@ -72,7 +72,7 @@ export default class GenWallet extends React.Component<null, InternalState> {
         </Text>
 
         <Button
-          onPress={this.generateWallet.bind(this)}
+          onPress={() => this.generateWallet()}
           title="Press Me Generate Wallet"
         />
       </View>

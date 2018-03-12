@@ -32,7 +32,8 @@ export function unlock(input, password, nonStrict) {
     if (kdfparams.prf !== 'hmac-sha256') {
       throw new Error('Unsupported parameters to PBKDF2');
     }
-    derivedKey = crypto.pbkdf2Sync(new Buffer(password), new Buffer(kdfparams.salt, 'hex'), kdfparams.c, kdfparams.dklen, 'sha256');
+    derivedKey = crypto.pbkdf2Sync(new Buffer(password),
+      new Buffer(kdfparams.salt, 'hex'), kdfparams.c, kdfparams.dklen, 'sha256');
   } else {
     throw new Error('Unsupported key derivation scheme');
   }
@@ -41,7 +42,8 @@ export function unlock(input, password, nonStrict) {
   if (mac.toString('hex') !== json.crypto.mac) {
     throw new Error('Key derivation failed - possibly wrong passphrase');
   }
-  const decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'));
+  const decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16),
+    new Buffer(json.crypto.cipherparams.iv, 'hex'));
   let seed = decipherBuffer(decipher, ciphertext);
   while (seed.length < 32) {
     const nullBuff = new Buffer([0x00]);

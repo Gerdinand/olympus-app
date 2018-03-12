@@ -12,11 +12,11 @@ import {
 } from 'react-native-elements';
 
 interface InternalProps {
-  onInputChangeText: (text: string) => void,
-  onTextPress?: (gestureEvent: GestureResponderEvent) => void,
-  sendAmount: string,
-  sendAmountErrorMessage: string,
-  balance: number,
+  onInputChangeText: (text: string) => void;
+  onTextPress?: (gestureEvent: GestureResponderEvent) => void;
+  sendAmount: string;
+  sendAmountErrorMessage: string;
+  balance: number;
 }
 
 interface InternalState {
@@ -69,5 +69,5 @@ export class InputModal extends React.PureComponent<InternalProps, InternalState
 }
 
 const styles = StyleSheet.create({
-  maxText: { position: 'relative', top: 30, left: '85%', color: 'rgb(85,137,255)', zIndex: 200 }
+  maxText: { position: 'relative', top: 30, left: '85%', color: 'rgb(85,137,255)', zIndex: 200 },
 });

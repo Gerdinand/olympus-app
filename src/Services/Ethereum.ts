@@ -22,7 +22,8 @@ export default class EthereumService {
   private isSyncing;
 
   private constructor() {
-    this.rpc = new Web3(new Web3.providers.HttpProvider(`https://${Constants.CHAIN_NAME}.infura.io/xiNNVkYQ6V3IsiPWTTNT`, 9000));
+    this.rpc = new Web3(
+      new Web3.providers.HttpProvider(`https://${Constants.CHAIN_NAME}.infura.io/xiNNVkYQ6V3IsiPWTTNT`, 9000));
     BigNumber = this.rpc.BigNumber;
     BigNumber.config({ ERRORS: false });
 
@@ -55,22 +56,23 @@ export default class EthereumService {
   }
 
   public async getTransactionReceipt(tx) {
-    const log = await Promisify(cb => this.rpc.eth.getTransactionReceipt(tx, cb));
+    const log = await Promisify((cb) => this.rpc.eth.getTransactionReceipt(tx, cb));
     return log;
   }
 
   public async getNonce(address): Promise<number> {
-    const nonce = await Promisify(cb => this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb)) as number;
+    const nonce = await Promisify((cb) =>
+      this.rpc.eth.getTransactionCount(address, this.rpc.eth.defaultBlock, cb)) as number;
     return nonce;
   }
 
   public async getGasPrice(): Promise<number> {
-    const gasPrice = await Promisify(cb => this.rpc.eth.getGasPrice(cb)) as number;
+    const gasPrice = await Promisify((cb) => this.rpc.eth.getGasPrice(cb)) as number;
     return gasPrice;
   }
 
   public async getGasLimit(): Promise<number> {
-    const block: any = await Promisify(cb => this.rpc.eth.getBlock('latest', cb));
+    const block: any = await Promisify((cb) => this.rpc.eth.getBlock('latest', cb));
     const gasLimit = block.gasLimit;
 
     return gasLimit;
@@ -121,7 +123,7 @@ export default class EthereumService {
 
   public async sendTx(tx) {
     const serializedTx = tx.serialize();
-    const hash = await Promisify(cb => this.rpc.eth.sendRawTransaction(`0x${serializedTx.toString('hex')}`, cb));
+    const hash = await Promisify((cb) => this.rpc.eth.sendRawTransaction(`0x${serializedTx.toString('hex')}`, cb));
     WalletService.getInstance().wallet.pendingTxHash = hash;
     this.sync(WalletService.getInstance().wallet);
     console.log(`tx hash: ${hash}`);
@@ -131,7 +133,7 @@ export default class EthereumService {
 
   public async getBalance(address) {
     try {
-      const balanceInWei = await Promisify(cb => this.rpc.eth.getBalance(address, cb));
+      const balanceInWei = await Promisify((cb) => this.rpc.eth.getBalance(address, cb));
       const balance = this.rpc.fromWei(balanceInWei, 'ether');
       console.log('Balance: ', balance.toNumber());
 
@@ -143,7 +145,7 @@ export default class EthereumService {
 
   public async getTokenBalance(address, ownerAddress, decimals) {
     const instance = this.erc20Contract.at(address);
-    const balance = await Promisify(cb => instance.balanceOf(ownerAddress, cb));
+    const balance = await Promisify((cb) => instance.balanceOf(ownerAddress, cb));
 
     const bigBalance = new BigNumber(balance);
     const base = new BigNumber(10);
@@ -197,7 +199,7 @@ export default class EthereumService {
       const tokenPrice = this.rpc.fromWei(priceInWei, 'ether').toFixed(2);
       token.price = tokenPrice;
 
-      if (tokenPrice != 0) {
+      if (tokenPrice !== 0) {
         balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
       }
 
@@ -205,9 +207,10 @@ export default class EthereumService {
       console.log(`${token.symbol} balance: ${token.balance}`);
     }
 
-    wallet.balanceInUSD = balanceInUSD != 0 ? balanceInUSD.toFixed(2) : 0;
+    wallet.balanceInUSD = balanceInUSD !== 0 ? balanceInUSD.toFixed(2) : 0;
     console.log('USD1: ', wallet.balanceInUSD);
 
+    // tslint:disable-next-line:max-line-length
     const url = `https://api-${Constants.CHAIN_NAME}.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
     const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
     wallet.txs = response ? (await response.json()).result : [];
@@ -215,8 +218,8 @@ export default class EthereumService {
 
     if (wallet.pendingTxHash) {
       let hasPacked = false;
-      for (let i = 0; i < wallet.txs.length; i++) {
-        if (wallet.txs[i].hash === wallet.pendingTxHash) {
+      for (const tx of wallet.txs) {
+        if (tx.hash === wallet.pendingTxHash) {
           hasPacked = true;
           break;
         }
@@ -239,7 +242,7 @@ export default class EthereumService {
     // this now returns 2 numbers.
     // The function returns the expected and worse case conversion rate between source and dest tokens,
     // where source and dest are 20 bytes addresses.
-    const result = (await Promisify(cb => this.kyberContract.getExpectedRate(source, dest, 1, cb)));
+    const result = (await Promisify((cb) => this.kyberContract.getExpectedRate(source, dest, 1, cb)));
     return result[0];
   }
 
@@ -345,4 +348,3 @@ export default class EthereumService {
     return tx;
   }
 }
-

@@ -10,11 +10,11 @@ import Token from '../Services/Token';
 import Tx from '../Services/Tx';
 
 interface InternalProps {
-  onListItemPress: (txHash: string) => void
-  pendingTxHash: string,
-  txs: Tx[],
-  token: Token,
-};
+  onListItemPress: (txHash: string) => void;
+  pendingTxHash: string;
+  txs: Tx[];
+  token: Token;
+}
 export class TransactionList extends PureComponent<InternalProps> {
 
   public constructor(props) {
@@ -87,7 +87,7 @@ export class TransactionList extends PureComponent<InternalProps> {
       />);
   }
 
-  render() {
+  public render() {
     return (
       <List>
         {this.props.pendingTxHash &&

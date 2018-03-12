@@ -39,9 +39,9 @@ interface InternalProps {
 
 interface InternalState {
   value: number;
-  amountPlaceHolder: string,
-  gasFee: number,
-  options: any[], //TODO type?
+  amountPlaceHolder: string;
+  gasFee: number;
+  options: any[]; // TODO type?
   cancelButtonIndex: number;
   sendModalVisible: boolean;
   scanModalVisible: boolean;
@@ -52,21 +52,22 @@ interface InternalState {
   token: any;
   balance: number;
   ETHBalance: number;
-  sendAddress: string | null; // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
-  sendAmount: string,
-  password: string | null,
-  sourceAmount: string,
+  sendAddress: string | null;
+  // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
+  sendAmount: string;
+  password: string | null;
+  sourceAmount: string;
   destAmount: number;
-  sendAddressErrorMessage: string | null,
-  sendAmountErrorMessage: string | null,
-  sendPasswordErrorMessage: string | null,
-  scanButtonDisable: boolean,
-  sendButtonDisable: boolean,
-  sendCancelButtonDisable: boolean,
-  tradeButtonDisable: boolean,
-  tradeCancelButtonDisable: boolean,
-  tradeAmountErrorMessage: string | null,
-  tradePasswordErrorMessage: string | null,
+  sendAddressErrorMessage: string | null;
+  sendAmountErrorMessage: string | null;
+  sendPasswordErrorMessage: string | null;
+  scanButtonDisable: boolean;
+  sendButtonDisable: boolean;
+  sendCancelButtonDisable: boolean;
+  tradeButtonDisable: boolean;
+  tradeCancelButtonDisable: boolean;
+  tradeAmountErrorMessage: string | null;
+  tradePasswordErrorMessage: string | null;
   exchangeType: string;
   exchangeAmount: number; // TODO not in use?
   buttonGroupSelectedIndex: number; // TODO better name
@@ -78,13 +79,13 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private walletListener: any;
   public refs: {
     actionSheet: ActionSheet;
-  }
-  static navigationOptions = (_navigationOptions: { navigation: any }) => ({
+  };
+  public static navigationOptions = (_navigationOptions: { navigation: any }) => ({
     title: 'Asset',
     tabBar: {
       visible: false,
     },
-  });
+  })
 
   public constructor(props) {
     super(props);
@@ -103,7 +104,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       token: this.props.navigation.state.params.token,
       balance: 0,
       ETHBalance: WalletService.getInstance().wallet.balance,
-      sendAddress: null, // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
+      // "0xf085e5aC2e58dC354021Fd9E2eC1e0377f0DB839", //"0x82A739B9c0da0462ddb0e087521693ab1aE48D32",  // test only
+      sendAddress: null,
       sendAmount: '',
       password: null,
       sourceAmount: '',
@@ -147,7 +149,9 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   }
 
   private async calcuateGasFee(gasLimit = Constants.MINIMUM_GAS_LIMIT) {
-    const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => { });
+    const gasPrice = await EthereumService.getInstance().getGasPrice().catch(() => {
+      //
+    });
     const value = gasLimit * gasPrice * 2;
     this.setState({
       gasFee: Number(toEtherNumber(value)), // TODO is this NUmber() cast correct?
@@ -158,7 +162,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private reloadTxs(wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
     const exchangeType = this.state.exchangeType;
-    const ETHBalance = wallet.tokens.find(token => token.address === Constants.ETHER_ADDRESS).balance;
+    const ETHBalance = wallet.tokens.find((token) => token.address === Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
       if (this.state.token.address === Constants.ETHER_ADDRESS) {
         // ETH shows all trading history
@@ -171,8 +175,11 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           || (tx.input.destToken && tx.input.destToken.symbol === token.symbol));
     });
     let balance;
-    if (exchangeType === 'BID' || token.address === Constants.ETHER_ADDRESS) { balance = ETHBalance; }
-    else { balance = token.balance; }
+    if (exchangeType === 'BID' || token.address === Constants.ETHER_ADDRESS) {
+      balance = ETHBalance;
+    } else {
+      balance = token.balance;
+    }
     this.setState({ token, txs, ETHBalance, balance, pendingTxHash: wallet.pendingTxHash });
   }
 
@@ -228,8 +235,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     let sendAmount;
     if (token.address === Constants.ETHER_ADDRESS || exchangeType === 'BID') {
       sendAmount = balance.minus(fee).toNumber();
-    }
-    else {
+    } else {
       sendAmount = Number(token.balance);
     }
     return sendAmount.toFixed(6);
@@ -243,7 +249,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     if (Number(text)) {
       sourceAmount = Number(text);
       const maxBalance = this.getMaxBalance();
-      if (sourceAmount > maxBalance) sourceAmount = maxBalance;
+      if (sourceAmount > maxBalance) { sourceAmount = maxBalance; }
       if (this.state.exchangeType === 'BID') {
         destAmount = sourceAmount * this.state.token.price;
       } else {
@@ -354,7 +360,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           e.message,
           [
             { text: 'Cancel', style: 'cancel' },
-          ]
+          ],
         );
       }
     }
@@ -405,7 +411,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     if (isValidate) {
       const token = this.state.token;
       let tx = null;
-      if (token.symbol != 'ETH') {
+      if (token.symbol !== 'ETH') {
         // token from, to, value, decimals, contractAddress, gasLimit
         tx = await EthereumService.getInstance().generateTokenTx(
           token.ownerAddress,
@@ -447,7 +453,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           e.message,
           [
             { text: 'Cancel', style: 'cancel' },
-          ]
+          ],
         );
       }
     }
@@ -464,11 +470,9 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     if (0 === selectedIndex) {
       if (this.state.ETHBalance < minBalance) {
         return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
-      }
-      else if (this.state.token.balance <= 0) {
+      } else if (this.state.token.balance <= 0) {
         return DeviceEventEmitter.emit('showToast', `your balance in ${this.state.token.symbol} is insufficient`);
-      }
-      else {
+      } else {
         this.onSend();
       }
     } else if (1 === selectedIndex) {
@@ -476,15 +480,13 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     } else if (2 === selectedIndex) {
       if (this.state.ETHBalance < minBalance) {
         return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
-      }
-      else {
+      } else {
         this.onExchange();
       }
     }
   }
 
   public render() {
-
 
     return (
       <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
@@ -527,7 +529,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   />
                 </View>
               </View>
-              <Button buttonStyle={styles.modalCloseButton}
+              <Button
+                buttonStyle={styles.modalCloseButton}
                 title={'Cancel'}
                 onPress={() => { this.setState({ sendModalVisible: true, scanModalVisible: false }); }}
                 color={'#4A4A4A'}
@@ -560,7 +563,10 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   }
                 }}
               >
-                <Icon name="md-qr-scanner" size={24} style={styles.inputButton}
+                <Icon
+                  name="md-qr-scanner"
+                  size={24}
+                  style={styles.inputButton}
                   disabled={this.state.scanButtonDisable}
                 />
               </FormInputWithButton>
@@ -581,7 +587,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   if (Number(text)) {
                     sendAmount = Number(text);
                     const max = this.getMaxBalance();
-                    if (sendAmount > max) sendAmount = max;
+                    if (sendAmount > max) { sendAmount = max; }
                     sendAmount = sendAmount.toString();
                   }
                   this.setState({ sendAmount });
@@ -643,14 +649,17 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 <Button
                   title={this.state.sendButtonDisable ? 'Sending...' : 'Send'}
                   buttonStyle={styles.modalSendButton}
-                  //raised={true}
+                  // raised={true}
                   disabled={this.state.sendButtonDisable}
                   onPress={async () => this.onSendPress()}
                 />
-                <Button buttonStyle={styles.modalCloseButton}
+                <Button
+                  buttonStyle={styles.modalCloseButton}
                   title={'Cancel'}
                   disabled={this.state.sendCancelButtonDisable}
-                  onPress={() => { this.setState({ sendModalVisible: false, sendAmount: '', password: null, sendAddress: null }); }}
+                  onPress={() => {
+                    this.setState({ sendModalVisible: false, sendAmount: '', password: null, sendAddress: null });
+                  }}
                   color={'#4A4A4A'}
                 />
               </View>
@@ -675,10 +684,18 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           transparent={true}
           visible={this.state.exchangeModalVisible}
           onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
-          onRequestClose={() => { this.setState({ exchangeModalVisible: false, exchangeType: '', amountPlaceHolder: '0' }); }}
+          onRequestClose={() => {
+            this.setState({
+              exchangeModalVisible: false,
+              exchangeType: '', amountPlaceHolder: '0',
+            });
+          }}
         >
           <View style={styles.modelContainer}>
-            <Card title={this.state.exchangeType === 'BID' ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}>
+            <Card
+              title={this.state.exchangeType === 'BID'
+                ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}
+            >
               <FormLabel>Exchange</FormLabel>
               <FormInputWithButton
                 inputStyle={{ width: '100%' }}
@@ -703,7 +720,10 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   {this.state.tradeAmountErrorMessage}
                 </FormValidationMessage>
               }
-              <FormLabel>Expected to receive {this.state.destAmount} {this.state.exchangeType === 'BID' ? this.state.token.symbol : 'ETH'}</FormLabel>
+              <FormLabel>
+                Expected to receive {this.state.destAmount} {this.state.exchangeType === 'BID' ?
+                  this.state.token.symbol : 'ETH'}
+              </FormLabel>
               <FormLabel>Password</FormLabel>
               <FormInput
                 inputStyle={{ width: '100%' }}
@@ -734,21 +754,22 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   }}
                 />
               </Row>
-              <View style={{
-                padding: 10,
-              }}
-              >
+              <View style={{ padding: 10 }}>
                 <Button
                   title={this.state.tradeButtonDisable ? 'Trading...' : 'Trade'}
                   buttonStyle={styles.modalSendButton}
                   disabled={this.state.tradeButtonDisable}
                   onPress={async () => this.onTradePress()}
                 />
-                <Button buttonStyle={styles.modalCloseButton}
+                <Button
+                  buttonStyle={styles.modalCloseButton}
                   title="Cancel"
                   disabled={this.state.tradeCancelButtonDisable}
                   onPress={() => {
-                    this.setState({ exchangeModalVisible: false, exchangeType: '', sourceAmount: '', password: null, exchangeAmount: 0.0 });
+                    this.setState({
+                      exchangeModalVisible: false, exchangeType: '',
+                      sourceAmount: '', password: null, exchangeAmount: 0.0,
+                    });
                   }}
                   color={'#4A4A4A'}
                 />
@@ -766,7 +787,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
             textStyle={{ fontSize: 13 }}
             selectedIndex={this.state.buttonGroupSelectedIndex}
             onPress={(selectedIndex) => this.onActionsButtonPress(selectedIndex)}
-            buttons={this.state.token.address === Constants.ETHER_ADDRESS ? ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
+            buttons={this.state.token.address === Constants.ETHER_ADDRESS ?
+              ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
           />
         </View>
         <TransactionList
@@ -778,10 +800,10 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           }}
         />
         <ActionSheet
-          ref='actionSheet'
+          ref="actionSheet"
           options={this.state.options}
           cancelButtonIndex={this.state.cancelButtonIndex}
-          onPress={this.handlePress.bind(this)}
+          onPress={(buttonIndex) => this.handlePress(buttonIndex)}
         />
       </ScrollView >
     );
@@ -847,4 +869,3 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
 });
-

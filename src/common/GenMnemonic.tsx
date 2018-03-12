@@ -41,7 +41,7 @@ export default class GenMnemonic extends React.Component<null, InternalState> {
         </Text>
 
         < Button
-          onPress={this.generateMnemonic.bind(this)}
+          onPress={() => this.generateMnemonic()}
           title="Press Me Generate Mnemonic"
         />
       </View>

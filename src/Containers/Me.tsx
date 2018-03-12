@@ -4,7 +4,7 @@ import React from 'react';
 import {
   ScrollView,
   Linking,
-  //ActionSheetIOS,
+  // ActionSheetIOS,
 } from 'react-native';
 import {
   List,
@@ -51,14 +51,14 @@ interface InternalProps {
 export default class MeView extends React.Component<InternalProps> {
 
   public refs = {
-    actionSheet: ActionSheet
-  }
+    actionSheet: ActionSheet,
+  };
 
   public constructor(props: InternalProps) {
     super(props);
   }
 
-  onPress(list, index) {
+  public onPress(list, index) {
     if (list === list1) {
       if (index === 0) {
         // backup
@@ -148,12 +148,12 @@ export default class MeView extends React.Component<InternalProps> {
           }
         </List>
         <ActionSheet
-          ref='actionSheet'
+          ref="actionSheet"
           title={''}
           options={options}
           cancelButtonIndex={CANCEL_INDEX}
           destructiveButtonIndex={destructiveButtonIndex}
-          onPress={this.handlePress.bind(this)}
+          onPress={(buttonIndex) => this.handlePress(buttonIndex)}
         />
       </ScrollView>
     );

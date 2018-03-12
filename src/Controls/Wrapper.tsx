@@ -2,10 +2,10 @@ import React from 'react';
 import { View, ViewProperties } from 'react-native';
 
 interface InternalProps extends ViewProperties {
-  style?: any,
-  padding?: number,
-  paddingVertical?: number,
-  paddingHorizontal?: number,
+  style?: any;
+  padding?: number;
+  paddingVertical?: number;
+  paddingHorizontal?: number;
 
 }
 export class Wrapper extends React.PureComponent<InternalProps> {

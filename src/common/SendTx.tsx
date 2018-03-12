@@ -41,10 +41,12 @@ export default class SendTx extends React.Component<null, InternalState> {
     };
   }
   private unlockAddress() {
-    const unlockAddress = `0x${ethW.fromPrivateKey(new Buffer(this.state.privateKey, 'hex')).getAddress().toString('hex')}`;
+    const unlockAddress = `0x${ethW.fromPrivateKey(
+      new Buffer(this.state.privateKey, 'hex')).getAddress().toString('hex')}`
+      ;
     this.setState({ unlockAddress });
   }
-  private genreateTx() {
+  private generateTx() {
     const nonce = web3.eth.getTransactionCount(this.state.unlockAddress);
     const gasPrice = web3.eth.getGasPrice();
     const _ = this;
@@ -62,7 +64,7 @@ export default class SendTx extends React.Component<null, InternalState> {
       tx.sign(new Buffer(_.state.privateKey, 'hex'));
       const serializedTx = tx.serialize();
       web3.eth.sendSignedTransaction(`0x${serializedTx.toString('hex')}`)
-        .on('receipt', function (data) {
+        .on('receipt', (data) => {
           console.log(data.transactionHash);
           if (data.transactionHash) {
             _.sendMessage = 'send success';
@@ -88,7 +90,7 @@ export default class SendTx extends React.Component<null, InternalState> {
           unlockAddress:{this.state.unlockAddress}
         </Text>
         <Button
-          onPress={this.unlockAddress.bind(this)}
+          onPress={() => this.unlockAddress()}
           title="Press Me to Unlock Address"
         />
         <Text>Receice Address</Text>
@@ -116,7 +118,7 @@ export default class SendTx extends React.Component<null, InternalState> {
         />
 
         <Button
-          onPress={this.genreateTx.bind(this)}
+          onPress={() => this.generateTx()}
           title="Press Me Generate Tx"
         />
       </View>

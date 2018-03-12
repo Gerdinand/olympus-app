@@ -13,17 +13,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Row } from '../Controls/index';
 import { AddressModal } from '../Components';
 
-
 interface InternalProps {
-  name: string,
-  address: string,
+  name: string;
+  address: string;
   balance: string | number;
 }
 interface InternalState {
   modalVisible: boolean;
 }
 export class WalletHeader extends React.Component<InternalProps, InternalState> {
-
 
   public constructor(props) {
     super(props);
@@ -42,7 +40,10 @@ export class WalletHeader extends React.Component<InternalProps, InternalState> 
             onPress={() => { this.setState({ modalVisible: true }); }}
           >
             <Text style={styles.address}> {address}</Text>
-            <Icon name="qrcode" color="white" size={22}
+            <Icon
+              name="qrcode"
+              color="white"
+              size={22}
               style={styles.icon}
             />
           </Row>

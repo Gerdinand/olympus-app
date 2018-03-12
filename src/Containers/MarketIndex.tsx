@@ -48,4 +48,3 @@ export default class MarketIndexView extends React.Component<InternalProps> {
     );
   }
 }
-

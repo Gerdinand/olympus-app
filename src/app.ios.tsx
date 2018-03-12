@@ -58,7 +58,7 @@ const Root = TabNavigator(
     tabBarOptions: {
       activeTintColor: '#5589FF',
     },
-  }
+  },
 );
 
 interface InternalState {
@@ -72,7 +72,7 @@ export default class Olympus extends React.Component<null, InternalState> {
   private toastListener: EmitterSubscription;
   public refs: {
     toast: Toast;
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -99,14 +99,14 @@ export default class Olympus extends React.Component<null, InternalState> {
     });
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     EventRegister.removeEventListener(this.listener);
     if (this.toastListener) {
       this.toastListener.remove();
     }
   }
 
-  async loadingWallet() {
+  public async loadingWallet() {
     const isUsed = await AsyncStorage.getItem('used');
     if (isUsed) {
       const wallet = await WalletService.getInstance().getActiveWallet();
@@ -116,13 +116,13 @@ export default class Olympus extends React.Component<null, InternalState> {
     }
   }
 
-  render() {
+  public render() {
     return (
       <View style={{ flex: 1, zIndex: 100 }}>
         {this.state.loading && <View />}
         {!this.state.loading && this.state.hasWallet && <Root />}
         {!this.state.loading && !this.state.hasWallet && <Welcome />}
-        <Toast ref='toast' />
+        <Toast ref="toast" />
       </View>
     );
   }

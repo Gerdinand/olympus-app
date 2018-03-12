@@ -14,7 +14,6 @@ import SupportedTokens from './SupportedTokens';
 import Token from './Token';
 import Constants from './Constants.js';
 
-
 export default class WalletService {
 
   public wallet;
@@ -37,7 +36,7 @@ export default class WalletService {
     this.wallet = null;
   }
 
-  async getActiveWallet() {
+  public async getActiveWallet() {
     const infoString = await readItem('wallets');
 
     if (infoString) {
@@ -58,9 +57,10 @@ export default class WalletService {
       };
 
       // 2. add tokens
-      for (let i = 0; i < SupportedTokens.length; i++) {
-        const t = SupportedTokens[i];
-        const token = new Token(t.name, t.icon, t.symbol, t.address, wallet.address, t.decimals);
+      for (const tokenData of SupportedTokens) {
+        const token = new Token(tokenData.name,
+          tokenData.icon, tokenData.symbol,
+          tokenData.address, wallet.address, tokenData.decimals);
         wallet.tokens.push(token);
       }
 
@@ -149,6 +149,5 @@ export default class WalletService {
 
     return json;
   }
-
 
 }

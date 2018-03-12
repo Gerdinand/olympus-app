@@ -9,21 +9,19 @@ import {
   FormInput, FormInputProps,
 } from 'react-native-elements';
 
-
-
 interface InternalProps extends FormInputProps {
-  onButtonPress: (input: FormInput) => void,
-};
+  onButtonPress: (input: FormInput) => void;
+}
 export class FormInputWithButton extends React.PureComponent<InternalProps> {
   public refs: {
     input: FormInput;
-  }
+  };
 
   constructor(props) {
     super(props);
   }
 
-  render() {
+  public render() {
     const { children, ...props } = this.props;
     return (
       <View>

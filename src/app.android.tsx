@@ -39,8 +39,7 @@ const Root = TabNavigator(
         tabBarLabel: 'Market',
         title: 'Market',
         tabBarIcon: ({ tintColor }) => (
-          <Image source={require('../images/market.png')} style={{ tintColor }
-          } />
+          <Image source={require('../images/market.png')} style={{ tintColor }} />
         ),
       },
     },
@@ -50,8 +49,7 @@ const Root = TabNavigator(
       navigationOptions: {
         tabBarLabel: 'Me',
         tabBarIcon: ({ tintColor }) => (
-          <Image source={require('../images/me.png')} style={{ tintColor }
-          } />
+          <Image source={require('../images/me.png')} style={{ tintColor }} />
         ),
       },
 
@@ -68,7 +66,7 @@ const Root = TabNavigator(
       activeTintColor: 'rgb(89,139,246)',
       inactiveTintColor: 'rgb(145,145,145)',
       indicatorStyle: {
-        height: 0
+        height: 0,
       },
       iconStyle: {
         marginTop: -2,
@@ -80,9 +78,9 @@ const Root = TabNavigator(
         backgroundColor: '#fff',
         height: 54,
       },
-      //activeTintColor: '#5589FF',
+      // activeTintColor: '#5589FF',
     },
-  }
+  },
 );
 
 interface InternalState {
@@ -95,7 +93,7 @@ export default class Olympus extends React.Component<null, InternalState> {
   private toastListener: EmitterSubscription;
   public refs: {
     toast: Toast;
-  }
+  };
   public constructor(props) {
     super(props);
 
@@ -140,8 +138,7 @@ export default class Olympus extends React.Component<null, InternalState> {
 
   public render() {
     return (
-      <View style={{ flex: 1, zIndex: 100 }
-      }>
+      <View style={{ flex: 1, zIndex: 100 }}>
         <StatusBar
           backgroundColor="white"
           barStyle="dark-content"
@@ -151,7 +148,7 @@ export default class Olympus extends React.Component<null, InternalState> {
           !this.state.loading && this.state.hasWallet && <Root />}
         {
           !this.state.loading && !this.state.hasWallet && <Welcome />}
-        < Toast ref='toast' />
+        < Toast ref="toast" />
       </View>
     );
   }

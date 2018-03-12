@@ -23,7 +23,7 @@ export const decodeInput = (tx) => {
     if (result) {
       let source = result.params.find((p) => p.name === 'source');
       let dest = result.params.find((p) => p.name === 'dest');
-      const amount = result.params.find((p) => ['srcAmount', '_amount', '_value'].some(n => p.name === n)).value;
+      const amount = result.params.find((p) => ['srcAmount', '_amount', '_value'].some((n) => p.name === n)).value;
 
       if (!source && !dest) {
         // token transfer

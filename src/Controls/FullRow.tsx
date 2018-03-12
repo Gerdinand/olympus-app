@@ -3,10 +3,10 @@ import { ViewProperties } from 'react-native';
 import { Row, Wrapper } from './';
 
 interface InternalProps {
-  rowStyle?: any, // fix this any types
-  wrapperStyle?: any,
-  paddingHorizontal?: number,
-  viewProps?: ViewProperties,
+  rowStyle?: any; // fix this any types
+  wrapperStyle?: any;
+  paddingHorizontal?: number;
+  viewProps?: ViewProperties;
 }
 export class FullRow extends React.PureComponent<InternalProps> {
 

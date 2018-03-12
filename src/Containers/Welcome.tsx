@@ -15,16 +15,15 @@ import CreateWalletView from './CreateWallet';
 import ImportWalletView from './ImportWallet';
 import PropTypes from 'prop-types';
 
-
 interface InternalProps {
   navigation;
 }
 class WelcomeView extends React.Component<InternalProps> {
-  static propTypes = {
+  public static propTypes = {
     navigation: PropTypes.object,
-  }
+  };
 
-  static navigationOptions = {
+  public static navigationOptions = {
     title: 'Welcome',
     header: null,
   };
@@ -44,7 +43,8 @@ class WelcomeView extends React.Component<InternalProps> {
           title={'Create new wallet'}
           onPress={() => navigate('CreateWallet')}
         />
-        <Button buttonStyle={styles.button2}
+        <Button
+          buttonStyle={styles.button2}
           title="Import exist wallet"
           onPress={() => navigate('ImportWallet')}
           color={'#4A4A4A'}

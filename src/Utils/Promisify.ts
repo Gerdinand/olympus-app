@@ -8,7 +8,7 @@ const Promisify = (inner) =>
       } else {
         resolve(res);
       }
-    })
+    }),
   );
 
 export default Promisify;

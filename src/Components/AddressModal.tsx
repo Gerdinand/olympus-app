@@ -14,14 +14,13 @@ import { Text } from '../Controls';
 import QRCode from 'react-native-qrcode';
 
 interface InternalProps {
-  visible: boolean,
-  onClose?: (message: string) => void,
-  address: string,
-  title: string,
-};
+  visible: boolean;
+  onClose?: (message: string) => void;
+  address: string;
+  title: string;
+}
 
 export class AddressModal extends React.PureComponent<InternalProps> {
-
 
   public constructor(props) {
     super(props);
@@ -51,11 +50,10 @@ export class AddressModal extends React.PureComponent<InternalProps> {
                 />
               </View>
             </View>
-            <Text style={{ color: 'black', fontSize: 12, textAlign: 'center', marginTop: 15 }}>{this.props.address}</Text>
-            <View style={{
-              padding: 10,
-            }}
-            >
+            <Text style={{ color: 'black', fontSize: 12, textAlign: 'center', marginTop: 15 }}>
+              {this.props.address}
+            </Text>
+            <View style={{ padding: 10 }}>
               <Button
                 title={'Copy address'}
                 buttonStyle={styles.modalSendButton}
@@ -64,7 +62,8 @@ export class AddressModal extends React.PureComponent<InternalProps> {
                   this.close('Address copied to clipboard.');
                 }}
               />
-              <Button buttonStyle={styles.modalCloseButton}
+              <Button
+                buttonStyle={styles.modalCloseButton}
                 title={'Cancel'}
                 onPress={() => { this.close(); }}
                 color={'#4A4A4A'}
@@ -76,7 +75,6 @@ export class AddressModal extends React.PureComponent<InternalProps> {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   modelContainer: {

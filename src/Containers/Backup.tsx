@@ -38,7 +38,7 @@ export default class BackupView extends React.PureComponent<InternalProps, Inter
     };
   }
 
-  render() {
+  public render() {
     const _ = this;
 
     return (
@@ -50,15 +50,17 @@ export default class BackupView extends React.PureComponent<InternalProps, Inter
             placeholder="to unlock wallet"
             onChangeText={(password) => this.setState({ password })}
           />
-          <View style={{
-            padding: 10,
-          }}
+          <View
+            style={{
+              padding: 10,
+            }}
           >
-            <Button buttonStyle={{ backgroundColor: '#5589FF' }}
+            <Button
+              buttonStyle={{ backgroundColor: '#5589FF' }}
               title={'Unlock'}
               disabled={this.state.unlockButtonDisable}
               onPress={async () => {
-                if (_.state.password != null && _.state.password.length != 0) {
+                if (_.state.password != null && _.state.password.length !== 0) {
                   this.setState({ unlockButtonDisable: true });
                   const v3json = await EthereumWallet.getInstance().getWalletJson(_.state.password);
                   // console.log(v3json);
@@ -76,13 +78,13 @@ export default class BackupView extends React.PureComponent<InternalProps, Inter
           </View>
         </View>)}
         {this.state.walletJson && (<View>
-          <View style={{
-            margin: 16,
-            padding: 12,
-          }}
+          <View
+            style={{
+              margin: 16,
+              padding: 12,
+            }}
           >
-            <Text style={styles.h1}
-            > Notice</Text>
+            <Text style={styles.h1}> Notice</Text>
             <Text
               style={{
                 marginTop: 12,
@@ -97,17 +99,17 @@ export default class BackupView extends React.PureComponent<InternalProps, Inter
             </Text>
           </View>
           <Hr />
-          <View style={{
-            margin: 16,
-            padding: 12,
-            backgroundColor: '#eee',
-          }}
+          <View
+            style={{
+              margin: 16,
+              padding: 12,
+              backgroundColor: '#eee',
+            }}
           >
-            <Text
-              selectable
-            >{this.state.walletJson}</Text>
+            <Text selectable>{this.state.walletJson}</Text>
 
-            <Button buttonStyle={{ backgroundColor: '#5589FF', marginTop: 24 }}
+            <Button
+              buttonStyle={{ backgroundColor: '#5589FF', marginTop: 24 }}
               title="Copy keystore"
               onPress={() => {
                 Clipboard.setString(this.state.walletJson);
@@ -121,12 +123,11 @@ export default class BackupView extends React.PureComponent<InternalProps, Inter
   }
 }
 
-
 const styles = StyleSheet.create({
   h1: {
     fontSize: 16,
     color: 'darkblue',
     fontWeight: 'bold',
-  }
+  },
 
 });

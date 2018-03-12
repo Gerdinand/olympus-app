@@ -43,7 +43,7 @@ export default class WalletView extends React.Component<InternalProps, InternalS
   public componentWillMount() {
     const _ = this;
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
-      if (_.state.wallet.length && wallet.txs.length != _.state.wallet.length) {
+      if (_.state.wallet.length && wallet.txs.length !== _.state.wallet.length) {
         DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');
       }
       _.setState({ wallet, refreshing: false });
@@ -86,9 +86,12 @@ export default class WalletView extends React.Component<InternalProps, InternalS
         <WalletHeader
           name={this.state.wallet.name}
           address={this.state.wallet.address}
-          balance={this.state.wallet.ethPrice != 0 ? `$ ${this.state.wallet.balanceInUSD}` : '$ --'}
+          balance={this.state.wallet.ethPrice !== 0 ? `$ ${this.state.wallet.balanceInUSD}` : '$ --'}
         />
-        <List style={{ height: 578 }} containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent' }}>
+        <List
+          style={{ height: 578 }}
+          containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent' }}
+        >
           {
             this.state.wallet.tokens.map((t, i) => (
               <ListItem
@@ -99,7 +102,9 @@ export default class WalletView extends React.Component<InternalProps, InternalS
                 key={i}
                 title={t.symbol}
                 subtitle={t.name}
-                rightTitle={(0 === i || t.price === 0) ? t.balance.toFixed(6).toString() : `${t.balance.toFixed(6).toString()}\n1 ETH = ${t.price} ${t.symbol}`}
+                rightTitle={(0 === i || t.price === 0) ?
+                  t.balance.toFixed(6).toString() :
+                  `${t.balance.toFixed(6).toString()}\n1 ETH = ${t.price} ${t.symbol}`}
                 rightTitleNumberOfLines={2}
                 rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A', textAlign: 'right' }}
                 onPress={() => {
@@ -117,4 +122,3 @@ export default class WalletView extends React.Component<InternalProps, InternalS
     );
   }
 }
-
