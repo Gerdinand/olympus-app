@@ -14,8 +14,8 @@ import {
 import { TabNavigator, TabBarBottom } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
-import { WalletTab, MarketTab, MeTab } from './Tabs';
-import { Welcome } from './Containers';
+import { WalletTab, MarketTab, MeTab } from './Navigators';
+import Welcome from './Pages/Welcome/Welcome';
 import { WalletService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 
