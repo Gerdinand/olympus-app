@@ -495,7 +495,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           visible={this.state.scanModalVisible}
           onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
           onRequestClose={() => { this.setState({ scanModalVisible: false, amountPlaceHolder: '0' }); }}
-        >
+          >
           <View style={styles.modelContainer}>
             <Card title="SCAN">
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -543,11 +543,11 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           visible={this.state.sendModalVisible}
           onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
           onRequestClose={() => { this.setState({ sendModalVisible: false, amountPlaceHolder: '0' }); }}
-        >
+          >
           <ScrollView style={styles.modelContainer} keyboardShouldPersistTaps={'handled'}>
             <Card
               title={`SEND ${this.state.token.symbol}`}
-            >
+              >
               <Image source={{ uri: this.state.token.icon }} style={styles.icon} />
               <FormLabel>To</FormLabel>
               <FormInputWithButton
@@ -582,12 +582,21 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
                 onChangeText={(text) => {
-                  let sendAmount: any = text; // TODO number | text
-                  if (Number(text)) {
-                    sendAmount = Number(text);
+                  // Filtering non digital and dot characters
+                  text = text.replace(/[^(\d.)]*/ig,'')
+                  let sendAmount: any = text
+                  if(/\d+\.$/.test(text))
+                    return this.setState({ sendAmount })
+                  if(/^\./.test(text))
+                    return this.setState({ sendAmount:'' })
+                  if(/\.\d*\./.test(text))
+                    return this.setState({ sendAmount:text.split('.').slice(0,2).join('.') })
+
+                  let numberValue = Number(text);
+                  if (numberValue) {
                     const max = this.getMaxBalance();
-                    if (sendAmount > max) { sendAmount = max; }
-                    sendAmount = sendAmount.toString();
+                    if (numberValue > max) { numberValue = max; }
+                    sendAmount = numberValue.toString();
                   }
                   this.setState({ sendAmount });
                 }}
@@ -689,7 +698,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
               exchangeType: '', amountPlaceHolder: '0',
             });
           }}
-        >
+          >
           <View style={styles.modelContainer}>
             <Card
               title={this.state.exchangeType === 'BID'
