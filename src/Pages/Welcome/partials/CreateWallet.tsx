@@ -85,10 +85,10 @@ export default class CreateWalletView extends React.Component<null, InternalStat
             {this.state.nameErrorMessage}
           </FormValidationMessage>
         }
-        <FormLabel>Passphrase </FormLabel>
+        <FormLabel>Password </FormLabel>
         < FormInput
           secureTextEntry={true}
-          placeholder="Type in your passphrase"
+          placeholder="Type in your password"
           onChangeText={(password1) => this.setState({ password1 })}
         />
         {
@@ -97,10 +97,10 @@ export default class CreateWalletView extends React.Component<null, InternalStat
             {this.state.passwordErrorMessage1}
           </FormValidationMessage>
         }
-        <FormLabel>Retype Passphrase </FormLabel>
+        <FormLabel>Retype Password </FormLabel>
         < FormInput
           secureTextEntry={true}
-          placeholder="Retype your passphrase"
+          placeholder="Retype your password"
           onChangeText={(password2) => this.setState({ password2 })}
         />
         {
