@@ -90,3 +90,21 @@ export function numberToHex(number) {
 export function hexToNumber(hex) {
   return new BigNumber(hex).toNumber();
 }
+
+/*
+ * Restricts a text to a number if value is not correct also retuns the flag
+ */
+export function restrictTextToNumber(text: string): { text: string, textCorrect: boolean } {
+  text = text.replace(/[^(\d.)]*/ig, '');
+  if (/^\./.test(text)) {
+    return { text: '', textCorrect: false };
+  }
+  if (/\.\d*\./.test(text)) {
+    return { text: text.split('.').slice(0, 2).join('.'), textCorrect: false };
+  }
+  if (/\d+\.$/.test(text)) {
+    return { text, textCorrect: false };
+  }
+
+  return { text, textCorrect: true };
+}

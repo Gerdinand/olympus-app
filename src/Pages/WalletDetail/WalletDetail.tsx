@@ -27,7 +27,7 @@ import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../../Services';
 import * as Constants from '../../Constants';
-import { toEtherNumber } from '../../Utils';
+import { toEtherNumber, restrictTextToNumber } from '../../Utils';
 import { Row, Text } from '../_shared/layout';
 import { AddressModal } from './partials/AddressModal';
 import { FormInputWithButton } from '../_shared/inputs';
@@ -241,10 +241,14 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     return sendAmount.toFixed(6);
   }
 
-  private onExchangeTextChanged(text: string) {
+  private onExchangeTextChanged(rawText: string) {
+    const { text, textCorrect } = restrictTextToNumber(rawText);
     // TODO this is behaving as number and as text
     let sourceAmount: any = text;
     let destAmount: any = 0;
+    if (!textCorrect) {
+      return this.setState({ sourceAmount: text, destAmount });
+    }
 
     if (Number(text)) {
       sourceAmount = Number(text);
@@ -581,13 +585,20 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 value={this.state.sendAmount}
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
-                onChangeText={(text) => {
-                  let sendAmount: any = text; // TODO number | text
-                  if (Number(text)) {
-                    sendAmount = Number(text);
+                onChangeText={(rawText) => {
+                  const { text, textCorrect } = restrictTextToNumber(rawText);
+                  let sendAmount: any = text;
+
+                  // Filtering non digital and dot characters
+                  if (!textCorrect) {
+                    return this.setState({ sendAmount });
+                  }
+
+                  let numberValue = Number(text);
+                  if (numberValue) {
                     const max = this.getMaxBalance();
-                    if (sendAmount > max) { sendAmount = max; }
-                    sendAmount = sendAmount.toString();
+                    if (numberValue > max) { numberValue = max; }
+                    sendAmount = numberValue.toString();
                   }
                   this.setState({ sendAmount });
                 }}
