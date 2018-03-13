@@ -10,6 +10,8 @@ import { EventRegister } from 'react-native-event-listeners';
 import { getETHPrice } from './Currency';
 import { WalletService } from './WalletService';
 import { decodeTx } from '../Utils';
+import { Wallet } from '../Models/index.js';
+import { Tx } from '../Models/Tx.js';
 
 let BigNumber;
 
@@ -78,10 +80,10 @@ export class EthereumService {
     return gasLimit;
   }
 
-  public async generateTx(from, to, value, gasLimit = 0, txData = '') {
+  public async generateTx(from, to, value, gasLimit = 0, txData = ''): Promise<Partial<Tx>> {
     const gasPrice = await this.getGasPrice();
 
-    const rawTx = {
+    const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
       gasPrice: this.rpc.toHex(gasPrice),
       gasLimit: this.rpc.toHex(gasLimit),
@@ -91,7 +93,6 @@ export class EthereumService {
       chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
-    const tx = new EthereumTx(rawTx);
     return tx;
   }
 
@@ -121,16 +122,16 @@ export class EthereumService {
     return tx;
   }
 
-  public async sendTx(tx): Promise<string> {
-    const serializedTx = tx.serialize();
-    const hash: string = await Promisify((cb) =>
+  public async sendTx(tx: Tx, privateKey: Buffer): Promise<Tx> {
+    const ethTx = new EthereumTx(tx);
+    ethTx.sign(privateKey);
+    const serializedTx = ethTx.serialize();
+    tx.hash = await Promisify((cb) =>
       this.rpc.eth.sendRawTransaction(`0x${serializedTx.toString('hex')}`, cb)) as string;
-
-    WalletService.getInstance().wallet.pendingTxHash = hash;
     this.sync(WalletService.getInstance().wallet);
-    console.log(`tx hash: ${hash}`);
+    console.log(`tx hash: ${tx.hash}`);
 
-    return hash;
+    return tx;
   }
 
   public async getBalance(address) {
@@ -169,9 +170,9 @@ export class EthereumService {
     clearInterval(this.intervalID);
   }
 
-  public async sync(wallet) {
+  public async sync(wallet: Wallet): Promise<Wallet | {}> {
     if (this.isSyncing) {
-      return;
+      return {};
     }
     this.isSyncing = true;
 
@@ -209,7 +210,7 @@ export class EthereumService {
       console.log(`${token.symbol} balance: ${token.balance}`);
     }
 
-    wallet.balanceInUSD = balanceInUSD !== 0 ? balanceInUSD.toFixed(2) : 0;
+    wallet.balanceInUSD = Number(balanceInUSD !== 0 ? balanceInUSD.toFixed(2) : 0);
     console.log('USD1: ', wallet.balanceInUSD);
 
     // tslint:disable-next-line:max-line-length
@@ -217,25 +218,14 @@ export class EthereumService {
     const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
     wallet.txs = response ? (await response.json()).result : [];
     await Promise.all(wallet.txs.map(decodeTx));
-
-    if (wallet.pendingTxHash) {
-      let hasPacked = false;
-      for (const tx of wallet.txs) {
-        if (tx.hash === wallet.pendingTxHash) {
-          hasPacked = true;
-          break;
-        }
-      }
-
-      if (hasPacked) {
-        wallet.pendingTxHash = null;
-      }
-    }
+    // Update pending transactions
+    wallet.pendingTxs = wallet.pendingTxs.filter((pendingTx) =>
+      !wallet.txs.find((tx) => tx.hash === pendingTx.tx.hash),
+    );
 
     this.isSyncing = false;
 
     EventRegister.emit('wallet.updated', wallet);
-
     return wallet;
   }
 
@@ -258,10 +248,9 @@ export class EthereumService {
     walletId,
     _throwOnFailure, // Need to be used later
     gasLimit,
-    nonce) {
+    nonce): Promise<Partial<Tx>> {
 
     const amount = this.rpc.toWei(sourceAmount, 'ether');
-
     // address,uint256,address,address,uint256,uint256,address
     const exchangeData = this.kyberContract.trade.getData(
       sourceToken,
@@ -275,7 +264,7 @@ export class EthereumService {
       // 0
     );
 
-    const rawTx = {
+    const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(nonce),
       gasPrice: this.rpc.toHex((await this.getGasPrice())),
       gasLimit: this.rpc.toHex(gasLimit),
@@ -284,10 +273,6 @@ export class EthereumService {
       data: exchangeData,
       chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
-
-    console.log(JSON.stringify(rawTx));
-
-    const tx = new EthereumTx(rawTx);
     return tx;
   }
 
@@ -295,12 +280,12 @@ export class EthereumService {
     return await this.getNonce(address);
   }
 
-  public async generateApproveTokenTx(sourceToken, sourceAmount, destAddress, gasLimit) {
+  public async generateApproveTokenTx(sourceToken, sourceAmount, destAddress, gasLimit): Promise<Partial<Tx>> {
     const amount = this.rpc.toWei(sourceAmount, 'ether');
     const tokenContract = this.erc20Contract.at(sourceToken);
     const approveData = tokenContract.approve.getData(this.kyberAddress, amount);
 
-    const rawTx = {
+    const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(await this.newNonce(destAddress)),
       gasPrice: this.rpc.toHex((await this.getGasPrice())),
       gasLimit: this.rpc.toHex(gasLimit),
@@ -310,9 +295,8 @@ export class EthereumService {
       chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
-    console.log(JSON.stringify(rawTx));
+    console.log(JSON.stringify(tx));
 
-    const tx = new EthereumTx(rawTx);
     return tx;
   }
 
