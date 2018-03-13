@@ -27,7 +27,7 @@ import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../../Services';
 import * as Constants from '../../Constants';
-import { toEtherNumber } from '../../Utils';
+import { toEtherNumber, restrictTextToNumber } from '../../Utils';
 import { Row, Text } from '../_shared/layout';
 import { AddressModal } from './partials/AddressModal';
 import { FormInputWithButton } from '../_shared/inputs';
@@ -241,18 +241,14 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     return sendAmount.toFixed(6);
   }
 
-  private onExchangeTextChanged(text: string) {
-    text = text.replace(/[^(\d.)]*/ig,'')
+  private onExchangeTextChanged(rawText: string) {
+    const { text, textCorrect } = restrictTextToNumber(rawText);
     // TODO this is behaving as number and as text
     let sourceAmount: any = text;
     let destAmount: any = 0;
-
-    if(/^\./.test(text))
-      return this.setState({ sourceAmount: '', destAmount })
-    if(/\.\d*\./.test(text))
-      return this.setState({ sourceAmount: text.split('.').slice(0,2).join('.'), destAmount })
-    if(/\d+\.$/.test(text))
-      return this.setState({ sourceAmount, destAmount })
+    if (!textCorrect) {
+      return this.setState({ sourceAmount: text, destAmount });
+    }
 
     if (Number(text)) {
       sourceAmount = Number(text);
@@ -503,7 +499,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           visible={this.state.scanModalVisible}
           onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
           onRequestClose={() => { this.setState({ scanModalVisible: false, amountPlaceHolder: '0' }); }}
-          >
+        >
           <View style={styles.modelContainer}>
             <Card title="SCAN">
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -551,11 +547,11 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           visible={this.state.sendModalVisible}
           onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
           onRequestClose={() => { this.setState({ sendModalVisible: false, amountPlaceHolder: '0' }); }}
-          >
+        >
           <ScrollView style={styles.modelContainer} keyboardShouldPersistTaps={'handled'}>
             <Card
               title={`SEND ${this.state.token.symbol}`}
-              >
+            >
               <Image source={{ uri: this.state.token.icon }} style={styles.icon} />
               <FormLabel>To</FormLabel>
               <FormInputWithButton
@@ -589,16 +585,14 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 value={this.state.sendAmount}
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
-                onChangeText={(text) => {
+                onChangeText={(rawText) => {
+                  const { text, textCorrect } = restrictTextToNumber(rawText);
+                  let sendAmount: any = text;
+
                   // Filtering non digital and dot characters
-                  text = text.replace(/[^(\d.)]*/ig,'')
-                  let sendAmount: any = text
-                  if(/^\./.test(text))
-                    return this.setState({ sendAmount:'' })
-                  if(/\.\d*\./.test(text))
-                    return this.setState({ sendAmount:text.split('.').slice(0,2).join('.') })
-                  if(/\d+\.$/.test(text))
-                    return this.setState({ sendAmount })
+                  if (!textCorrect) {
+                    return this.setState({ sendAmount });
+                  }
 
                   let numberValue = Number(text);
                   if (numberValue) {
@@ -706,7 +700,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
               exchangeType: '', amountPlaceHolder: '0',
             });
           }}
-          >
+        >
           <View style={styles.modelContainer}>
             <Card
               title={this.state.exchangeType === 'BID'
