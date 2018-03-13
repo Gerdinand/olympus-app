@@ -27,7 +27,7 @@ import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../../Services';
 import * as Constants from '../../Constants';
-import { toEtherNumber, restrictTextToNumber } from '../../Utils';
+import { toEtherNumber, restrictTextToNumber, filterStringLessThanNumber, maxDecimals } from '../../Utils';
 import { Row, Text } from '../_shared/layout';
 import { AddressModal } from './partials/AddressModal';
 import { FormInputWithButton } from '../_shared/inputs';
@@ -238,7 +238,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     } else {
       sendAmount = Number(token.balance);
     }
-    return sendAmount.toFixed(6);
+    return sendAmount.toFixed(8);
   }
 
   private onExchangeTextChanged(rawText: string) {
@@ -582,7 +582,10 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
               <FormLabel>Amount</FormLabel>
               <FormInputWithButton
                 inputStyle={{ width: '100%' }}
-                value={this.state.sendAmount}
+                value={maxDecimals(
+                  filterStringLessThanNumber(this.state.sendAmount, this.getMaxBalance()),
+                  8)
+                }
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
                 onChangeText={(rawText) => {
@@ -644,7 +647,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   maximumValue={WalletService.getInstance().wallet.gasLimit}
                   minimumTrackTintColor="#5589FF"
                   thumbTintColor="#5589FF"
-                  onValueChange={(value) => {
+                  onSlidingComplete={(value) => {
                     if (isNaN(value)) { return; }
                     this.calcuateGasFee(value);
                     this.setState({ value });
@@ -711,7 +714,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 inputStyle={{ width: '100%' }}
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
-                value={this.state.sourceAmount}
+                // Never max than getMax Balance (if fee gas changes it must)
+                value={maxDecimals(filterStringLessThanNumber(this.state.sourceAmount, this.getMaxBalance()), 8)}
                 onChangeText={(text) => this.onExchangeTextChanged(text)}
                 onFocus={() => {
                   const balance = this.state.exchangeType === 'BID' ? this.state.ETHBalance : this.state.token.balance;
@@ -757,7 +761,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   maximumValue={WalletService.getInstance().wallet.gasLimit}
                   minimumTrackTintColor="#5589FF"
                   thumbTintColor="#5589FF"
-                  onValueChange={(value) => {
+                  onSlidingComplete={(value) => {
                     if (isNaN(value)) { return; }
                     this.calcuateGasFee(value);
                     this.setState({ value });
