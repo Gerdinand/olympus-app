@@ -1,4 +1,4 @@
-image: "elviejokike/react-native-android"
+image: "node:8.10.0"
 
 cache:
   paths:
@@ -6,7 +6,7 @@ cache:
 
 # Create the link so certain modules can be setup with node from inside npm
 before_script:
-  - npm install
+  - npm install --registry=https://registry.npm.taobao.org
 
 stages:
   - build
