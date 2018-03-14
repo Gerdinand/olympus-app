@@ -59,7 +59,7 @@ export class TransactionList extends PureComponent<InternalProps> {
       }
     } else {
       isSending = tx.from === this.props.token.ownerAddress;
-      tokenAmount = tx.value;
+      tokenAmount = tx.input.amount;
     }
     const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
@@ -87,6 +87,7 @@ export class TransactionList extends PureComponent<InternalProps> {
   }
 
   public render() {
+    console.log('Transactions ', this.props.txs);
     return (
       <List>
         {this.props.pendingTxHash &&

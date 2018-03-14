@@ -794,7 +794,9 @@ export const KYBER_WALLET = [
   ;
 export const CHAIN_ID = 42; // 3 is ropsten, 42 is kovan.;
 export const CHAIN_NAME = 'kovan';
-export const MINIMUM_GAS_LIMIT = 184000;
+export const MINIMUN_GAS_PRICE = 184000;
+export const GAS_LIMIT = 24000;
+export const MAX_GAS_PRICE = 15000000000 * 10; // 20 times half of default one from API
 
 // contract datas
 // compiled with v0.4.11+commit.68ef5810

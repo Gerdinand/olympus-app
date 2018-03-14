@@ -32,6 +32,7 @@ import { Row, Text } from '../_shared/layout';
 import { AddressModal } from './partials/AddressModal';
 import { FormInputWithButton } from '../_shared/inputs';
 import { TransactionList } from './partials/TransactionList';
+import { GAS_LIMIT, MAX_GAS_PRICE } from '../../Constants';
 
 const GAS_MIN_BALANCE = 0.1;
 const GAS_MIN_ERROR = `You need at least ${GAS_MIN_BALANCE} ETH to afford transactions fee.`;
@@ -47,7 +48,7 @@ interface InternalProps {
 }
 
 interface InternalState {
-  value: number;
+  gasPrice: number;
   amountPlaceHolder: string;
   gasFee: number;
   options: any[]; // TODO type?
@@ -99,7 +100,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   public constructor(props) {
     super(props);
     this.state = {
-      value: Constants.MINIMUM_GAS_LIMIT,
+      gasPrice: Constants.MINIMUN_GAS_PRICE,
       amountPlaceHolder: '0',
       gasFee: 0,
       options: [],
@@ -150,20 +151,22 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   }
 
   public async componentDidMount() {
-    await this.calcuateGasFee(this.state.value);
+    // Gas price from API is too big, get half
+    const gasPrice = Number(await EthereumService.getInstance().getGasPrice()) / 2;
+    await this.calcuateGasFee(gasPrice);
+    this.setState({ gasPrice });
   }
 
   public componentWillUnmount() {
     EventRegister.removeEventListener(this.walletListener);
   }
 
-  private async calcuateGasFee(gasLimit = Constants.MINIMUM_GAS_LIMIT) {
-    const gasPrice = await EthereumService.getInstance().getGasPrice();
-    const value = gasLimit * gasPrice * 2;
+  private async calcuateGasFee(gasPrice: number) {
+    const gassFee: BigNumber | 0 = toEtherNumber(GAS_LIMIT * gasPrice);
     this.setState({
-      gasFee: Number(toEtherNumber(value)), // TODO is this NUmber() cast correct?
+      gasFee: Number(gassFee), // TODO is this NUmber() cast correct?
     });
-    return toEtherNumber(value);
+    return gassFee;
   }
 
   private reloadTxs(wallet) {
@@ -326,6 +329,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           sourceAmount,
           this.state.token.address,
           this.state.token.ownerAddress,
+          this.state.gasPrice.toString(),
         );
       } else {
         // token -> eth
@@ -334,17 +338,23 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           this.state.token.address,
           sourceAmount,
           this.state.token.ownerAddress,
-          (this.state.value * 2).toString(),
+          this.state.gasPrice.toString(),
         );
         approveTx.sign(privateKey);
-        await EthereumService.getInstance().sendTx(approveTx);
+        try {
+          await EthereumService.getInstance().sendTx(approveTx);
 
-        tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
-          this.state.token.address,
-          sourceAmount,
-          this.state.token.ownerAddress,
-          (this.state.value * 2).toString(),
-        );
+          tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
+            this.state.token.address,
+            sourceAmount,
+            this.state.token.ownerAddress,
+            this.state.gasPrice.toString(),
+          );
+        } catch (e) {
+          Alert.alert('Failed to trade', e.message, [{ text: 'Cancel', style: 'cancel' }]);
+          this.closeModal();
+          return;
+        }
       }
 
       // sign tx
@@ -364,23 +374,21 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           pendingTxHash: hash,
         });
       } catch (e) {
-        // console.error(e);
-        Alert.alert(
-          'Failed to trade',
-          e.message,
-          [
-            { text: 'Cancel', style: 'cancel' },
-          ],
-        );
+        Alert.alert('Failed to trade', e.message, [{ text: 'Cancel', style: 'cancel' }]);
+        this.closeModal();
+        return;
       }
     }
 
+    this.closeModal();
+  }
+
+  private closeModal() {
     this.setState({
       tradeButtonDisable: false,
       tradeCancelButtonDisable: false,
     });
   }
-
   private async onSendPress() {
     console.log('send action');
     this.setState({
@@ -429,14 +437,15 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           sendAmount,
           token.decimals,
           token.address,
-          (this.state.value * 2).toString(),
+          this.state.gasPrice.toString(),
+
         );
       } else {
         tx = await EthereumService.getInstance().generateTx(
           token.ownerAddress,
           this.state.sendAddress,
           sendAmount,
-          this.state.value * 2,
+          this.state.gasPrice.toString(),
         );
       }
 
@@ -496,6 +505,29 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     }
   }
 
+  private renderGasFeeSlider() {
+    return (
+      <View>
+        <FormLabel>Gas Fee (est.): {this.state.gasFee.toFixed(8)} eth</FormLabel>
+        <Row style={{ alignItems: 'stretch', justifyContent: 'center' }}>
+          <Slider
+            style={{ width: '88%', marginTop: 12 }}
+            value={this.state.gasPrice}
+            step={100000000}
+            minimumValue={0}
+            maximumValue={MAX_GAS_PRICE}
+            minimumTrackTintColor="#5589FF"
+            thumbTintColor="#5589FF"
+            onValueChange={(gasPrice) => {
+              if (isNaN(gasPrice)) { return; }
+              this.calcuateGasFee(gasPrice);
+              this.setState({ gasPrice });
+            }}
+          />
+        </Row>
+      </View>
+    );
+  }
   public render() {
 
     return (
@@ -641,23 +673,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   {this.state.sendPasswordErrorMessage}
                 </FormValidationMessage>
               }
-              <FormLabel>Gas Fee (est.): {this.state.gasFee.toFixed(8)} eth</FormLabel>
-              <Row style={{ alignItems: 'stretch', justifyContent: 'center' }}>
-                <Slider
-                  style={{ width: '88%', marginTop: 12 }}
-                  value={this.state.value}
-                  step={1000}
-                  minimumValue={0}
-                  maximumValue={WalletService.getInstance().wallet.gasLimit}
-                  minimumTrackTintColor="#5589FF"
-                  thumbTintColor="#5589FF"
-                  onValueChange={(value) => {
-                    if (isNaN(value)) { return; }
-                    this.calcuateGasFee(value);
-                    this.setState({ value });
-                  }}
-                />
-              </Row>
+              {this.renderGasFeeSlider()}
               <View
                 style={{
                   padding: 10,
@@ -754,23 +770,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   {this.state.tradePasswordErrorMessage}
                 </FormValidationMessage>
               }
-              <FormLabel>Gas Fee (est.): {this.state.gasFee.toFixed(8)} eth</FormLabel>
-              <Row style={{ alignItems: 'stretch', justifyContent: 'center' }}>
-                <Slider
-                  style={{ width: '88%', marginTop: 12 }}
-                  value={this.state.value}
-                  step={1000}
-                  minimumValue={0}
-                  maximumValue={WalletService.getInstance().wallet.gasLimit}
-                  minimumTrackTintColor="#5589FF"
-                  thumbTintColor="#5589FF"
-                  onValueChange={(value) => {
-                    if (isNaN(value)) { return; }
-                    this.calcuateGasFee(value);
-                    this.setState({ value });
-                  }}
-                />
-              </Row>
+              {this.renderGasFeeSlider()}
               <View style={{ padding: 10 }}>
                 <Button
                   title={this.state.tradeButtonDisable ? 'Trading...' : 'Trade'}
