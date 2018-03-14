@@ -10,7 +10,7 @@ import { Tx, Token } from '../../../Models';
 import { PendingTx } from '../../../Models/Wallet';
 
 const TRADE = 'Trade';
-const ETHER_RECIVAL = 'EtherReceival';
+const ETHER_RECEIVAL = 'EtherReceival';
 const TOKEN_ETHER = 'ETH';
 
 interface InternalProps {
@@ -42,7 +42,7 @@ export class TransactionList extends PureComponent<InternalProps> {
       };
     }
 
-    const ethReceival = tx.logs.find((log) => log.name === ETHER_RECIVAL);
+    const ethReceival = tx.logs.find((log) => log.name === ETHER_RECEIVAL);
     const trade = tx.logs.find((log) => log.name === TRADE);
     const isETH = this.props.token.symbol === TOKEN_ETHER;
     // Trading information
