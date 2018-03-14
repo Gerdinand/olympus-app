@@ -8,7 +8,7 @@ cache:
 before_script:
   - ln -s /opt/node/bin/npm /usr/local/bin/npm
   - ln -s /opt/node/bin/node /usr/local/bin/node
-  - sudo npm install
+  - sudo npm install --verbose
 
 stages:
   - build
