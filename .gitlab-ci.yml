@@ -6,7 +6,7 @@ cache:
 
 # Create the link so certain modules can be setup with node from inside npm
 before_script:
-  - npm install
+  - sudo npm install
 
 stages:
   - build
