@@ -66,7 +66,6 @@ export class TransactionList extends PureComponent<InternalProps> {
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
     const direction = isSending ? '-' : '+';
-
     return (
       <ListItem
         roundAvatar
@@ -99,7 +98,7 @@ export class TransactionList extends PureComponent<InternalProps> {
             }}
             hideChevron={true}
             key={'pending' + pendingTx.tx.hash}
-            title={'PENDING ' + this.formatAddress(pendingTx.tx.hash)}
+            title={`PENDING ${this.formatAddress(pendingTx.tx.to)}`}
             subtitle={'wait for a minute...'}
           />
         ),
