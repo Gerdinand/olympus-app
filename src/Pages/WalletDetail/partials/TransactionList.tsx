@@ -11,7 +11,6 @@ import { Tx, Token } from '../../../Models';
 const TRADE = 'Trade';
 const ETHER_RECIVAL = 'EtherReceival';
 const TOKEN_ETHER = 'ETH';
-
 interface InternalProps {
   onListItemPress: (txHash: string) => void;
   pendingTxHash: string;
@@ -71,10 +70,10 @@ export class TransactionList extends PureComponent<InternalProps> {
     };
 
   }
+
   private renderLine(tx) {
 
     const { isSending, tokenAmount } = this.getTransactionInformation(tx);
-
     const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
