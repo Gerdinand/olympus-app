@@ -8,6 +8,10 @@ import BigNumber from 'bignumber.js';
 import Moment from 'moment';
 import { Tx, Token } from '../../../Models';
 
+const TRADE = 'Trade';
+const ETHER_RECIVAL = 'EtherReceival';
+const TOKEN_ETHER = 'ETH';
+
 interface InternalProps {
   onListItemPress: (txHash: string) => void;
   pendingTxHash: string;
@@ -24,43 +28,53 @@ export class TransactionList extends PureComponent<InternalProps> {
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
-  private renderLine(tx) {
+  private getTransactionInformation(tx): { isSending: boolean, tokenAmount: any } {
+
     let isSending;
     let tokenAmount;
-    let isExchange = false;
 
-    if (tx.logs && tx.logs.length > 0) {
-      const ethReceival = tx.logs.find((log) => log.name === 'EtherReceival');
-      const trade = tx.logs.find((log) => log.name === 'Trade');
-      const isETH = this.props.token.symbol === 'ETH';
-
-      // Must be an exchange if we have one of those methods invoked so far.
-      isExchange = trade || ethReceival;
-
-      if (ethReceival) {
-        if (isETH) {
-          isSending = false;
-          tokenAmount = ethReceival.events.find((evt) => evt.name === 'amount').value;
-        } else {
-          isSending = true;
-          tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
-        }
-      } else if (trade) {
-        if (isETH) {
-          isSending = (tx.input.srcToken && tx.input.srcToken.symbol === 'ETH');
-        } else {
-          isSending = (tx.input.srcToken && tx.input.srcToken.symbol === this.props.token.symbol);
-        }
-        const key = isSending ? 'actualSrcAmount' : 'actualDestAmount';
-        tokenAmount = trade.events.find((evt) => evt.name === key).value;
-      } else {
-        isSending = tx.from === this.props.token.ownerAddress;
-        tokenAmount = tx.input.amount;
-      }
-    } else {
-      isSending = tx.from === this.props.token.ownerAddress;
-      tokenAmount = tx.value;
+    // No logs case
+    if (!tx.logs || tx.logs.length === 0) {
+      return {
+        isSending: tx.from === this.props.token.ownerAddress,
+        tokenAmount: tx.value,
+      };
     }
+
+    const ethReceival = tx.logs.find((log) => log.name === ETHER_RECIVAL);
+    const trade = tx.logs.find((log) => log.name === TRADE);
+    const isETH = this.props.token.symbol === TOKEN_ETHER;
+    // Trading information
+    if (ethReceival) {
+      if (isETH) {
+        isSending = false;
+        tokenAmount = ethReceival.events.find((evt) => evt.name === 'amount').value;
+      } else {
+        isSending = true;
+        tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
+      }
+      return { isSending, tokenAmount };
+    }
+    // Second scenario is trade
+    if (trade) {
+      isSending = isETH ?
+        (tx.input.srcToken && tx.input.srcToken.symbol === TOKEN_ETHER) :
+        (tx.input.srcToken && tx.input.srcToken.symbol === this.props.token.symbol);
+      const eventAmountKey = isSending ? 'actualSrcAmount' : 'actualDestAmount';
+      tokenAmount = trade.events.find((evt) => evt.name === eventAmountKey).value;
+      return { isSending, tokenAmount };
+    }
+    // Final case
+    return {
+      tokenAmount: tx.input.amount,
+      isSending: tx.from === this.props.token.ownerAddress,
+    };
+
+  }
+  private renderLine(tx) {
+
+    const { isSending, tokenAmount } = this.getTransactionInformation(tx);
+
     const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
@@ -68,12 +82,11 @@ export class TransactionList extends PureComponent<InternalProps> {
 
     return (
       <ListItem
-        roundAvatar
-        leftIcon={{
-          name: isExchange ? 'exchange' : (isSending ? 'arrow-top-right' : 'arrow-bottom-right'),
-          type: isExchange ? 'font-awesome' : 'material-community',
-          color: 'rgb(89,139,246)',
-        }}
+        avatar={isSending ? require('../../../../images/flow-out.png') : require('../../../../images/flow-in.png')}
+        avatarStyle={{ width: 20, height: 20 }}
+        avatarOverlayContainerStyle={{ backgroundColor: 'rgba(0,0,0,0)' }}
+        avatarContainerStyle={
+          { backgroundColor: isSending ? '#FCD850' : '#5589FF', width: 36, height: 36, borderRadius: 18 }}
         leftIconUnderlayColor="red"
         key={tx.hash}
         title={dest}
