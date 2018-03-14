@@ -33,6 +33,8 @@ import { AddressModal } from './partials/AddressModal';
 import { FormInputWithButton } from '../_shared/inputs';
 import { TransactionList } from './partials/TransactionList';
 import { GAS_LIMIT, MAX_GAS_PRICE } from '../../Constants';
+import { Wallet, Tx } from '../../Models';
+import { PendingTx } from '../../Models/Wallet';
 
 const GAS_MIN_BALANCE = 0.1;
 const GAS_MIN_ERROR = `You need at least ${GAS_MIN_BALANCE} ETH to afford transactions fee.`;
@@ -47,6 +49,11 @@ interface InternalProps {
   navigation: any;
 }
 
+enum ExchangeType {
+  NONE = '',
+  ETH_TO_TOKEN = 'BID',
+  TOKEN_TO_ETH = 'ASK',
+}
 interface InternalState {
   gasPrice: number;
   amountPlaceHolder: string;
@@ -57,8 +64,8 @@ interface InternalState {
   scanModalVisible: boolean;
   receiveModalVisible: boolean;
   exchangeModalVisible: boolean;
-  txs: any[]; // TODO type?
-  pendingTxHash: string | null;
+  txs: Tx[];
+  pendingTxs: PendingTx[];
   token: any;
   balance: number;
   ETHBalance: number;
@@ -78,7 +85,7 @@ interface InternalState {
   tradeCancelButtonDisable: boolean;
   tradeAmountErrorMessage: string | null;
   tradePasswordErrorMessage: string | null;
-  exchangeType: string;
+  exchangeType: ExchangeType;
   exchangeAmount: number; // TODO not in use?
   buttonGroupSelectedIndex: number; // TODO better name
 }
@@ -110,7 +117,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       receiveModalVisible: false,
       exchangeModalVisible: false,
       txs: [],
-      pendingTxHash: null,
+      pendingTxs: [],
       token: this.props.navigation.state.params.token,
       balance: 0,
       ETHBalance: WalletService.getInstance().wallet.balance,
@@ -130,7 +137,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       tradeCancelButtonDisable: false,
       tradeAmountErrorMessage: null,
       tradePasswordErrorMessage: null,
-      exchangeType: '', // TODO Correct?
+      exchangeType: ExchangeType.NONE,
       exchangeAmount: 0.0,
       buttonGroupSelectedIndex: 0,
     };
@@ -169,7 +176,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     return gassFee;
   }
 
-  private reloadTxs(wallet) {
+  private reloadTxs(wallet: Wallet) {
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
     const exchangeType = this.state.exchangeType;
     const ETHBalance = wallet.tokens.find((token) => token.address === Constants.ETHER_ADDRESS).balance;
@@ -185,14 +192,22 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           || (tx.input.destToken && tx.input.destToken.symbol === token.symbol));
     });
     let balance;
-    if (exchangeType === 'BID' || token.address === Constants.ETHER_ADDRESS) {
+    if (exchangeType === ExchangeType.ETH_TO_TOKEN || token.address === Constants.ETHER_ADDRESS) {
       balance = ETHBalance;
     } else {
       balance = token.balance;
     }
-    this.setState({ token, txs, ETHBalance, balance, pendingTxHash: wallet.pendingTxHash });
+    this.setState({
+      token, txs, ETHBalance, balance,
+    });
+    this.updatePendingTransactions(wallet);
   }
 
+  private updatePendingTransactions(wallet: Wallet) {
+    this.setState({
+      pendingTxs: wallet.pendingTxs.filter((pendingTx) => pendingTx.token.symbol === this.state.token.symbol),
+    });
+  }
   private onSend() {
     console.log('send modal');
     const balance = this.state.token.balance;
@@ -213,16 +228,15 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   }
 
   private handlePress(buttonIndex) {
-    const _ = this;
     const ETHBalance = this.state.ETHBalance;
     const token = this.state.token;
     let balance;
     if (0 === buttonIndex) {
       balance = ETHBalance;
-      _.setState({ exchangeType: 'BID', exchangeModalVisible: true, balance });
+      this.setState({ exchangeType: ExchangeType.ETH_TO_TOKEN, exchangeModalVisible: true, balance });
     } else if (1 === buttonIndex) {
       balance = token.balance;
-      _.setState({ exchangeType: 'ASK', exchangeModalVisible: true, balance });
+      this.setState({ exchangeType: ExchangeType.TOKEN_TO_ETH, exchangeModalVisible: true, balance });
     }
   }
 
@@ -243,7 +257,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     const fee = new BigNumber(this.state.gasFee.toPrecision(15));
     const balance = new BigNumber(this.state.ETHBalance.toPrecision(15));
     let sendAmount;
-    if (token.address === Constants.ETHER_ADDRESS || exchangeType === 'BID') {
+    if (token.address === Constants.ETHER_ADDRESS || exchangeType === ExchangeType.ETH_TO_TOKEN) {
       sendAmount = balance.minus(fee).toNumber();
     } else {
       sendAmount = Number(token.balance);
@@ -264,7 +278,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       sourceAmount = Number(text);
       const maxBalance = this.getMaxBalance();
       if (sourceAmount > maxBalance) { sourceAmount = maxBalance; }
-      if (this.state.exchangeType === 'BID') {
+      if (this.state.exchangeType === ExchangeType.ETH_TO_TOKEN) {
         destAmount = sourceAmount * this.state.token.price;
       } else {
         destAmount = sourceAmount * (1.0 / this.state.token.price);
@@ -276,12 +290,12 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     this.setState({ sourceAmount, destAmount });
   }
 
-  private onExchangeButtonPress() {
+  private onExchangePress() {
     let sourceAmount = this.getMaxBalance();
     let destAmount: any = 0; // TODO This is a text and string
     if (Number(sourceAmount)) {
       sourceAmount = Number(sourceAmount);
-      if (this.state.exchangeType === 'BID') {
+      if (this.state.exchangeType === ExchangeType.ETH_TO_TOKEN) {
         destAmount = sourceAmount * this.state.token.price;
       } else {
         destAmount = sourceAmount * (1.0 / this.state.token.price);
@@ -305,8 +319,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     let isValidate = true;
 
     // amount validation
-    if (!sourceAmount || this.state.exchangeType === 'BID' && sourceAmount > etherBlance ||
-      this.state.exchangeType === 'ASK' && sourceAmount > this.state.token.balance) {
+    if (!sourceAmount || this.state.exchangeType === ExchangeType.ETH_TO_TOKEN && sourceAmount > etherBlance ||
+      this.state.exchangeType === ExchangeType.TOKEN_TO_ETH && sourceAmount > this.state.token.balance) {
       isValidate = false;
       this.setState({ tradeAmountErrorMessage: 'Not enough to trade' });
     }
@@ -322,15 +336,15 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     if (isValidate) {
       // generate tx
       // const token = _.state.token;
-      let tx = null;
-      if (this.state.exchangeType === 'BID') {
+      let tx: Tx = null;
+      if (this.state.exchangeType === ExchangeType.ETH_TO_TOKEN) {
         // eth -> token
         tx = await EthereumService.getInstance().generateTradeFromEtherToTokenTx(
           sourceAmount,
           this.state.token.address,
           this.state.token.ownerAddress,
           this.state.gasPrice.toString(),
-        );
+        ) as Tx;
       } else {
         // token -> eth
         // send approve tx
@@ -339,17 +353,17 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           sourceAmount,
           this.state.token.ownerAddress,
           this.state.gasPrice.toString(),
-        );
-        approveTx.sign(privateKey);
+        ) as Tx;
+
         try {
-          await EthereumService.getInstance().sendTx(approveTx);
+          await EthereumService.getInstance().sendTx(approveTx, privateKey);
 
           tx = await EthereumService.getInstance().generateTradeFromTokenToEtherTx(
             this.state.token.address,
             sourceAmount,
             this.state.token.ownerAddress,
             this.state.gasPrice.toString(),
-          );
+          ) as Tx;
         } catch (e) {
           Alert.alert('Failed to trade', e.message, [{ text: 'Cancel', style: 'cancel' }]);
           this.closeModal();
@@ -357,22 +371,21 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
         }
       }
 
-      // sign tx
-      tx.sign(privateKey);
-
       try {
         // send tx
-        const hash = await EthereumService.getInstance().sendTx(tx);
+        await EthereumService.getInstance().sendTx(tx, privateKey);
+        const wallet = WalletService.getInstance().wallet;
+        wallet.pendingTxs.push({ tx, token: this.state.token });
         this.setState({
           exchangeModalVisible: false,
-          exchangeType: '',
+          exchangeType: ExchangeType.NONE,
           password: null,
           sourceAmount: '',
           destAmount: 0.0,
           tradeAmountErrorMessage: null,
           tradePasswordErrorMessage: null,
-          pendingTxHash: hash,
         });
+        this.updatePendingTransactions(wallet);
       } catch (e) {
         Alert.alert('Failed to trade', e.message, [{ text: 'Cancel', style: 'cancel' }]);
         this.closeModal();
@@ -428,7 +441,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     console.log('validate end');
     if (isValidate) {
       const token = this.state.token;
-      let tx = null;
+      let tx: Tx = null;
       if (token.symbol !== 'ETH') {
         // token from, to, value, decimals, contractAddress, gasLimit
         tx = await EthereumService.getInstance().generateTokenTx(
@@ -438,23 +451,22 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           token.decimals,
           token.address,
           this.state.gasPrice.toString(),
-
-        );
+        ) as Tx;
       } else {
         tx = await EthereumService.getInstance().generateTx(
           token.ownerAddress,
           this.state.sendAddress,
           sendAmount,
           this.state.gasPrice.toString(),
-        );
+        ) as Tx;
       }
-
-      // sign tx
-      tx.sign(privateKey);
 
       // send tx
       try {
-        const hash = await EthereumService.getInstance().sendTx(tx);
+        await EthereumService.getInstance().sendTx(tx, privateKey);
+        const wallet = WalletService.getInstance().wallet;
+        wallet.pendingTxs.push({ tx, token: this.state.token });
+
         this.setState({
           sendModalVisible: false,
           sendAmount: '',
@@ -463,8 +475,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           sendAddressErrorMessage: null,
           sendAmountErrorMessage: null,
           sendPasswordErrorMessage: null,
-          pendingTxHash: hash,
         });
+        this.updatePendingTransactions(wallet);
       } catch (e) {
         // console.error(e);
         Alert.alert(
@@ -720,13 +732,14 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           onRequestClose={() => {
             this.setState({
               exchangeModalVisible: false,
-              exchangeType: '', amountPlaceHolder: '0',
+              exchangeType: ExchangeType.NONE,
+              amountPlaceHolder: '0',
             });
           }}
         >
           <View style={styles.modelContainer}>
             <Card
-              title={this.state.exchangeType === 'BID'
+              title={this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
                 ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}
             >
               <FormLabel>Exchange</FormLabel>
@@ -737,13 +750,14 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 value={this.state.sourceAmount}
                 onChangeText={(text) => this.onExchangeTextChanged(text)}
                 onFocus={() => {
-                  const balance = this.state.exchangeType === 'BID' ? this.state.ETHBalance : this.state.token.balance;
+                  const balance = this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
+                    ? this.state.ETHBalance : this.state.token.balance;
                   this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(6)}` });
                 }}
                 onBlur={() => {
                   this.setState({ amountPlaceHolder: '0' });
                 }}
-                onButtonPress={() => this.onExchangeButtonPress()}
+                onButtonPress={() => this.onExchangePress()}
               >
                 <Text style={styles.inputButton}> Max </Text>
               </FormInputWithButton>
@@ -754,7 +768,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 </FormValidationMessage>
               }
               <FormLabel>
-                Expected to receive {this.state.destAmount} {this.state.exchangeType === 'BID' ?
+                Expected to receive {this.state.destAmount} {this.state.exchangeType === ExchangeType.ETH_TO_TOKEN ?
                   this.state.token.symbol : 'ETH'}
               </FormLabel>
               <FormLabel>Password</FormLabel>
@@ -784,8 +798,10 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   disabled={this.state.tradeCancelButtonDisable}
                   onPress={() => {
                     this.setState({
-                      exchangeModalVisible: false, exchangeType: '',
-                      sourceAmount: '', password: null, exchangeAmount: 0.0,
+                      exchangeModalVisible: false,
+                      exchangeType: ExchangeType.NONE,
+                      sourceAmount: '',
+                      password: null, exchangeAmount: 0.0,
                     });
                   }}
                   color={'#4A4A4A'}
@@ -809,7 +825,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
         </View>
         <TransactionList
           token={this.state.token}
-          pendingTxHash={this.state.pendingTxHash}
+          pendingTxs={this.state.pendingTxs}
           txs={this.state.txs}
           onListItemPress={(hash) => {
             Linking.openURL(`https://${Constants.CHAIN_NAME}.etherscan.io/tx/${hash}`);
