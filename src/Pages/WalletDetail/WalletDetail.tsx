@@ -33,7 +33,14 @@ import { AddressModal } from './partials/AddressModal';
 import { FormInputWithButton } from '../_shared/inputs';
 import { TransactionList } from './partials/TransactionList';
 
-const minBalance = 0.1;
+const GAS_MIN_BALANCE = 0.1;
+const GAS_MIN_ERROR = `You need at least ${GAS_MIN_BALANCE} ETH to afford transactions fee.`;
+
+const ETHER_ACTIONS = ['Send', 'Receive'];
+const TOKEN_ACTIONS = ['Send', 'Receive', 'Exchange'];
+const SEND_INDEX = TOKEN_ACTIONS.indexOf('Send');
+const RECEIVE_INDEX = TOKEN_ACTIONS.indexOf('Receive');
+const EXCHANGE_INDEX = TOKEN_ACTIONS.indexOf('Exchange');
 
 interface InternalProps {
   navigation: any;
@@ -470,19 +477,19 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
 
   private onActionsButtonPress(selectedIndex: number) {
     this.setState({ buttonGroupSelectedIndex: selectedIndex });
-    if (0 === selectedIndex) {
-      if (this.state.ETHBalance < minBalance) {
-        return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
+    if (SEND_INDEX === selectedIndex) {
+      if (this.state.ETHBalance < GAS_MIN_BALANCE) {
+        return DeviceEventEmitter.emit('showToast', GAS_MIN_ERROR);
       } else if (this.state.token.balance <= 0) {
-        return DeviceEventEmitter.emit('showToast', `your balance in ${this.state.token.symbol} is insufficient`);
+        return DeviceEventEmitter.emit('showToast', `Your balance in ${this.state.token.symbol} is insufficient.`);
       } else {
         this.onSend();
       }
-    } else if (1 === selectedIndex) {
+    } else if (RECEIVE_INDEX === selectedIndex) {
       this.onReceive();
-    } else if (2 === selectedIndex) {
-      if (this.state.ETHBalance < minBalance) {
-        return DeviceEventEmitter.emit('showToast', 'your balance in ETH is insufficient');
+    } else if (EXCHANGE_INDEX === selectedIndex) {
+      if (this.state.ETHBalance < GAS_MIN_BALANCE) {
+        return DeviceEventEmitter.emit('showToast', GAS_MIN_ERROR);
       } else {
         this.onExchange();
       }
@@ -797,8 +804,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
             textStyle={{ fontSize: 13 }}
             selectedIndex={this.state.buttonGroupSelectedIndex}
             onPress={(selectedIndex) => this.onActionsButtonPress(selectedIndex)}
-            buttons={this.state.token.address === Constants.ETHER_ADDRESS ?
-              ['Send', 'Receive'] : ['Send', 'Receive', 'Exchange']}
+            buttons={this.state.token.address === Constants.ETHER_ADDRESS ? ETHER_ACTIONS : TOKEN_ACTIONS}
           />
         </View>
         <TransactionList
