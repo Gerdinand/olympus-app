@@ -258,7 +258,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private onExchangeTextChanged(rawText: string, maxBalance: number) {
     const { text, textCorrect } = restrictTextToNumber(rawText);
     // TODO this is behaving as number and as text
-    const sourceAmount: string = filterStringLessThanNumber(rawText, maxBalance);
+    const sourceAmount: string = filterStringLessThanNumber(text, maxBalance);
     const destAmount: any = 0;
     if (!textCorrect) {
       return this.setState({ sourceAmount: text, destAmount });
@@ -266,12 +266,12 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
 
     this.setState({ sourceAmount });
     if (Number(text)) {
-      this.calculateDestinationAmount(Number(sourceAmount), maxBalance);
+      this.calculateDestinationAmount(Number(sourceAmount));
     }
 
   }
 
-  private calculateDestinationAmount(sourceAmount: number, maxBalance: number) {
+  private calculateDestinationAmount(sourceAmount: number) {
     let destAmount;
 
     if (this.state.exchangeType === ExchangeType.ETH_TO_TOKEN) {
@@ -483,21 +483,14 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     });
   }
 
-  private onSendAmountPress(rawText: string) {
+  private onSendAmountPress(rawText: string, maxBalance: number) {
     const { text, textCorrect } = restrictTextToNumber(rawText);
-    let sendAmount: any = text;
-
+    const sendAmount: any = filterStringLessThanNumber(text, maxBalance);
     // Filtering non digital and dot characters
     if (!textCorrect) {
       return this.setState({ sendAmount });
     }
 
-    let numberValue = Number(text);
-    if (numberValue) {
-      const max = this.getMaxBalance();
-      if (numberValue > max) { numberValue = max; }
-      sendAmount = numberValue.toString();
-    }
     this.setState({ sendAmount });
   }
   private onActionsButtonPress(selectedIndex: number) {
@@ -617,7 +610,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 value={maxDecimals(this.state.sendAmount, 8)}
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
-                onChangeText={(rawText) => this.onSendAmountPress(rawText)}
+                onChangeText={(rawText) => this.onSendAmountPress(rawText, this.getMaxBalance(this.state.gasFee))}
                 onFocus={() => {
                   this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(6)}` });
                 }}
@@ -625,7 +618,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   this.setState({ amountPlaceHolder: '0' });
                 }}
                 onButtonPress={() => {
-                  const max = this.getMaxBalance();
+                  const max = this.getMaxBalance(this.state.gasFee);
                   this.setState({ sendAmount: max });
                 }}
               >
@@ -660,10 +653,10 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   maximumValue={WalletService.getInstance().wallet.gasLimit}
                   minimumTrackTintColor="#5589FF"
                   thumbTintColor="#5589FF"
-                  onSlidingComplete={(value) => {
+                  onSlidingComplete={async (value) => {
                     if (isNaN(value)) { return; }
-                    this.calcuateGasFee(value);
-                    this.onSendAmountPress(filterStringLessThanNumber(this.state.sendAmount, this.getMaxBalance()));
+                    const gasFee = await this.calcuateGasFee(value);
+                    this.onSendAmountPress(this.state.sendAmount, this.getMaxBalance(gasFee));
                     this.setState({ value });
                   }}
                 />
@@ -731,7 +724,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 keyboardType={'numeric'}
                 // Never max than getMax Balance (if fee gas changes it must)
                 value={maxDecimals(this.state.sourceAmount, 8)}
-                onChangeText={(text) => this.onExchangeTextChanged(text, this.getMaxBalance())}
+                onChangeText={(text) => this.onExchangeTextChanged(text, this.getMaxBalance(this.state.gasFee))}
                 onFocus={() => {
                   const balance = this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
                     ? this.state.ETHBalance : this.state.token.balance;
