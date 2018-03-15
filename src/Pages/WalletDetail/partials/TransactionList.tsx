@@ -12,8 +12,7 @@ import { PendingTx } from '../../../Models/Wallet';
 const TRADE = 'Trade';
 const ETHER_RECEIVAL = 'EtherReceival';
 const TOKEN_ETHER = 'ETH';
-const POWR = 'POWR';
-const POWR_SPECIAL_DECIMALS = 6;
+const INPUT_DECIMALS = 18; // Input decimals are always 18, independent than number of decimlas of token
 
 interface InternalProps {
   onListItemPress: (txHash: string) => void;
@@ -40,7 +39,7 @@ export class TransactionList extends PureComponent<InternalProps> {
     if (!tx.logs || tx.logs.length === 0) {
       return {
         isSending: tx.from === this.props.token.ownerAddress,
-        tokenAmount: tx.input.amount || tx.value, // input amount is better, in few cases is undefined,
+        tokenAmount: this.amountfromInputAmoutnt(tx) || tx.value, // input amount is better, in few cases is undefined,
       };
     }
 
@@ -69,20 +68,25 @@ export class TransactionList extends PureComponent<InternalProps> {
     }
     // Final case
     return {
-      tokenAmount: tx.input.amount,
+      tokenAmount: this.amountfromInputAmoutnt(tx),
       isSending: tx.from === this.props.token.ownerAddress,
     };
 
   }
+
+  // Nomrally decimals are just 18. In some cases like
+  // POWR, are 6, but in input are still 18. So here we remove the 12 missing.
+  private amountfromInputAmoutnt(tx) {
+    return new BigNumber(tx.input.amount).
+      div(Math.pow(10, INPUT_DECIMALS - this.props.token.decimals)).toString();
+  }
+
   private renderLine(tx) {
 
     const { isSending, tokenAmount } = this.getTransactionInformation(tx);
 
-    let amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
-    // Special scenario, with POWR some times is 18 decimals, other is just 6.
-    if (this.props.token.symbol === POWR && Number(amount) === 0) {
-      amount = (new BigNumber(tokenAmount)).div(Math.pow(10, POWR_SPECIAL_DECIMALS)).toFixed(6);
-    }
+    const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
+
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
     const direction = isSending ? '-' : '+';

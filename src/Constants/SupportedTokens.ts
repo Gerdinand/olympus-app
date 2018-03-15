@@ -49,7 +49,7 @@ export const SupportedTokens = [
   {
     symbol: 'POWR',
     name: 'Power Ledger',
-    decimals: 18,
+    decimals: 6,
     address: '0x71da415026fa64d1e348415e9486253e94333acc',
     icon: 'https://files.coinmarketcap.com/static/img/coins/64x64/2132.png',
 

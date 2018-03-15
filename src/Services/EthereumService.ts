@@ -194,7 +194,6 @@ export class EthereumService {
       const token = wallet.tokens[i];
       const tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
       token.balance = tokenBalance;
-
       const priceInWei = await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address);
       console.log('Expected rate: ', priceInWei.toNumber());
 
