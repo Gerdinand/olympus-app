@@ -38,7 +38,7 @@ export class TransactionList extends PureComponent<InternalProps> {
     if (!tx.logs || tx.logs.length === 0) {
       return {
         isSending: tx.from === this.props.token.ownerAddress,
-        tokenAmount: tx.input.amount,
+        tokenAmount: tx.input.amount || tx.value, // input amount is better, in few cases is undefined,
       };
     }
 
