@@ -12,9 +12,10 @@ import {
   FormValidationMessage,
   Button,
 } from 'react-native-elements';
-
 import { EventRegister } from 'react-native-event-listeners';
+
 import { WalletService } from '../../../Services';
+import { PasswordInput } from '../../_shared/inputs';
 
 interface InternalState {
   name: string | null;
@@ -86,11 +87,7 @@ export default class CreateWalletView extends React.Component<null, InternalStat
           </FormValidationMessage>
         }
         <FormLabel>Password </FormLabel>
-        < FormInput
-          secureTextEntry={true}
-          placeholder="Type in your password"
-          onChangeText={(password1) => this.setState({ password1 })}
-        />
+        <PasswordInput onChangeText={(password1) => this.setState({ password1 })} />
         {
           this.state.passwordErrorMessage1 &&
           <FormValidationMessage>
@@ -98,10 +95,9 @@ export default class CreateWalletView extends React.Component<null, InternalStat
           </FormValidationMessage>
         }
         <FormLabel>Retype Password </FormLabel>
-        < FormInput
-          secureTextEntry={true}
-          placeholder="Retype your password"
+        <PasswordInput
           onChangeText={(password2) => this.setState({ password2 })}
+          placeholder="Retype your password"
         />
         {
           this.state.passwordErrorMessage2 &&

@@ -16,7 +16,6 @@ import {
   ButtonGroup,
   Button,
   FormLabel,
-  FormInput,
   FormValidationMessage,
   Slider,
 } from 'react-native-elements';
@@ -30,7 +29,7 @@ import * as Constants from '../../Constants';
 import { toEtherNumber, restrictTextToNumber } from '../../Utils';
 import { Row, Text } from '../_shared/layout';
 import { AddressModal } from './partials/AddressModal';
-import { FormInputWithButton } from '../_shared/inputs';
+import { FormInputWithButton, PasswordInput } from '../_shared/inputs';
 import { TransactionList } from './partials/TransactionList';
 import { Wallet, Tx } from '../../Models';
 import { PendingTx } from '../../Models/Wallet';
@@ -635,11 +634,9 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 </FormValidationMessage>
               }
               <FormLabel>Password</FormLabel>
-              <FormInput
-                inputStyle={{ width: '100%' }}
-                secureTextEntry={true}
-                placeholder="To unlock the wallet"
+              <PasswordInput
                 onChangeText={(password) => this.setState({ password })}
+                placeholder="To unlock the wallet"
               />
               {
                 this.state.sendPasswordErrorMessage &&
@@ -750,11 +747,9 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   this.state.token.symbol : 'ETH'}
               </FormLabel>
               <FormLabel>Password</FormLabel>
-              <FormInput
-                inputStyle={{ width: '100%' }}
-                secureTextEntry={true}
-                placeholder="To unlock the wallet"
+              <PasswordInput
                 onChangeText={(password) => this.setState({ password })}
+                placeholder="To unlock the wallet"
               />
               {
                 this.state.tradePasswordErrorMessage &&
@@ -892,7 +887,7 @@ const styles = StyleSheet.create({
     left: 0,
   },
   inputButton: {
-    color: 'rgb(85,137,255)',
+    color: '#58f',
     alignSelf: 'flex-end',
   },
 });
