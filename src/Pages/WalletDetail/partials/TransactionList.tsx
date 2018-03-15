@@ -7,13 +7,14 @@ import {
 import BigNumber from 'bignumber.js';
 import Moment from 'moment';
 import { Tx, Token } from '../../../Models';
+import { PendingTx } from '../../../Models/Wallet';
 
 const TRADE = 'Trade';
-const ETHER_RECIVAL = 'EtherReceival';
+const ETHER_RECEIVAL = 'EtherReceival';
 const TOKEN_ETHER = 'ETH';
 interface InternalProps {
   onListItemPress: (txHash: string) => void;
-  pendingTxHash: string;
+  pendingTxs: PendingTx[];
   txs: Tx[];
   token: Token;
 }
@@ -40,7 +41,7 @@ export class TransactionList extends PureComponent<InternalProps> {
       };
     }
 
-    const ethReceival = tx.logs.find((log) => log.name === ETHER_RECIVAL);
+    const ethReceival = tx.logs.find((log) => log.name === ETHER_RECEIVAL);
     const trade = tx.logs.find((log) => log.name === TRADE);
     const isETH = this.props.token.symbol === TOKEN_ETHER;
     // Trading information
@@ -78,7 +79,6 @@ export class TransactionList extends PureComponent<InternalProps> {
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
     const direction = isSending ? '-' : '+';
-
     return (
       <ListItem
         avatar={isSending ? require('../../../../images/flow-out.png') : require('../../../../images/flow-in.png')}
@@ -101,7 +101,7 @@ export class TransactionList extends PureComponent<InternalProps> {
   public render() {
     return (
       <List>
-        {this.props.pendingTxHash &&
+        {this.props.pendingTxs.map((pendingTx) => (
           <ListItem
             leftIcon={{
               name: 'lan-pending',
@@ -109,10 +109,12 @@ export class TransactionList extends PureComponent<InternalProps> {
               color: 'rgb(89,139,246)',
             }}
             hideChevron={true}
-            key={-1}
-            title={'PENDING'}
+            key={'pending' + pendingTx.tx.hash}
+            title={`PENDING ${this.formatAddress(pendingTx.tx.to)}`}
             subtitle={'wait for a minute...'}
           />
+        ),
+        )
         }
         {this.props.txs.map((tx) => this.renderLine(tx))}
       </List>
