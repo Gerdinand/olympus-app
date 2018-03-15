@@ -115,7 +115,6 @@ export function filterStringLessThanNumber(value: string, max: number) {
     return value; // The cast would return no decimals, but that could be annoying
   }
 
-  console.log(Number(value), max, Math.min(Number(value), max));
   return Math.min(Number(value), max).toString();
 }
 

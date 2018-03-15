@@ -163,7 +163,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     this.setState({
       gasFee: Number(toEtherNumber(value)), // TODO is this NUmber() cast correct?
     });
-    return toEtherNumber(value);
+    return Number(toEtherNumber(value));
   }
 
   private reloadTxs(wallet: Wallet) {
@@ -237,14 +237,14 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
 
   // TODO is being called?
   public onTapMax() {
-    const sendAmount = (this.getMaxBalance()).toString();
+    const sendAmount = (this.getMaxBalance(this.state.gasFee)).toString();
     this.setState({ sendAmount });
   }
 
-  private getMaxBalance() {
+  private getMaxBalance(gasFee: number) {
     const token = this.state.token;
     const exchangeType = this.state.exchangeType;
-    const fee = new BigNumber(this.state.gasFee.toPrecision(15));
+    const fee = new BigNumber(gasFee.toPrecision(15));
     const balance = new BigNumber(this.state.ETHBalance.toPrecision(15));
     let sendAmount;
     if (token.address === Constants.ETHER_ADDRESS || exchangeType === ExchangeType.ETH_TO_TOKEN) {
@@ -255,24 +255,25 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     return sendAmount.toFixed(8);
   }
 
-  private onExchangeTextChanged(rawText: string) {
+  private onExchangeTextChanged(rawText: string, maxBalance: number) {
     const { text, textCorrect } = restrictTextToNumber(rawText);
     // TODO this is behaving as number and as text
-    const sourceAmount: any = text;
+    const sourceAmount: string = filterStringLessThanNumber(rawText, maxBalance);
     const destAmount: any = 0;
     if (!textCorrect) {
       return this.setState({ sourceAmount: text, destAmount });
     }
+
     this.setState({ sourceAmount });
     if (Number(text)) {
-      this.calculateDestinationAmount(Number(sourceAmount));
+      this.calculateDestinationAmount(Number(sourceAmount), maxBalance);
     }
+
   }
 
-  private calculateDestinationAmount(sourceAmount: number) {
+  private calculateDestinationAmount(sourceAmount: number, maxBalance: number) {
     let destAmount;
-    const maxBalance = this.getMaxBalance();
-    if (sourceAmount > maxBalance) { sourceAmount = maxBalance; }
+
     if (this.state.exchangeType === ExchangeType.ETH_TO_TOKEN) {
       destAmount = sourceAmount * this.state.token.price;
     } else {
@@ -282,7 +283,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     this.setState({ destAmount });
   }
   private onExchangePress() {
-    let sourceAmount = this.getMaxBalance();
+    let sourceAmount = this.getMaxBalance(this.state.gasFee);
     let destAmount: any = 0; // TODO This is a text and string
     if (Number(sourceAmount)) {
       sourceAmount = Number(sourceAmount);
@@ -730,7 +731,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 keyboardType={'numeric'}
                 // Never max than getMax Balance (if fee gas changes it must)
                 value={maxDecimals(this.state.sourceAmount, 8)}
-                onChangeText={(text) => this.onExchangeTextChanged(text)}
+                onChangeText={(text) => this.onExchangeTextChanged(text, this.getMaxBalance())}
                 onFocus={() => {
                   const balance = this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
                     ? this.state.ETHBalance : this.state.token.balance;
@@ -776,11 +777,11 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   maximumValue={WalletService.getInstance().wallet.gasLimit}
                   minimumTrackTintColor="#5589FF"
                   thumbTintColor="#5589FF"
-                  onSlidingComplete={(value) => {
+                  onSlidingComplete={async (value) => {
                     if (isNaN(value)) { return; }
-                    this.calcuateGasFee(value);
-                    this.onExchangeTextChanged(
-                      filterStringLessThanNumber(this.state.sourceAmount, this.getMaxBalance()));
+                    const updatedGasFee = await this.calcuateGasFee(value);
+                    const maxBalance = this.getMaxBalance(updatedGasFee);
+                    this.onExchangeTextChanged(this.state.sourceAmount, maxBalance);
                     this.setState({ value });
                   }}
                 />
