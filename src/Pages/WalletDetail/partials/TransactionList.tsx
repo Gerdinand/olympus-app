@@ -12,6 +12,8 @@ import { PendingTx } from '../../../Models/Wallet';
 const TRADE = 'Trade';
 const ETHER_RECEIVAL = 'EtherReceival';
 const TOKEN_ETHER = 'ETH';
+const POWR = 'POWR';
+const POWR_SPECIAL_DECIMALS = 6;
 
 interface InternalProps {
   onListItemPress: (txHash: string) => void;
@@ -76,7 +78,11 @@ export class TransactionList extends PureComponent<InternalProps> {
 
     const { isSending, tokenAmount } = this.getTransactionInformation(tx);
 
-    const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
+    let amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
+    // Special scenario, with POWR some times is 18 decimals, other is just 6.
+    if (this.props.token.symbol === POWR && Number(amount) === 0) {
+      amount = (new BigNumber(tokenAmount)).div(Math.pow(10, POWR_SPECIAL_DECIMALS)).toFixed(6);
+    }
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
     const direction = isSending ? '-' : '+';
