@@ -108,3 +108,25 @@ export function restrictTextToNumber(text: string): { text: string, textCorrect:
 
   return { text, textCorrect: true };
 }
+
+export function filterStringLessThanNumber(value: string, max: number) {
+
+  if (value === '' || value === '.' || (/^(\d)*\.$/.test(value)) || !Number(value)) {
+    return value; // The cast would return no decimals, but that could be annoying
+  }
+
+  return Math.min(Number(value), max).toString();
+}
+
+/**
+ * Big difference between toFixed(2), is that here you dont add 0
+ * to complete the max of decimals. Just cut if they are more.
+ */
+export function maxDecimals(value: string, maxDecimals: number) {
+  const [integer, decimals] = value.split('.');
+  // 1 => 1
+  if (!decimals) { return value; }
+  if (decimals.length <= maxDecimals) { return value; }
+
+  return integer + '.' + decimals.substr(0, maxDecimals);
+}
