@@ -113,6 +113,9 @@ export class TransactionList extends PureComponent<InternalProps> {
             key={'pending' + pendingTx.tx.hash}
             title={`PENDING ${this.formatAddress(pendingTx.tx.to)}`}
             subtitle={'wait for a minute...'}
+            onPress={() => {
+              this.props.onListItemPress && this.props.onListItemPress(pendingTx.tx.hash);
+            }}
           />
         ),
         )
