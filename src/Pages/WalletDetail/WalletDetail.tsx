@@ -258,28 +258,29 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private onExchangeTextChanged(rawText: string) {
     const { text, textCorrect } = restrictTextToNumber(rawText);
     // TODO this is behaving as number and as text
-    let sourceAmount: any = text;
-    let destAmount: any = 0;
+    const sourceAmount: any = text;
+    const destAmount: any = 0;
     if (!textCorrect) {
       return this.setState({ sourceAmount: text, destAmount });
     }
-
+    this.setState({ sourceAmount });
     if (Number(text)) {
-      sourceAmount = Number(text);
-      const maxBalance = this.getMaxBalance();
-      if (sourceAmount > maxBalance) { sourceAmount = maxBalance; }
-      if (this.state.exchangeType === ExchangeType.ETH_TO_TOKEN) {
-        destAmount = sourceAmount * this.state.token.price;
-      } else {
-        destAmount = sourceAmount * (1.0 / this.state.token.price);
-      }
-
-      sourceAmount = sourceAmount.toString();
-      destAmount = destAmount.toFixed(6);
+      this.calculateDestinationAmount(Number(sourceAmount));
     }
-    this.setState({ sourceAmount, destAmount });
   }
 
+  private calculateDestinationAmount(sourceAmount: number) {
+    let destAmount;
+    const maxBalance = this.getMaxBalance();
+    if (sourceAmount > maxBalance) { sourceAmount = maxBalance; }
+    if (this.state.exchangeType === ExchangeType.ETH_TO_TOKEN) {
+      destAmount = sourceAmount * this.state.token.price;
+    } else {
+      destAmount = sourceAmount * (1.0 / this.state.token.price);
+    }
+    destAmount = destAmount.toFixed(6);
+    this.setState({ destAmount });
+  }
   private onExchangePress() {
     let sourceAmount = this.getMaxBalance();
     let destAmount: any = 0; // TODO This is a text and string
@@ -481,6 +482,23 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     });
   }
 
+  private onSendAmountPress(rawText: string) {
+    const { text, textCorrect } = restrictTextToNumber(rawText);
+    let sendAmount: any = text;
+
+    // Filtering non digital and dot characters
+    if (!textCorrect) {
+      return this.setState({ sendAmount });
+    }
+
+    let numberValue = Number(text);
+    if (numberValue) {
+      const max = this.getMaxBalance();
+      if (numberValue > max) { numberValue = max; }
+      sendAmount = numberValue.toString();
+    }
+    this.setState({ sendAmount });
+  }
   private onActionsButtonPress(selectedIndex: number) {
     this.setState({ buttonGroupSelectedIndex: selectedIndex });
     if (0 === selectedIndex) {
@@ -595,29 +613,10 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
               <FormLabel>Amount</FormLabel>
               <FormInputWithButton
                 inputStyle={{ width: '100%' }}
-                value={maxDecimals(
-                  filterStringLessThanNumber(this.state.sendAmount, this.getMaxBalance()),
-                  8)
-                }
+                value={maxDecimals(this.state.sendAmount, 8)}
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
-                onChangeText={(rawText) => {
-                  const { text, textCorrect } = restrictTextToNumber(rawText);
-                  let sendAmount: any = text;
-
-                  // Filtering non digital and dot characters
-                  if (!textCorrect) {
-                    return this.setState({ sendAmount });
-                  }
-
-                  let numberValue = Number(text);
-                  if (numberValue) {
-                    const max = this.getMaxBalance();
-                    if (numberValue > max) { numberValue = max; }
-                    sendAmount = numberValue.toString();
-                  }
-                  this.setState({ sendAmount });
-                }}
+                onChangeText={(rawText) => this.onSendAmountPress(rawText)}
                 onFocus={() => {
                   this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(6)}` });
                 }}
@@ -663,6 +662,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   onSlidingComplete={(value) => {
                     if (isNaN(value)) { return; }
                     this.calcuateGasFee(value);
+                    this.onSendAmountPress(filterStringLessThanNumber(this.state.sendAmount, this.getMaxBalance()));
                     this.setState({ value });
                   }}
                 />
@@ -729,7 +729,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                 placeholder={this.state.amountPlaceHolder}
                 keyboardType={'numeric'}
                 // Never max than getMax Balance (if fee gas changes it must)
-                value={maxDecimals(filterStringLessThanNumber(this.state.sourceAmount, this.getMaxBalance()), 8)}
+                value={maxDecimals(this.state.sourceAmount, 8)}
                 onChangeText={(text) => this.onExchangeTextChanged(text)}
                 onFocus={() => {
                   const balance = this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
@@ -779,6 +779,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
                   onSlidingComplete={(value) => {
                     if (isNaN(value)) { return; }
                     this.calcuateGasFee(value);
+                    this.onExchangeTextChanged(
+                      filterStringLessThanNumber(this.state.sourceAmount, this.getMaxBalance()));
                     this.setState({ value });
                   }}
                 />
