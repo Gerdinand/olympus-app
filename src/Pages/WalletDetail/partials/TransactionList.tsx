@@ -12,6 +12,7 @@ import { PendingTx } from '../../../Models/Wallet';
 const TRADE = 'Trade';
 const ETHER_RECEIVAL = 'EtherReceival';
 const TOKEN_ETHER = 'ETH';
+const APPROVAL = 'Approval';
 interface InternalProps {
   onListItemPress: (txHash: string) => void;
   pendingTxs: PendingTx[];
@@ -73,6 +74,11 @@ export class TransactionList extends PureComponent<InternalProps> {
   }
 
   private renderLine(tx) {
+
+    // Ignore approval logs
+    if (tx.logs && tx.logs.find((log) => log.name === APPROVAL)) {
+      return null;
+    }
 
     const { isSending, tokenAmount } = this.getTransactionInformation(tx);
     const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
