@@ -38,7 +38,7 @@ export class TransactionList extends PureComponent<InternalProps> {
     if (!tx.logs || tx.logs.length === 0) {
       return {
         isSending: tx.from === this.props.token.ownerAddress,
-        tokenAmount: tokenAmount = tx.input.amount,
+        tokenAmount: tx.input.amount,
       };
     }
 
@@ -100,7 +100,6 @@ export class TransactionList extends PureComponent<InternalProps> {
   }
 
   public render() {
-    console.log('Transactions ', this.props.txs);
     return (
       <List>
         {this.props.pendingTxs.map((pendingTx) => (
