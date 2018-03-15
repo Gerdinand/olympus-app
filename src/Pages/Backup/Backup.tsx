@@ -26,7 +26,7 @@ interface InternalState {
   walletJson: string;
   unlockButtonDisable: boolean;
 }
-export default class BackupView extends React.PureComponent<InternalProps, InternalState> {
+export default class Backup extends React.PureComponent<InternalProps, InternalState> {
 
   constructor(props: InternalProps) {
     super(props);

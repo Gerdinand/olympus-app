@@ -12,9 +12,10 @@ import {
   FormInput,
   Button,
 } from 'react-native-elements';
+import { EventRegister } from 'react-native-event-listeners';
 
 import { WalletService } from '../../../Services';
-import { EventRegister } from 'react-native-event-listeners';
+import { PasswordInput } from '../../_shared/inputs';
 
 interface InternalState {
   name: string | null;
@@ -52,10 +53,7 @@ export default class ImportWalletView extends React.Component<null, InternalStat
           onChangeText={(name) => this.setState({ name })}
         />
         <FormLabel>Password</FormLabel>
-        <FormInput
-          secureTextEntry={true}
-          onChangeText={(password) => this.setState({ password })}
-        />
+        <PasswordInput onChangeText={(password) => this.setState({ password })} />
         <FormLabel>Paste wallet json</FormLabel>
         <FormInput
           multiline={true}
