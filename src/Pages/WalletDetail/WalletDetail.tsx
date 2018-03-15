@@ -268,23 +268,21 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private onExchangeTextChanged(rawText: string) {
     const { text, textCorrect } = restrictTextToNumber(rawText);
     // TODO this is behaving as number and as text
-    let sourceAmount: any = text;
+    let sourceAmount: string = text;
     let destAmount: any = 0;
     if (!textCorrect) {
-      return this.setState({ sourceAmount: text, destAmount });
+      return this.setState({ sourceAmount, destAmount });
     }
 
     if (Number(text)) {
-      sourceAmount = Number(text);
+      const sourceAmountNumber = Number(text);
       const maxBalance = this.getMaxBalance();
-      if (sourceAmount > maxBalance) { sourceAmount = maxBalance; }
+      if (sourceAmountNumber > maxBalance) { sourceAmount = maxBalance.toString(); }
       if (this.state.exchangeType === ExchangeType.ETH_TO_TOKEN) {
-        destAmount = sourceAmount * this.state.token.price;
+        destAmount = sourceAmountNumber * this.state.token.price;
       } else {
-        destAmount = sourceAmount * (1.0 / this.state.token.price);
+        destAmount = sourceAmountNumber * (1.0 / this.state.token.price);
       }
-
-      sourceAmount = sourceAmount.toString();
       destAmount = destAmount.toFixed(6);
     }
     this.setState({ sourceAmount, destAmount });
