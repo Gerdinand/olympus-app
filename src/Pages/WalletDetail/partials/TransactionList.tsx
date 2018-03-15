@@ -39,7 +39,7 @@ export class TransactionList extends PureComponent<InternalProps> {
     if (!tx.logs || tx.logs.length === 0) {
       return {
         isSending: tx.from === this.props.token.ownerAddress,
-        tokenAmount: this.amountfromInputAmoutnt(tx) || tx.value, // input amount is better, in few cases is undefined,
+        tokenAmount: this.amountfromInputAmount(tx) || tx.value, // input amount is better, in few cases is undefined,
       };
     }
 
@@ -68,7 +68,7 @@ export class TransactionList extends PureComponent<InternalProps> {
     }
     // Final case
     return {
-      tokenAmount: this.amountfromInputAmoutnt(tx),
+      tokenAmount: this.amountfromInputAmount(tx),
       isSending: tx.from === this.props.token.ownerAddress,
     };
 
@@ -76,7 +76,9 @@ export class TransactionList extends PureComponent<InternalProps> {
 
   // Nomrally decimals are just 18. In some cases like
   // POWR, are 6, but in input are still 18. So here we remove the 12 missing.
-  private amountfromInputAmoutnt(tx) {
+  private amountfromInputAmount(tx) {
+    if (!tx.input.amount) { return undefined; }
+
     return new BigNumber(tx.input.amount).
       div(Math.pow(10, INPUT_DECIMALS - this.props.token.decimals)).toString();
   }
