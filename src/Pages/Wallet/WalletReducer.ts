@@ -1,4 +1,4 @@
-import { BALANCE_VISIBILITY } from './Actions';
+import { BALANCE_VISIBILITY } from './WalletActions';
 
 export interface WalletState {
   balanceVisibility: boolean;

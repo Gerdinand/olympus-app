@@ -54,7 +54,7 @@ class WalletHeader extends React.Component<OwnProps & ReduxProps, InternalState>
             />
           </Row>
           <Text style={styles.tips}>
-            BALANCE
+            {`BALANCE  `}
             <Icon
               style={styles.balanceVisibilityIcon}
               name={this.props.balanceVisibility ? 'eye' : 'eye-slash'}
@@ -91,11 +91,8 @@ const mapDispatchToProps = (dispatch: any) => {
     changeBalanceVisibility: () => dispatch(setBalanceVisibility()),
   };
 };
-const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
-  return { ...ownProps, ...reduxStatePros, ...dispatchProps };
-};
 
-export default connect(mapReduxStateToProps, mapDispatchToProps, mergeProps)(WalletHeader);
+export default connect(mapReduxStateToProps, mapDispatchToProps)(WalletHeader);
 
 const styles = StyleSheet.create({
   container: {
@@ -138,6 +135,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   balanceVisibilityIcon: {
+    marginLeft: 20,
     fontSize: 20,
     color: '#fff',
   },

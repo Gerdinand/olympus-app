@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from 'redux';
-import { walletReducer, WalletState } from './Reducers';
+import { walletReducer, WalletState } from '../Pages/Wallet/WalletReducer';
 
 export interface AppState {
   wallet: WalletState;
@@ -11,4 +11,4 @@ const Store = createStore(combineReducers<AppState>({
 }));
 
 export { Store };
-export * from './Actions';
+export * from '../Pages/Wallet/WalletActions';
