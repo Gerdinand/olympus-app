@@ -14,7 +14,7 @@ export interface Tx {
   gasLimit: string;
   data: any;
   chainId: number;
-  isError: boolean;
+  isError: string;
   logs: any[]; // TODO
   input: string | {
     destToken: Token;

@@ -30,11 +30,11 @@ import { Row, Text } from '../_shared/layout';
 import { AddressModal } from './partials/AddressModal';
 import { FormInputWithButton, PasswordInput } from '../_shared/inputs';
 import { TransactionList } from './partials/TransactionList';
-import { GAS_LIMIT, MAX_GAS_PRICE } from '../../Constants';
+import { GAS_LIMIT, MAX_GAS_PRICE, MINIMUN_GAS_PRICE } from '../../Constants';
 import { Wallet, Tx } from '../../Models';
 import { PendingTx } from '../../Models/Wallet';
 
-const GAS_MIN_BALANCE = 0.1;
+const GAS_MIN_BALANCE = 0.2;
 const GAS_MIN_ERROR = `You need at least ${GAS_MIN_BALANCE} ETH to afford transactions fee.`;
 const DECIMALS = 8; // Display number 8 decimals
 const ETHER_ACTIONS = ['Send', 'Receive'];
@@ -157,7 +157,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
 
   public async componentDidMount() {
     // Gas price from API is too big, get half
-    const gasPrice = Number(await EthereumService.getInstance().getGasPrice()) / 2;
+    const gasPrice = Number(await EthereumService.getInstance().getGasPrice());
     await this.calcuateGasFee(gasPrice);
     this.setState({ gasPrice });
   }
@@ -167,11 +167,17 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   }
 
   private async calcuateGasFee(gasPrice: number) {
-    const gasFee: BigNumber | 0 = toEtherNumber(GAS_LIMIT * gasPrice);
-    this.setState({
-      gasFee: Number(gasFee), // TODO is this NUmber() cast correct?
-    });
-    return Number(gasFee);
+    try {
+
+      const gasFee: BigNumber | 0 = toEtherNumber(GAS_LIMIT * gasPrice);
+      this.setState({
+        gasFee: Number(gasFee), // TODO is this NUmber() cast correct?
+      });
+      return Number(gasFee);
+    } catch (e) {
+
+      return 0;
+    }
   }
 
   private reloadTxs(wallet: Wallet) {
@@ -185,6 +191,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
         && ((tx.input.srcToken && tx.input.srcToken.symbol === token.symbol)
           || (tx.input.destToken && tx.input.destToken.symbol === token.symbol));
     });
+    console.log(txs);
     let balance;
     if (exchangeType === ExchangeType.ETH_TO_TOKEN || token.address === Constants.ETHER_ADDRESS) {
       balance = ETHBalance;
@@ -239,16 +246,17 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
-  // TODO is being called?
   public onTapMax() {
-    const sendAmount = (this.getMaxBalance(this.state.gasFee)).toString();
+
+    const sendAmount = this.getMaxBalance(this.state.gasFee).toString();
+
     this.setState({ sendAmount });
   }
 
   private getMaxBalance(gasFee: number) {
     const token = this.state.token;
     const exchangeType = this.state.exchangeType;
-    const fee = new BigNumber(gasFee.toPrecision(15));
+    const fee = new BigNumber((gasFee + GAS_MIN_BALANCE).toPrecision(15));
     const balance = new BigNumber(this.state.ETHBalance.toPrecision(15));
     let sendAmount;
     if (token.address === Constants.ETHER_ADDRESS || exchangeType === ExchangeType.ETH_TO_TOKEN) {
@@ -611,10 +619,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
               onBlur={() => {
                 this.setState({ amountPlaceHolder: '0' });
               }}
-              onButtonPress={() => {
-                const max = this.getMaxBalance(this.state.gasFee);
-                this.setState({ sendAmount: max });
-              }}
+              onButtonPress={() => this.onTapMax()}
             >
               <Text style={styles.inputButton}> Max </Text>
             </FormInputWithButton>

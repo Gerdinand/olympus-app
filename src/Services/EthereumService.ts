@@ -12,6 +12,7 @@ import { WalletService } from './WalletService';
 import { decodeTx } from '../Utils';
 import { Wallet } from '../Models/index.js';
 import { Tx } from '../Models/Tx.js';
+import { GAS_LIMIT } from '../Constants';
 
 let BigNumber;
 
@@ -85,7 +86,7 @@ export class EthereumService {
     const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
       gasPrice: this.rpc.toHex(gasPrice),
-      gasLimit: this.rpc.toHex(await this.getGasLimit()),
+      gasLimit: this.rpc.toHex(GAS_LIMIT),
       to,
       value: this.rpc.toHex(this.rpc.toWei(value, 'ether')),
       data: txData,
@@ -110,7 +111,7 @@ export class EthereumService {
       from: source,
       nonce: this.rpc.toHex(await this.getNonce(source)),
       gasPrice: this.rpc.toHex(gasPrice),
-      gasLimit: this.rpc.toHex(await this.getGasLimit()),
+      gasLimit: this.rpc.toHex(GAS_LIMIT),
       to: contractAddress,
       value: '0x0',
       data: contract.transfer.getData(dest, amount),
@@ -180,7 +181,7 @@ export class EthereumService {
     wallet.tokens[0].balance = balance;
     console.log('ETH balance: ', wallet.balance);
 
-    wallet.gasLimit = await this.getGasLimit();
+    wallet.gasLimit = GAS_LIMIT;
     console.log('Gas limit: ', wallet.gasLimit);
 
     const ethPrice = await getETHPrice();
@@ -261,11 +262,18 @@ export class EthereumService {
       // throwOnFailure,
       // 0
     );
-
+    console.log('EXCHANGE , ', sourceToken,
+      amount,
+      destToken,
+      destAddress,
+      maxDestAmount,
+      minConversionRate,
+      walletId
+      , gasPrice, GAS_LIMIT);
     const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(nonce),
       gasPrice: this.rpc.toHex(gasPrice),
-      gasLimit: this.rpc.toHex(await this.getGasLimit()),
+      gasLimit: this.rpc.toHex(GAS_LIMIT),
       to: this.kyberAddress,
       value: sourceToken === Constants.ETHER_ADDRESS ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
@@ -286,7 +294,7 @@ export class EthereumService {
     const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(await this.newNonce(destAddress)),
       gasPrice: this.rpc.toHex(gasPrice),
-      gasLimit: this.rpc.toHex(await this.getGasLimit()),
+      gasLimit: this.rpc.toHex(GAS_LIMIT),
       to: sourceToken,
       value: 0,
       data: approveData,

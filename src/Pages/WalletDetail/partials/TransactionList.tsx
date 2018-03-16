@@ -30,7 +30,7 @@ export class TransactionList extends PureComponent<InternalProps> {
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
-  private getTransactionInformation(tx): { isSending: boolean, tokenAmount: any } {
+  private getTransactionInformation(tx: Tx): { isSending: boolean, tokenAmount: any } {
 
     let isSending;
     let tokenAmount;
@@ -38,7 +38,10 @@ export class TransactionList extends PureComponent<InternalProps> {
     // No logs case
     if (!tx.logs || tx.logs.length === 0) {
       return {
-        isSending: tx.from === this.props.token.ownerAddress,
+        isSending:
+          typeof tx.input !== 'string' ?
+            tx.input.srcToken.symbol === this.props.token.symbol : // In a case of a exchange that fails, with no logs
+            tx.from === this.props.token.ownerAddress, // in last situation where there are no more hints
         tokenAmount: this.amountfromInputAmount(tx) || tx.value, // input amount is better, in few cases is undefined,
       };
     }
@@ -58,7 +61,7 @@ export class TransactionList extends PureComponent<InternalProps> {
       return { isSending, tokenAmount };
     }
     // Second scenario is trade
-    if (trade) {
+    if (trade && typeof tx.input !== 'string') {
       isSending = isETH ?
         (tx.input.srcToken && tx.input.srcToken.symbol === TOKEN_ETHER) :
         (tx.input.srcToken && tx.input.srcToken.symbol === this.props.token.symbol);
@@ -83,7 +86,7 @@ export class TransactionList extends PureComponent<InternalProps> {
       div(Math.pow(10, INPUT_DECIMALS - this.props.token.decimals)).toString();
   }
 
-  private renderLine(tx) {
+  private renderLine(tx: Tx) {
 
     // Ignore approval logs
     if (tx.logs && tx.logs.find((log) => log.name === APPROVAL)) {
@@ -107,7 +110,7 @@ export class TransactionList extends PureComponent<InternalProps> {
         key={tx.hash}
         title={dest}
         subtitle={time}
-        rightTitle={`${direction}${amount}`}
+        rightTitle={tx.isError === '1' ? 'Error' : `${direction}${amount}`}
         rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
         onPress={() => {
           this.props.onListItemPress && this.props.onListItemPress(tx.hash);
