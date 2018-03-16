@@ -13,7 +13,7 @@ const TRADE = 'Trade';
 const ETHER_RECEIVAL = 'EtherReceival';
 const TOKEN_ETHER = 'ETH';
 const INPUT_DECIMALS = 18; // Input decimals are always 18, independent than number of decimlas of token
-
+const APPROVAL = 'Approval';
 interface InternalProps {
   onListItemPress: (txHash: string) => void;
   pendingTxs: PendingTx[];
@@ -85,8 +85,12 @@ export class TransactionList extends PureComponent<InternalProps> {
 
   private renderLine(tx) {
 
-    const { isSending, tokenAmount } = this.getTransactionInformation(tx);
+    // Ignore approval logs
+    if (tx.logs && tx.logs.find((log) => log.name === APPROVAL)) {
+      return null;
+    }
 
+    const { isSending, tokenAmount } = this.getTransactionInformation(tx);
     const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
 
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
