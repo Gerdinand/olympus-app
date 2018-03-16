@@ -170,10 +170,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     const exchangeType = this.state.exchangeType;
     const ETHBalance = wallet.tokens.find((token) => token.address === Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
-      if (this.state.token.address === Constants.ETHER_ADDRESS) {
-        // ETH shows all trading history
-        return tx.from === token.ownerAddress || tx.to === token.ownerAddress;
-      }
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
         && (typeof tx.input === 'object')
