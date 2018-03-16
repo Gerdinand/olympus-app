@@ -10,6 +10,7 @@ import {
   StatusBar,
   EmitterSubscription,
 } from 'react-native';
+import { Provider } from 'react-redux';
 
 import { TabNavigator, TabBarBottom } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
@@ -18,6 +19,7 @@ import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
 import { WalletService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
+import { Store } from './Store';
 
 const Root = TabNavigator(
   {
@@ -138,18 +140,20 @@ export default class Olympus extends React.Component<null, InternalState> {
 
   public render() {
     return (
-      <View style={{ flex: 1, zIndex: 100 }}>
-        <StatusBar
-          backgroundColor="white"
-          barStyle="dark-content"
-        />
-        {this.state.loading && <View />}
-        {
-          !this.state.loading && this.state.hasWallet && <Root />}
-        {
-          !this.state.loading && !this.state.hasWallet && <Welcome />}
-        < Toast ref="toast" />
-      </View>
+      <Provider store={Store}>
+        <View style={{ flex: 1, zIndex: 100 }}>
+          <StatusBar
+            backgroundColor="white"
+            barStyle="dark-content"
+          />
+          {this.state.loading && <View />}
+          {
+            !this.state.loading && this.state.hasWallet && <Root />}
+          {
+            !this.state.loading && !this.state.hasWallet && <Welcome />}
+          < Toast ref="toast" />
+        </View>
+      </Provider>
     );
   }
 }

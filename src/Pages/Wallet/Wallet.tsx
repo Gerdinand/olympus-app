@@ -6,24 +6,27 @@ import {
   RefreshControl,
   DeviceEventEmitter,
 } from 'react-native';
+import { connect } from 'react-redux';
 import {
   List,
   ListItem,
 } from 'react-native-elements';
 
 import { EventRegister } from 'react-native-event-listeners';
-import { WalletHeader } from './partials/WalletHeader';
+import WalletHeader from './partials/WalletHeader';
 import { WalletService, EthereumService } from '../../Services';
+import { AppState } from '../../Store';
 
 interface InternalProps {
   navigation: any;
+  balanceVisibility: boolean;
 }
 
 interface InternalState {
   wallet: any; // TODO object?
   refreshing: boolean;
 }
-export default class WalletView extends React.Component<InternalProps, InternalState> {
+class WalletView extends React.Component<InternalProps, InternalState> {
 
   private walletListener;
 
@@ -86,7 +89,11 @@ export default class WalletView extends React.Component<InternalProps, InternalS
         <WalletHeader
           name={this.state.wallet.name}
           address={this.state.wallet.address}
-          balance={this.state.wallet.ethPrice !== 0 ? `$ ${this.state.wallet.balanceInUSD}` : '$ --'}
+          balance={
+            !this.props.balanceVisibility ?
+              '$ ******' :
+              this.state.wallet.ethPrice ? `$ ${this.state.wallet.balanceInUSD}` : '$ --'
+          }
         />
         <List
           style={{ height: 578 }}
@@ -103,8 +110,13 @@ export default class WalletView extends React.Component<InternalProps, InternalS
                 title={t.symbol}
                 subtitle={t.name}
                 rightTitle={(0 === i || t.price === 0) ?
-                  t.balance.toFixed(6).toString() :
-                  `${t.balance.toFixed(6).toString()}\n1 ETH = ${t.price} ${t.symbol}`}
+                  (this.props.balanceVisibility ? t.balance.toFixed(6).toString() : '******') :
+                  (
+                    this.props.balanceVisibility ?
+                      `${t.balance.toFixed(6).toString()}\n1 ETH = ${t.price} ${t.symbol}` :
+                      `******\n1 ETH = ${t.price} ${t.symbol}`
+                  )
+                }
                 rightTitleNumberOfLines={2}
                 rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A', textAlign: 'right' }}
                 onPress={() => {
@@ -122,3 +134,11 @@ export default class WalletView extends React.Component<InternalProps, InternalS
     );
   }
 }
+
+const mapReduxStateToProps = (state: AppState) => {
+  return {
+    balanceVisibility: state.wallet.balanceVisibility,
+  };
+};
+
+export default connect(mapReduxStateToProps, null)(WalletView);

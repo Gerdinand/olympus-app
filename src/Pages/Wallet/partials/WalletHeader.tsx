@@ -6,22 +6,28 @@ import {
   View,
   DeviceEventEmitter,
 } from 'react-native';
+import { connect } from 'react-redux';
 import {
   Text,
 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
 import { Row } from '../../_shared/layout';
+import { AppState, setBalanceVisibility } from '../../../Store';
 
-interface InternalProps {
+interface OwnProps {
   name: string;
   address: string;
   balance: string | number;
 }
+interface ReduxProps {
+  balanceVisibility: boolean;
+  changeBalanceVisibility: () => void;
+}
 interface InternalState {
   modalVisible: boolean;
 }
-export class WalletHeader extends React.Component<InternalProps, InternalState> {
+class WalletHeader extends React.Component<OwnProps & ReduxProps, InternalState> {
 
   public constructor(props) {
     super(props);
@@ -47,7 +53,15 @@ export class WalletHeader extends React.Component<InternalProps, InternalState> 
               style={styles.icon}
             />
           </Row>
-          <Text style={styles.tips}>BALANCE</Text>
+          <Text style={styles.tips}>
+            BALANCE
+            <Icon
+              style={styles.balanceVisibilityIcon}
+              name={this.props.balanceVisibility ? 'eye' : 'eye-slash'}
+              onPress={() => this.props.changeBalanceVisibility()}
+            />
+          </Text>
+
           <Text style={styles.assets}>{balance}</Text>
         </View>
 
@@ -66,6 +80,22 @@ export class WalletHeader extends React.Component<InternalProps, InternalState> 
     );
   }
 }
+
+const mapReduxStateToProps = (state: AppState) => {
+  return {
+    balanceVisibility: state.wallet.balanceVisibility,
+  };
+};
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    changeBalanceVisibility: () => dispatch(setBalanceVisibility()),
+  };
+};
+const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
+  return { ...ownProps, ...reduxStatePros, ...dispatchProps };
+};
+
+export default connect(mapReduxStateToProps, mapDispatchToProps, mergeProps)(WalletHeader);
 
 const styles = StyleSheet.create({
   container: {
@@ -106,5 +136,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     alignSelf: 'flex-end',
+  },
+  balanceVisibilityIcon: {
+    fontSize: 20,
+    color: '#fff',
   },
 });
