@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   tips: {
-    fontSize: 12,
+    fontSize: 14,
     color: 'white',
     marginLeft: 15,
     marginTop: 30,
@@ -135,8 +135,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   balanceVisibilityIcon: {
-    marginLeft: 20,
-    fontSize: 20,
+    fontSize: 14,
     color: '#fff',
   },
 });
