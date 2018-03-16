@@ -11,11 +11,11 @@ import EthJs from 'ethereumjs-wallet-react-native';
 import { addressFromJSONString, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
 import { SupportedTokens, MINIMUM_GAS_LIMIT } from '../Constants/index.js';
-import { Token } from '../Models/index.js';
+import { Token, Wallet } from '../Models/index.js';
 
 export class WalletService {
 
-  public wallet;
+  public wallet: Wallet;
 
   private constructor() {
     this.wallet = null;
@@ -35,7 +35,7 @@ export class WalletService {
     this.wallet = null;
   }
 
-  public async getActiveWallet() {
+  public async getActiveWallet(): Promise<Wallet | null> {
     const infoString = await readItem('wallets');
 
     if (infoString) {
@@ -43,7 +43,7 @@ export class WalletService {
 
       // TODO: select different wallet
       // 1. build basic wallet
-      const wallet = {
+      const wallet: Wallet = {
         address: info[0].address,
         name: info[0].name,
         balance: 0,
@@ -52,7 +52,7 @@ export class WalletService {
         ethPrice: 0,
         tokens: [],
         txs: [],
-        pendingTxHash: null,
+        pendingTxs: [],
       };
 
       // 2. add tokens
@@ -121,7 +121,7 @@ export class WalletService {
       // check if address equals.
       if (wallet.getAddressString() === `0x${json.address}`) {
         const infoString = JSON.stringify(info);
-        this.wallet = { address, name };
+        this.wallet = { address, name } as Wallet;
         await saveItem('wallets', infoString);
         return true;
       }
@@ -141,7 +141,7 @@ export class WalletService {
       ];
       const infoString = JSON.stringify(info);
 
-      this.wallet = { address, name };
+      this.wallet = { address, name } as Wallet;
 
       await saveItem('wallets', infoString);
     }

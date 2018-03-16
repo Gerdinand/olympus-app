@@ -3,7 +3,7 @@
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
 import MeView from '../Pages/Me/Me';
-import Backup from '../Pages/BackUp/Backup';
+import Backup from '../Pages/Backup/Backup';
 
 const MeScreen = ({ navigation }) => (
   <MeView navigation={navigation} />
