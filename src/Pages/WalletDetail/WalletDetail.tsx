@@ -37,7 +37,7 @@ import { PendingTx } from '../../Models/Wallet';
 
 const GAS_MIN_BALANCE = 0.1;
 const GAS_MIN_ERROR = `You need at least ${GAS_MIN_BALANCE} ETH to afford transactions fee.`;
-
+const DECIMALS = 8; // Display number 8 decimals
 const ETHER_ACTIONS = ['Send', 'Receive'];
 const TOKEN_ACTIONS = ['Send', 'Receive', 'Exchange'];
 const SEND_INDEX = TOKEN_ACTIONS.indexOf('Send');
@@ -257,7 +257,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     } else {
       sendAmount = Number(token.balance);
     }
-    return sendAmount.toFixed(8);
+    return sendAmount.toFixed(DECIMALS);
   }
 
   private updateEchangeAmountText(rawText: string, maxBalance: number) {
@@ -284,7 +284,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     } else {
       destAmount = sourceAmount * (1.0 / this.state.token.price);
     }
-    destAmount = destAmount.toFixed(8);
+    destAmount = destAmount.toFixed(DECIMALS);
     this.setState({ destAmount });
   }
   private onExchangePress() {
@@ -298,7 +298,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
         destAmount = sourceAmount * (1.0 / this.state.token.price);
       }
 
-      destAmount = destAmount.toFixed(6);
+      destAmount = destAmount.toFixed(DECIMALS);
       sourceAmount = sourceAmount.toString();
     }
     this.setState({ sourceAmount, destAmount });
@@ -536,12 +536,12 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       this.updateEchangeAmountText(this.state.sourceAmount, this.getMaxBalance(gasFee));
     }
     this.setState({ gasPrice });
-
   }
+
   private renderGasFeeSlider() {
     return (
       <View>
-        <FormLabel>Gas Fee (est.): {this.state.gasFee.toFixed(8)} eth</FormLabel>
+        <FormLabel>Gas Fee (est.): {this.state.gasFee.toFixed(DECIMALS)} eth</FormLabel>
         <Row style={{ alignItems: 'stretch', justifyContent: 'center' }}>
           <Slider
             style={{ width: '88%', marginTop: 12 }}
@@ -557,162 +557,209 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       </View>
     );
   }
+
+  private renderSendModal() {
+    return (
+
+      <Modal
+        animationType={'fade'}
+        transparent={true}
+        visible={this.state.sendModalVisible}
+        onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
+        onRequestClose={() => { this.setState({ sendModalVisible: false, amountPlaceHolder: '0' }); }}
+      >
+        <ScrollView style={styles.modelContainer} keyboardShouldPersistTaps={'handled'}>
+          <Card
+            title={`SEND ${this.state.token.symbol}`}
+          >
+            <Image source={{ uri: this.state.token.icon }} style={styles.icon} />
+            <FormLabel>To</FormLabel>
+            <FormInputWithButton
+              multiline
+              inputStyle={{ width: '100%', fontSize: 12 }}
+              value={this.state.sendAddress}
+              onChangeText={(sendAddress) => this.setState({ sendAddress })}
+              onButtonPress={() => {
+                this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
+                if (this.scanner) {
+                  this.scanner.reactivate();
+                }
+              }}
+            >
+              <Icon
+                name="md-qr-scanner"
+                size={24}
+                style={styles.inputButton}
+                disabled={this.state.scanButtonDisable}
+              />
+            </FormInputWithButton>
+            {
+              this.state.sendAddressErrorMessage &&
+              <FormValidationMessage>
+                {this.state.sendAddressErrorMessage}
+              </FormValidationMessage>
+            }
+            <FormLabel>Amount</FormLabel>
+            <FormInputWithButton
+              inputStyle={{ width: '100%' }}
+              value={maxDecimals(this.state.sendAmount, 8)}
+              placeholder={this.state.amountPlaceHolder}
+              keyboardType={'numeric'}
+              onChangeText={(rawText) => this.updateSendAmountText(rawText, this.getMaxBalance(this.state.gasFee))}
+              onFocus={() => {
+                this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(DECIMALS)}` });
+              }}
+              onBlur={() => {
+                this.setState({ amountPlaceHolder: '0' });
+              }}
+              onButtonPress={() => {
+                const max = this.getMaxBalance(this.state.gasFee);
+                this.setState({ sendAmount: max });
+              }}
+            >
+              <Text style={styles.inputButton}> Max </Text>
+            </FormInputWithButton>
+            {
+              this.state.sendAmountErrorMessage &&
+              <FormValidationMessage>
+                {this.state.sendAmountErrorMessage}
+              </FormValidationMessage>
+            }
+            <FormLabel>Password</FormLabel>
+            <PasswordInput
+              onChangeText={(password) => this.setState({ password })}
+              placeholder="To unlock the wallet"
+            />
+            {
+              this.state.sendPasswordErrorMessage &&
+              <FormValidationMessage>
+                {this.state.sendPasswordErrorMessage}
+              </FormValidationMessage>
+            }
+            {this.renderGasFeeSlider()}
+            <View
+              style={{
+                padding: 10,
+              }}
+            >
+              <Button
+                title={this.state.sendButtonDisable ? 'Sending...' : 'Send'}
+                buttonStyle={styles.modalSendButton}
+                // raised={true}
+                disabled={this.state.sendButtonDisable}
+                onPress={async () => this.onSendPress()}
+              />
+              <Button
+                buttonStyle={styles.modalCloseButton}
+                title={'Cancel'}
+                disabled={this.state.sendCancelButtonDisable}
+                onPress={() => {
+                  this.setState({ sendModalVisible: false, sendAmount: '', password: null, sendAddress: null });
+                }}
+                color={'#4A4A4A'}
+              />
+            </View>
+          </Card>
+        </ScrollView>
+      </Modal>
+    );
+  }
+
+  private renderExchangeModal() {
+    return (
+      <Modal
+        animationType={'fade'}
+        transparent={true}
+        visible={this.state.exchangeModalVisible}
+        onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
+        onRequestClose={() => {
+          this.setState({
+            exchangeModalVisible: false,
+            exchangeType: ExchangeType.NONE,
+            amountPlaceHolder: '0',
+          });
+        }}
+      >
+        <View style={styles.modelContainer}>
+          <Card
+            title={this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
+              ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}
+          >
+            <FormLabel>Exchange</FormLabel>
+            <FormInputWithButton
+              inputStyle={{ width: '100%' }}
+              placeholder={this.state.amountPlaceHolder}
+              keyboardType={'numeric'}
+              // Never max than getMax Balance (if fee gas changes it must)
+              value={maxDecimals(this.state.sourceAmount, 8)}
+              onChangeText={(text) => this.updateEchangeAmountText(text, this.getMaxBalance(this.state.gasFee))}
+              onFocus={() => {
+                const balance = this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
+                  ? this.state.ETHBalance : this.state.token.balance;
+                this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(DECIMALS)}` });
+              }}
+              onBlur={() => {
+                this.setState({ amountPlaceHolder: '0' });
+              }}
+              onButtonPress={() => this.onExchangePress()}
+            >
+              <Text style={styles.inputButton}> Max </Text>
+            </FormInputWithButton>
+            {
+              this.state.tradeAmountErrorMessage &&
+              <FormValidationMessage>
+                {this.state.tradeAmountErrorMessage}
+              </FormValidationMessage>
+            }
+            <FormLabel>
+              Expected to receive {this.state.destAmount} {this.state.exchangeType === ExchangeType.ETH_TO_TOKEN ?
+                this.state.token.symbol : 'ETH'}
+            </FormLabel>
+            <FormLabel>Password</FormLabel>
+            <PasswordInput
+              onChangeText={(password) => this.setState({ password })}
+              placeholder="To unlock the wallet"
+            />
+            {
+              this.state.tradePasswordErrorMessage &&
+              <FormValidationMessage>
+                {this.state.tradePasswordErrorMessage}
+              </FormValidationMessage>
+            }
+            {this.renderGasFeeSlider()}
+            <View style={{ padding: 10 }}>
+              <Button
+                title={this.state.tradeButtonDisable ? 'Trading...' : 'Trade'}
+                buttonStyle={styles.modalSendButton}
+                disabled={this.state.tradeButtonDisable}
+                onPress={async () => this.onTradePress()}
+              />
+              <Button
+                buttonStyle={styles.modalCloseButton}
+                title="Cancel"
+                disabled={this.state.tradeCancelButtonDisable}
+                onPress={() => {
+                  this.setState({
+                    exchangeModalVisible: false,
+                    exchangeType: ExchangeType.NONE,
+                    sourceAmount: '',
+                    password: null, exchangeAmount: 0.0,
+                  });
+                }}
+                color={'#4A4A4A'}
+              />
+            </View>
+          </Card>
+        </View>
+      </Modal >
+    );
+  }
   public render() {
 
     return (
       <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
-
-        <Modal
-          animationType={'fade'}
-          transparent={true}
-          visible={this.state.scanModalVisible}
-          onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
-          onRequestClose={() => { this.setState({ scanModalVisible: false, amountPlaceHolder: '0' }); }}
-        >
-          <View style={styles.modelContainer}>
-            <Card title="SCAN">
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <View style={{ flex: 1, maxWidth: 300, flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <QRCodeScanner
-                    ref={(node) => { this.scanner = node; }}
-                    cameraStyle={{ width: 300, height: 300 }}
-                    onRead={(e) => {
-                      let data = e.data;
-                      const reg = /^iban:/;
-                      console.log('read: ', data);
-                      if (EthereumService.getInstance().isValidateAddress(data)) {
-                        console.log('is an address');
-                        this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: data });
-                      } else if (reg.test(data)) {
-                        data = `0x${(data.replace(reg, '') || '')}`;
-                        console.log(data);
-                        if (EthereumService.getInstance().isValidateAddress(data)) {
-                          console.log('is an address');
-                          this.setState({ sendModalVisible: true, scanModalVisible: false, sendAddress: data });
-                        } else {
-                          console.log('is not an address');
-                          this.scanner.reactivate();
-                        }
-                      } else {
-                        console.log('is not an address');
-                        this.scanner.reactivate();
-                      }
-                    }}
-                  />
-                </View>
-              </View>
-              <Button
-                buttonStyle={styles.modalCloseButton}
-                title={'Cancel'}
-                onPress={() => { this.setState({ sendModalVisible: true, scanModalVisible: false }); }}
-                color={'#4A4A4A'}
-              />
-            </Card>
-          </View>
-        </Modal>
-
-        <Modal
-          animationType={'fade'}
-          transparent={true}
-          visible={this.state.sendModalVisible}
-          onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
-          onRequestClose={() => { this.setState({ sendModalVisible: false, amountPlaceHolder: '0' }); }}
-        >
-          <ScrollView style={styles.modelContainer} keyboardShouldPersistTaps={'handled'}>
-            <Card
-              title={`SEND ${this.state.token.symbol}`}
-            >
-              <Image source={{ uri: this.state.token.icon }} style={styles.icon} />
-              <FormLabel>To</FormLabel>
-              <FormInputWithButton
-                multiline
-                inputStyle={{ width: '100%', fontSize: 12 }}
-                value={this.state.sendAddress}
-                onChangeText={(sendAddress) => this.setState({ sendAddress })}
-                onButtonPress={() => {
-                  this.setState({ sendModalVisible: false, scanModalVisible: true, sendAddress: null });
-                  if (this.scanner) {
-                    this.scanner.reactivate();
-                  }
-                }}
-              >
-                <Icon
-                  name="md-qr-scanner"
-                  size={24}
-                  style={styles.inputButton}
-                  disabled={this.state.scanButtonDisable}
-                />
-              </FormInputWithButton>
-              {
-                this.state.sendAddressErrorMessage &&
-                <FormValidationMessage>
-                  {this.state.sendAddressErrorMessage}
-                </FormValidationMessage>
-              }
-              <FormLabel>Amount</FormLabel>
-              <FormInputWithButton
-                inputStyle={{ width: '100%' }}
-                value={maxDecimals(this.state.sendAmount, 8)}
-                placeholder={this.state.amountPlaceHolder}
-                keyboardType={'numeric'}
-                onChangeText={(rawText) => this.updateSendAmountText(rawText, this.getMaxBalance(this.state.gasFee))}
-                onFocus={() => {
-                  this.setState({ amountPlaceHolder: `BAL: ${this.state.token.balance.toFixed(6)}` });
-                }}
-                onBlur={() => {
-                  this.setState({ amountPlaceHolder: '0' });
-                }}
-                onButtonPress={() => {
-                  const max = this.getMaxBalance(this.state.gasFee);
-                  this.setState({ sendAmount: max });
-                }}
-              >
-                <Text style={styles.inputButton}> Max </Text>
-              </FormInputWithButton>
-              {
-                this.state.sendAmountErrorMessage &&
-                <FormValidationMessage>
-                  {this.state.sendAmountErrorMessage}
-                </FormValidationMessage>
-              }
-              <FormLabel>Password</FormLabel>
-              <PasswordInput
-                onChangeText={(password) => this.setState({ password })}
-                placeholder="To unlock the wallet"
-              />
-              {
-                this.state.sendPasswordErrorMessage &&
-                <FormValidationMessage>
-                  {this.state.sendPasswordErrorMessage}
-                </FormValidationMessage>
-              }
-              {this.renderGasFeeSlider()}
-              <View
-                style={{
-                  padding: 10,
-                }}
-              >
-                <Button
-                  title={this.state.sendButtonDisable ? 'Sending...' : 'Send'}
-                  buttonStyle={styles.modalSendButton}
-                  // raised={true}
-                  disabled={this.state.sendButtonDisable}
-                  onPress={async () => this.onSendPress()}
-                />
-                <Button
-                  buttonStyle={styles.modalCloseButton}
-                  title={'Cancel'}
-                  disabled={this.state.sendCancelButtonDisable}
-                  onPress={() => {
-                    this.setState({ sendModalVisible: false, sendAmount: '', password: null, sendAddress: null });
-                  }}
-                  color={'#4A4A4A'}
-                />
-              </View>
-            </Card>
-          </ScrollView>
-        </Modal>
-
+        {this.renderSendModal()}
+        {this.renderExchangeModal()}
         <AddressModal
           title={'RECEIVE'}
           visible={this.state.receiveModalVisible}
@@ -724,96 +771,9 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
             }
           }}
         />
-
-        <Modal
-          animationType={'fade'}
-          transparent={true}
-          visible={this.state.exchangeModalVisible}
-          onShow={() => { this.setState({ amountPlaceHolder: '0' }); }}
-          onRequestClose={() => {
-            this.setState({
-              exchangeModalVisible: false,
-              exchangeType: ExchangeType.NONE,
-              amountPlaceHolder: '0',
-            });
-          }}
-        >
-          <View style={styles.modelContainer}>
-            <Card
-              title={this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
-                ? `ETH -> ${this.state.token.symbol}` : `${this.state.token.symbol} -> ETH`}
-            >
-              <FormLabel>Exchange</FormLabel>
-              <FormInputWithButton
-                inputStyle={{ width: '100%' }}
-                placeholder={this.state.amountPlaceHolder}
-                keyboardType={'numeric'}
-                // Never max than getMax Balance (if fee gas changes it must)
-                value={maxDecimals(this.state.sourceAmount, 8)}
-                onChangeText={(text) => this.updateEchangeAmountText(text, this.getMaxBalance(this.state.gasFee))}
-                onFocus={() => {
-                  const balance = this.state.exchangeType === ExchangeType.ETH_TO_TOKEN
-                    ? this.state.ETHBalance : this.state.token.balance;
-                  this.setState({ amountPlaceHolder: `BAL: ${balance.toFixed(6)}` });
-                }}
-                onBlur={() => {
-                  this.setState({ amountPlaceHolder: '0' });
-                }}
-                onButtonPress={() => this.onExchangePress()}
-              >
-                <Text style={styles.inputButton}> Max </Text>
-              </FormInputWithButton>
-              {
-                this.state.tradeAmountErrorMessage &&
-                <FormValidationMessage>
-                  {this.state.tradeAmountErrorMessage}
-                </FormValidationMessage>
-              }
-              <FormLabel>
-                Expected to receive {this.state.destAmount} {this.state.exchangeType === ExchangeType.ETH_TO_TOKEN ?
-                  this.state.token.symbol : 'ETH'}
-              </FormLabel>
-              <FormLabel>Password</FormLabel>
-              <PasswordInput
-                onChangeText={(password) => this.setState({ password })}
-                placeholder="To unlock the wallet"
-              />
-              {
-                this.state.tradePasswordErrorMessage &&
-                <FormValidationMessage>
-                  {this.state.tradePasswordErrorMessage}
-                </FormValidationMessage>
-              }
-              {this.renderGasFeeSlider()}
-              <View style={{ padding: 10 }}>
-                <Button
-                  title={this.state.tradeButtonDisable ? 'Trading...' : 'Trade'}
-                  buttonStyle={styles.modalSendButton}
-                  disabled={this.state.tradeButtonDisable}
-                  onPress={async () => this.onTradePress()}
-                />
-                <Button
-                  buttonStyle={styles.modalCloseButton}
-                  title="Cancel"
-                  disabled={this.state.tradeCancelButtonDisable}
-                  onPress={() => {
-                    this.setState({
-                      exchangeModalVisible: false,
-                      exchangeType: ExchangeType.NONE,
-                      sourceAmount: '',
-                      password: null, exchangeAmount: 0.0,
-                    });
-                  }}
-                  color={'#4A4A4A'}
-                />
-              </View>
-            </Card>
-          </View>
-        </Modal >
-
         <Card>
           <Text style={styles.name}>{this.state.token.symbol}</Text>
-          <Text style={styles.balance}>{this.state.token.balance.toFixed(6)}</Text>
+          <Text style={styles.balance}>{this.state.token.balance.toFixed(DECIMALS)}</Text>
         </Card>
         <View style={{ marginTop: 20 }}>
           <ButtonGroup
