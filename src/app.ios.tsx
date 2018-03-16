@@ -19,6 +19,7 @@ import Welcome from './Pages/Welcome/Welcome';
 import { WalletService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import { Store } from './Store';
+import ConfirmationWallet from './Pages/Welcome/partials/ConfirmationWallet';
 
 const Root = TabNavigator(
   {
