@@ -36,7 +36,7 @@ export default class SendTx extends React.Component<null, InternalState> {
       privateKey: DEFAULT_PRIVATE_KEY,
       unlockAddress: DEFAULT_UNLOCK_ADDRESS,
       address: DEFAULT_ADDRESS,
-      gasLimit: Constants.MINIMUM_GAS_LIMIT.toString(),
+      gasLimit: Constants.GAS_LIMIT.toString(),
       value: '0.01',
     };
   }

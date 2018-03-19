@@ -10,7 +10,7 @@ import EthJs from 'ethereumjs-wallet-react-native';
 
 import { addressFromJSONString, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
-import { SupportedTokens, MINIMUM_GAS_LIMIT } from '../Constants/index.js';
+import { SupportedTokens, GAS_LIMIT } from '../Constants/index.js';
 import { Token, Wallet } from '../Models/index.js';
 
 export class WalletService {
@@ -48,7 +48,7 @@ export class WalletService {
         name: info[0].name,
         balance: 0,
         balanceInUSD: 0,
-        gasLimit: MINIMUM_GAS_LIMIT,
+        gasLimit: GAS_LIMIT,
         ethPrice: 0,
         tokens: [],
         txs: [],
