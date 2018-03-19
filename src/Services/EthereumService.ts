@@ -262,14 +262,7 @@ export class EthereumService {
       // throwOnFailure,
       // 0
     );
-    console.log('EXCHANGE , ', sourceToken,
-      amount,
-      destToken,
-      destAddress,
-      maxDestAmount,
-      minConversionRate,
-      walletId
-      , gasPrice, GAS_LIMIT);
+
     const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(nonce),
       gasPrice: this.rpc.toHex(gasPrice),
