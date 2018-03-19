@@ -101,7 +101,7 @@ export default class Olympus extends React.Component<null, InternalState> {
     this.listener = EventRegister.addEventListener('hasWallet', (data) => {
       console.log('[event] hasWallet');
       this.setState({
-        hasWallet: data,
+        hasWallet: data ? true : false,
       });
     });
   }

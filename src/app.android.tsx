@@ -20,9 +20,11 @@ import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
-import { WalletService } from './Services';
+import { WalletService, FcmService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import LoginGesture from './Pages/Security/LoginGesture';
+import { FCM, FCMEvent } from './fcm';
+import { Wallet } from './Models';
 import { Store } from './Store';
 
 const Root = TabNavigator(
@@ -66,7 +68,7 @@ const Root = TabNavigator(
     tabBarComponent: TabBarBottom,
     initialRouteName: 'WalletTab',
     animationEnabled: false,
-    swipeEnabled: true,
+    swipeEnabled: false,
     tabBarOptions: {
       showIcon: true,
       activeTintColor: 'rgb(89,139,246)',
@@ -88,13 +90,15 @@ const Root = TabNavigator(
     },
   },
 );
-
+let FcmNotificationListener;
 interface InternalState {
   loading: boolean;
   isSecurityProtect: boolean;
   hasWallet: boolean;
   appState: AppStateStatus;
 
+  token: string;
+  wallet: Wallet;
 }
 export default class Olympus extends React.Component<null, InternalState> {
 
@@ -111,6 +115,8 @@ export default class Olympus extends React.Component<null, InternalState> {
       hasWallet: false,
       isSecurityProtect: false,
       appState: AppState.currentState,
+      token: null,
+      wallet: null,
     };
 
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
@@ -122,8 +128,12 @@ export default class Olympus extends React.Component<null, InternalState> {
     AppState.addEventListener('change', this._handleAppStateChange);
     this.listener = EventRegister.addEventListener('hasWallet', (data) => {
       console.log('[event] hasWallet');
+      if (data) {
+        this.setState({ wallet: data });
+        FcmService.uploadFcmToken(this.state.token, data);
+      }
       this.setState({
-        hasWallet: data,
+        hasWallet: data ? true : false,
       });
     });
   }
@@ -147,6 +157,33 @@ export default class Olympus extends React.Component<null, InternalState> {
           });
       })
       .catch((error) => console.log(error.message));
+    FCM.requestPermissions().then(
+      () => console.log('granted')).catch(() => console.log('notification permission rejected'));
+
+    FCM.getFCMToken().then((token) => {
+      FcmService.uploadFcmToken(token, this.state.wallet);
+      this.setState({
+        token,
+      });
+    });
+
+    FcmNotificationListener = FCM.on(FCMEvent.Notification, async (notification) => {
+      console.log('notification' + JSON.stringify(notification));
+      notification.finish();
+    });
+
+    /*
+     initial notification contains the notification that launchs the app.
+    If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
+     sometimes Android kills activity when app goes to background,
+      and when resume it broadcasts notification before JS is run.
+      You can use FCM.getInitialNotification() to capture those missed events.
+     initial notification will be triggered all the time even
+     when open app by icon so send some action identifier when you send notification
+    */
+    FCM.getInitialNotification().then((notif) => {
+      console.log(notif);
+    });
   }
 
   public componentWillUnmount() {
@@ -166,13 +203,15 @@ export default class Olympus extends React.Component<null, InternalState> {
       isSecurityProtect = true;
     }
     this.setState({ appState: nextAppState, isSecurityProtect });
+    FcmNotificationListener.remove();
   }
 
   private async loadingWallet() {
     const isUsed = await AsyncStorage.getItem('used');
     if (isUsed) {
       const wallet = await WalletService.getInstance().getActiveWallet();
-      this.setState({ loading: false, hasWallet: wallet != null });
+      FcmService.uploadFcmToken(this.state.token, wallet);
+      this.setState({ loading: false, wallet, hasWallet: wallet != null });
     } else {
       this.setState({ loading: false, hasWallet: null });
     }
@@ -186,11 +225,11 @@ export default class Olympus extends React.Component<null, InternalState> {
             backgroundColor="white"
             barStyle="dark-content"
           />
-           {this.state.loading && <View />}
-            {!this.state.loading && this.state.isSecurityProtect && this.state.hasWallet
+          {this.state.loading && <View />}
+          {!this.state.loading && this.state.isSecurityProtect && this.state.hasWallet
             && <LoginGesture loginSucceed={() => this.setState({ isSecurityProtect: false })} />}
-            {!this.state.loading && !this.state.isSecurityProtect && this.state.hasWallet && <Root />}
-            {!this.state.loading && !this.state.hasWallet && <Welcome />}
+          {!this.state.loading && !this.state.isSecurityProtect && this.state.hasWallet && <Root />}
+          {!this.state.loading && !this.state.hasWallet && <Welcome />}
           < Toast ref="toast" />
         </View>
       </Provider>

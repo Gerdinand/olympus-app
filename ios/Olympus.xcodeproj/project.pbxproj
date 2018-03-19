@@ -26,6 +26,7 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		1524CFFF7F6B47B09584C78D /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EA8CF3EF44404020ABC19EDD /* MaterialIcons.ttf */; };
 		23DCABB7D236496B9F5DB5F4 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0100DED96F044A2B8F54AB08 /* Feather.ttf */; };
+		269A5846D981B1BCA0C0FB11 /* libPods-OlympusTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7CD43BA2E1EA7884BC132C2 /* libPods-OlympusTests.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -38,6 +39,7 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* OlympusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* OlympusTests.m */; };
+		2DD9676AF08490C12FA1BCD8 /* libPods-Olympus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF1FD299E05E265B2DA3EC5 /* libPods-Olympus.a */; };
 		2EBA234871294E678E1B7E8E /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 561B745C09564B559DE04390 /* MaterialCommunityIcons.ttf */; };
 		3E9B9A158ACC4AC9AF5C4CAD /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C000025E384252AB22FD85 /* libRNVectorIcons.a */; };
 		457B91B0EE5F4C9BBABA7678 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F7EDBBD62BB440F3991D82F5 /* Ionicons.ttf */; };
@@ -54,6 +56,8 @@
 		A1720A1BECDB4A6EB03C9723 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC81A23093154C3C9138D870 /* libRNRandomBytes.a */; };
 		B61C2E109CAC429C91E81A26 /* libRNKeychain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D654B58013944F86B460C887 /* libRNKeychain.a */; };
 		B6E53EF6942346389C37AF19 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9B8DF2B428864FA8A7E535B3 /* Octicons.ttf */; };
+		BCC6337F418A41AEA9ADD9A6 /* libRNFIRMessaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6234AF8AA2D54C509C6647CB /* libRNFIRMessaging.a */; };
+		BFB8222A2059303F00B2191C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFB822082059303D00B2191C /* GoogleService-Info.plist */; };
 		E3B5820742D04159A05CE93A /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDBC35990EE8428383123860 /* libRCTCamera.a */; };
 		E8E4AC9B4EE44E7AA2C32F47 /* libReactNativeFingerprintScanner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79349759818148A69601B4F2 /* libReactNativeFingerprintScanner.a */; };
 /* End PBXBuildFile section */
@@ -311,6 +315,13 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
+		BFB82262205930E600B2191C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F362C11CF5124F3C9E0C1FB0 /* RNFIRMessaging.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNFIRMessaging;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -338,13 +349,18 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		1D91A7DD5632496FB809E2D2 /* libRNOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNOS.a; sourceTree = "<group>"; };
 		268398B21D2843FC9E718662 /* UdpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = UdpSockets.xcodeproj; path = "../node_modules/react-native-udp/ios/UdpSockets.xcodeproj"; sourceTree = "<group>"; };
+		27AA2FD4EC655DB721C2EE82 /* Pods-OlympusTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OlympusTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OlympusTests/Pods-OlympusTests.release.xcconfig"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Olympus-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Olympus-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Olympus-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Olympus-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		35AF2429CE4178EED68595F9 /* Pods-Olympus.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Olympus.release.xcconfig"; path = "Pods/Target Support Files/Pods-Olympus/Pods-Olympus.release.xcconfig"; sourceTree = "<group>"; };
 		49C000025E384252AB22FD85 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		55F674B22C04491BAADB618D /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		561B745C09564B559DE04390 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
+		57B5CFB675B48455BF4DF50A /* Pods-OlympusTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OlympusTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OlympusTests/Pods-OlympusTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		6234AF8AA2D54C509C6647CB /* libRNFIRMessaging.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFIRMessaging.a; sourceTree = "<group>"; };
 		62F5A3304EF74DE994FC983A /* libRNFastCrypto.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFastCrypto.a; sourceTree = "<group>"; };
+		67E19EF46B62A9C5233F7C95 /* Pods-Olympus.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Olympus.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Olympus/Pods-Olympus.debug.xcconfig"; sourceTree = "<group>"; };
 		68C2B7BB3E2D458C8E05C78B /* TcpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = TcpSockets.xcodeproj; path = "../node_modules/react-native-tcp/ios/TcpSockets.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		792612EF518349399E38197C /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
@@ -356,16 +372,21 @@
 		9B8DF2B428864FA8A7E535B3 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		9ED8A7E6298443469DE55D40 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		A49829CD2647406DBD8047D1 /* ReactNativeFingerprintScanner.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeFingerprintScanner.xcodeproj; path = "../node_modules/react-native-fingerprint-scanner/ios/ReactNativeFingerprintScanner.xcodeproj"; sourceTree = "<group>"; };
+		A7CD43BA2E1EA7884BC132C2 /* libPods-OlympusTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OlympusTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC81A23093154C3C9138D870 /* libRNRandomBytes.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNRandomBytes.a; sourceTree = "<group>"; };
 		B2CDDF7949CD4EC18BCD9BC3 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
 		BA93218A908442C28F4E6658 /* RNOS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNOS.xcodeproj; path = "../node_modules/react-native-os/ios/RNOS.xcodeproj"; sourceTree = "<group>"; };
+		BBF1FD299E05E265B2DA3EC5 /* libPods-Olympus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Olympus.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC479253DD414D2E847852D0 /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
+		BF52A8B4205BBA9600576045 /* Olympus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Olympus.entitlements; path = Olympus/Olympus.entitlements; sourceTree = "<group>"; };
+		BFB822082059303D00B2191C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CDBC35990EE8428383123860 /* libRCTCamera.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTCamera.a; sourceTree = "<group>"; };
 		D2A7DE8BC62B46C8B5172A9E /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		D654B58013944F86B460C887 /* libRNKeychain.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNKeychain.a; sourceTree = "<group>"; };
 		DD8C1804EF8144679DFAD2B4 /* RNFastCrypto.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFastCrypto.xcodeproj; path = "../node_modules/react-native-fast-crypto/ios/RNFastCrypto.xcodeproj"; sourceTree = "<group>"; };
 		EA8CF3EF44404020ABC19EDD /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		F118211F414D4A649488F0E2 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		F362C11CF5124F3C9E0C1FB0 /* RNFIRMessaging.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFIRMessaging.xcodeproj; path = "../node_modules/react-native-fcm/ios/RNFIRMessaging.xcodeproj"; sourceTree = "<group>"; };
 		F7EDBBD62BB440F3991D82F5 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		FBBF1172192941C8A425AD94 /* RCTCamera.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RCTCamera.xcodeproj"; sourceTree = "<group>"; };
 		FE8F4D7276C548CABEE87935 /* libUdpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libUdpSockets.a; sourceTree = "<group>"; };
@@ -377,6 +398,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
+				269A5846D981B1BCA0C0FB11 /* libPods-OlympusTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,6 +426,8 @@
 				0533AFEA9E3A4D72BB318B3F /* libUdpSockets.a in Frameworks */,
 				3E9B9A158ACC4AC9AF5C4CAD /* libRNVectorIcons.a in Frameworks */,
 				E8E4AC9B4EE44E7AA2C32F47 /* libReactNativeFingerprintScanner.a in Frameworks */,
+				BCC6337F418A41AEA9ADD9A6 /* libRNFIRMessaging.a in Frameworks */,
+				2DD9676AF08490C12FA1BCD8 /* libPods-Olympus.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -505,6 +529,7 @@
 				49C000025E384252AB22FD85 /* libRNVectorIcons.a */,
 				7F8EAFF8742E4830B32E584D /* libLRDRCTSimpleToast.a */,
 				79349759818148A69601B4F2 /* libReactNativeFingerprintScanner.a */,
+				6234AF8AA2D54C509C6647CB /* libRNFIRMessaging.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -594,11 +619,13 @@
 		13B07FAE1A68108700A75B9A /* Olympus */ = {
 			isa = PBXGroup;
 			children = (
+				BF52A8B4205BBA9600576045 /* Olympus.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				BFB822082059303D00B2191C /* GoogleService-Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
@@ -626,6 +653,15 @@
 				51DA5E18205B9BDB00DB875B /* libReactNativeFingerprintScanner.a */,
 			);
 			name = Products;
+		302B3F67532EFB9B3C2DFB60 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				67E19EF46B62A9C5233F7C95 /* Pods-Olympus.debug.xcconfig */,
+				35AF2429CE4178EED68595F9 /* Pods-Olympus.release.xcconfig */,
+				57B5CFB675B48455BF4DF50A /* Pods-OlympusTests.debug.xcconfig */,
+				27AA2FD4EC655DB721C2EE82 /* Pods-OlympusTests.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
@@ -687,6 +723,7 @@
 				268398B21D2843FC9E718662 /* UdpSockets.xcodeproj */,
 				792612EF518349399E38197C /* RNVectorIcons.xcodeproj */,
 				A49829CD2647406DBD8047D1 /* ReactNativeFingerprintScanner.xcodeproj */,
+				F362C11CF5124F3C9E0C1FB0 /* RNFIRMessaging.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -709,6 +746,8 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				7D7DDC1FBFA240C0851A2E6B /* Resources */,
 				02B772D32024B06200E2C6DE /* Recovered References */,
+				302B3F67532EFB9B3C2DFB60 /* Pods */,
+				A389B3252F7D5015DA77DE1E /* Frameworks */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -725,6 +764,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A389B3252F7D5015DA77DE1E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BBF1FD299E05E265B2DA3EC5 /* libPods-Olympus.a */,
+				A7CD43BA2E1EA7884BC132C2 /* libPods-OlympusTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BFB8225F205930E300B2191C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFB82263205930E600B2191C /* libRNFIRMessaging.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -732,9 +788,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "OlympusTests" */;
 			buildPhases = (
+				A9380C5FD4BD71DF6C15762A /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				775A033C80AC1D21B469999D /* [CP] Embed Pods Frameworks */,
+				576E7A342A768E04B9E65FF0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -750,10 +809,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Olympus" */;
 			buildPhases = (
+				6EDA5693E240270DF9719ADB /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				260C1395E1FF463B092AB07B /* [CP] Embed Pods Frameworks */,
+				08512895FF122302EFF4FEB1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -816,6 +878,14 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = JD8Y8TEM93;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -895,6 +965,10 @@
 				{
 					ProductGroup = 02B772F12024B06400E2C6DE /* Products */;
 					ProjectRef = DD8C1804EF8144679DFAD2B4 /* RNFastCrypto.xcodeproj */;
+				},
+				{
+					ProductGroup = BFB8225F205930E300B2191C /* Products */;
+					ProjectRef = F362C11CF5124F3C9E0C1FB0 /* RNFIRMessaging.xcodeproj */;
 				},
 				{
 					ProductGroup = 02B773102024B06400E2C6DE /* Products */;
@@ -1170,6 +1244,13 @@
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		BFB82263205930E600B2191C /* libRNFIRMessaging.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFIRMessaging.a;
+			remoteRef = BFB82262205930E600B2191C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1197,6 +1278,7 @@
 				B6E53EF6942346389C37AF19 /* Octicons.ttf in Resources */,
 				11794B98FDAC4F398B3BF4F3 /* SimpleLineIcons.ttf in Resources */,
 				90ACB0CF2FB94B74A0219F3B /* Zocial.ttf in Resources */,
+				BFB8222A2059303F00B2191C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1232,6 +1314,36 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=/Users/0dayZh/.nvm/versions/node/v7.10.0/bin//node\n../node_modules/react-native/packager/react-native-xcode.sh";
 		};
+		08512895FF122302EFF4FEB1 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Olympus/Pods-Olympus-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		260C1395E1FF463B092AB07B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Olympus/Pods-Olympus-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1245,6 +1357,72 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
+		};
+		576E7A342A768E04B9E65FF0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OlympusTests/Pods-OlympusTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6EDA5693E240270DF9719ADB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Olympus-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		775A033C80AC1D21B469999D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OlympusTests/Pods-OlympusTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A9380C5FD4BD71DF6C15762A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OlympusTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1313,6 +1491,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 57B5CFB675B48455BF4DF50A /* Pods-OlympusTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = JD8Y8TEM93;
@@ -1331,6 +1510,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = OlympusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -1360,6 +1540,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 27AA2FD4EC655DB721C2EE82 /* Pods-OlympusTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -1375,6 +1556,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = OlympusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -1404,8 +1586,10 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67E19EF46B62A9C5233F7C95 /* Pods-Olympus.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Olympus/Olympus.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = JD8Y8TEM93;
@@ -1421,6 +1605,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = Olympus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1437,8 +1622,10 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 35AF2429CE4178EED68595F9 /* Pods-Olympus.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Olympus/Olympus.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JD8Y8TEM93;
 				ENABLE_BITCODE = NO;
@@ -1453,6 +1640,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = Olympus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1490,6 +1678,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = "Olympus-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1542,6 +1731,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 				);
 				INFOPLIST_FILE = "Olympus-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
