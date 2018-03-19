@@ -68,7 +68,7 @@ const Root = TabNavigator(
     tabBarComponent: TabBarBottom,
     initialRouteName: 'WalletTab',
     animationEnabled: false,
-    swipeEnabled: true,
+    swipeEnabled: false,
     tabBarOptions: {
       showIcon: true,
       activeTintColor: 'rgb(89,139,246)',
