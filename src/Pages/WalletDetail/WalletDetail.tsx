@@ -34,7 +34,7 @@ import { GAS_LIMIT, MAX_GAS_PRICE } from '../../Constants';
 import { Wallet, Tx } from '../../Models';
 import { PendingTx } from '../../Models/Wallet';
 
-const GAS_MIN_BALANCE = 0.1;
+const GAS_MIN_BALANCE = 0.01;
 const GAS_MIN_ERROR = `You need at least ${GAS_MIN_BALANCE} ETH to afford transactions fee.`;
 const DECIMALS = 8; // Display number 8 decimals
 const ETHER_ACTIONS = ['Send', 'Receive'];
