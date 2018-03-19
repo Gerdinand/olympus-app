@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
   },
   subtitle: {
-    fontWeight: '500',
     color: '#999',
+    fontSize: 12,
   },
 });
