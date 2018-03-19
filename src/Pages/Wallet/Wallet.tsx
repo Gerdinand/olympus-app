@@ -3,8 +3,11 @@
 import React from 'react';
 import {
   ScrollView,
+  StyleSheet,
   RefreshControl,
   DeviceEventEmitter,
+  Text,
+  View,
 } from 'react-native';
 import { connect } from 'react-redux';
 import {
@@ -97,38 +100,51 @@ class WalletView extends React.Component<InternalProps, InternalState> {
         />
         <List
           style={{ height: 578 }}
-          containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent' }}
+          containerStyle={styles.listContainer}
         >
-          {
-            this.state.wallet.tokens.map((t, i) => (
-              <ListItem
-                roundAvatar
-                hideChevron={true}
-                avatar={{ uri: t.icon }}
-                avatarStyle={{ backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.5, padding: 2 }}
-                key={i}
-                title={t.symbol}
-                subtitle={t.name}
-                rightTitle={(0 === i || t.price === 0) ?
-                  (this.props.balanceVisibility ? t.balance.toFixed(6).toString() : '******') :
-                  (
-                    this.props.balanceVisibility ?
-                      `${t.balance.toFixed(6).toString()}\n1 ETH = ${t.price} ${t.symbol}` :
-                      `******\n1 ETH = ${t.price} ${t.symbol}`
-                  )
-                }
-                rightTitleNumberOfLines={2}
-                rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A', textAlign: 'right' }}
-                onPress={() => {
-                  console.log(`navigate to : ${t.symbol}`);
+          {this.state.wallet.tokens.map((t, i) => {
+            if (i === 0 || t.price === 0) {
+              return (
+                <ListItem
+                  key={i}
+                  hideChevron={true}
+                  roundAvatar
+                  avatar={{ uri: t.icon }}
+                  title={t.symbol}
+                  subtitle={t.name}
+                  rightTitle={this.props.balanceVisibility ? t.balance.toFixed(6).toString() : '******'}
+                  onPress={() => navigation.navigate('WalletDetail', { token: t })}
+                  containerStyle={styles.itemContainer}
+                  avatarStyle={styles.itemAvatar}
+                  titleStyle={styles.itemTitle}
+                  rightTitleStyle={styles.itemTitle}
+                  subtitleStyle={styles.subtitle}
+                />);
+            }
 
-                  navigation.navigate('WalletDetail', {
-                    token: t,
-                  });
-                }}
-              />
-            ))
-          }
+            return (
+              <ListItem
+                key={i}
+                hideChevron={true}
+                roundAvatar
+                avatar={{ uri: t.icon }}
+                title={
+                  <View style={styles.itemFlex}>
+                    <Text style={styles.itemTitle}>{t.symbol}</Text>
+                    <Text style={styles.itemTitle}>
+                      {this.props.balanceVisibility ? t.balance.toFixed(6).toString() : '******'}
+                    </Text>
+                  </View>}
+                subtitle={
+                  <View style={styles.itemFlex}>
+                    <Text style={styles.subtitle}>{t.name}</Text>
+                    <Text style={styles.subtitle}>{`1 ETH = ${t.price} ${t.symbol}`}</Text>
+                  </View>}
+                onPress={() => navigation.navigate('WalletDetail', { token: t })}
+                containerStyle={styles.itemContainer}
+                avatarStyle={styles.itemAvatar}
+              />);
+          })}
         </List>
       </ScrollView>
     );
@@ -142,3 +158,36 @@ const mapReduxStateToProps = (state: AppState) => {
 };
 
 export default connect(mapReduxStateToProps, null)(WalletView);
+
+const styles = StyleSheet.create({
+  listContainer: {
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    borderBottomColor: 'transparent',
+  },
+  itemContainer: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#999',
+  },
+  itemFlex: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginLeft: 10,
+    marginRight: 5,
+  },
+  itemAvatar: {
+    backgroundColor: 'white',
+    borderColor: '#999',
+    borderWidth: 0.5,
+    padding: 2,
+  },
+  itemTitle: {
+    fontWeight: 'bold',
+    color: '#4A4A4A',
+  },
+  subtitle: {
+    fontWeight: '500',
+    color: '#999',
+  },
+});
