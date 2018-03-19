@@ -10,7 +10,7 @@ import {
   List,
   ListItem,
 } from 'react-native-elements';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
 import { removeItem } from '../../Utils/KeyStore';
 import { EventRegister } from 'react-native-event-listeners';
@@ -36,6 +36,17 @@ const list2 = [
 ];
 
 const list3 = [
+  {
+    icon: { name: 'ios-grid', type: 'ionicon' },
+    title: 'Gesture',
+  },
+  {
+    icon: { name: 'ios-hand', type: 'ionicon' },
+    title: 'Fingerprint',
+  },
+];
+
+const list4 = [
   {
     icon: { name: 'log-out', type: 'entypo' },
     title: 'Sign out',
@@ -78,7 +89,13 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
       }
     } else if (list === list3) {
       if (index === 0) {
-        // logout out
+        this.props.navigation.navigate('SetGesture');
+      } else if (index === 1) {
+        // to do
+      }
+    } else if (list === list4) {
+      if (index === 0) {
+        // logout
         // let _ = this;
         this.refs.actionSheet.show();
         /* ActionSheetIOS.showActionSheetWithOptions({
@@ -148,6 +165,20 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
                 title={l.title}
                 onPress={() => {
                   this.onPress(list3, i);
+                }}
+              />
+            ))
+          }
+        </List>
+        <List>
+          {
+            list4.map((l, i) => (
+              <ListItem
+                key={i}
+                leftIcon={l.icon}
+                title={l.title}
+                onPress={() => {
+                  this.onPress(list4, i);
                 }}
               />
             ))

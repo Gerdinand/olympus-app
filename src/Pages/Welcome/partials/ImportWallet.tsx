@@ -48,7 +48,6 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
   }
 
   private importWallet() {
-
     this.setState({
       importButtonName: 'Importing...',
       importDisable: true,
@@ -67,10 +66,9 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
             throw new Error();
           }
           // await AsyncStorage.setItem('used', 'true');
-          await WalletService.getInstance().getActiveWallet();
+          const wallet = await WalletService.getInstance().getActiveWallet();
           await AsyncStorage.setItem('used', 'true');
-          this.props.walletRestored();
-          EventRegister.emit('hasWallet', true);
+          EventRegister.emit('hasWallet', wallet);
         } catch (e) {
           this.setState({ importButtonName: 'Import', importDisable: false });
           DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
@@ -82,6 +80,7 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
         DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
       }, 1000);
     }
+
   }
 
   public render() {
