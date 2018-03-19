@@ -8,16 +8,20 @@ import {
   AsyncStorage,
   DeviceEventEmitter,
   EmitterSubscription,
+  AppState,
+  AppStateStatus,
 } from 'react-native';
 import { Provider } from 'react-redux';
 
 import { TabNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
+import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
 import { WalletService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
+import LoginGesture from './Pages/Security/LoginGesture';
 import { Store } from './Store';
 
 const Root = TabNavigator(
@@ -56,7 +60,7 @@ const Root = TabNavigator(
   {
     initialRouteName: 'WalletTab',
     animationEnabled: false,
-    swipeEnabled: true,
+    swipeEnabled: false,
     tabBarOptions: {
       activeTintColor: '#5589FF',
     },
@@ -65,7 +69,9 @@ const Root = TabNavigator(
 
 interface InternalState {
   loading: boolean;
+  isSecurityProtect: boolean;
   hasWallet: boolean;
+  appState: AppStateStatus;
 }
 
 export default class Olympus extends React.Component<null, InternalState> {
@@ -82,11 +88,16 @@ export default class Olympus extends React.Component<null, InternalState> {
     this.state = {
       loading: true,
       hasWallet: false,
+      isSecurityProtect: false,
+      appState: AppState.currentState,
     };
+
+    this._handleAppStateChange = this._handleAppStateChange.bind(this);
   }
 
   public componentWillMount() {
     this.loadingWallet();
+    AppState.addEventListener('change', this._handleAppStateChange);
     this.listener = EventRegister.addEventListener('hasWallet', (data) => {
       console.log('[event] hasWallet');
       this.setState({
@@ -99,13 +110,38 @@ export default class Olympus extends React.Component<null, InternalState> {
     this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
       this.refs.toast.show(text, DURATION.LENGTH_LONG);
     });
+
+    FingerprintScanner
+      .isSensorAvailable()
+      .then(() => {
+        FingerprintScanner
+          .authenticate({ description: 'Scan your fingerprint on the device scanner to continue' })
+          .then(() => {
+            this.setState({ isSecurityProtect: false });
+          })
+          .catch((error) => {
+            this.setState({ isSecurityProtect: true });
+            console.log(error.message);
+          });
+      })
+      .catch((error) => console.log(error.message));
   }
 
   public componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
     EventRegister.removeEventListener(this.listener);
     if (this.toastListener) {
       this.toastListener.remove();
     }
+  }
+  private _handleAppStateChange(nextAppState) {
+    let isSecurityProtect = false;
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      console.log('App has come to the foreground!');
+
+      isSecurityProtect = true;
+    }
+    this.setState({ appState: nextAppState, isSecurityProtect });
   }
 
   public async loadingWallet() {
@@ -122,9 +158,11 @@ export default class Olympus extends React.Component<null, InternalState> {
     return (
       <Provider store={Store}>
         <View style={{ flex: 1, zIndex: 100 }}>
-          {this.state.loading && <View />}
-          {!this.state.loading && this.state.hasWallet && <Root />}
-          {!this.state.loading && !this.state.hasWallet && <Welcome />}
+            {this.state.loading && <View />}
+            {!this.state.loading && this.state.isSecurityProtect && this.state.hasWallet
+                && <LoginGesture loginSucceed={() => this.setState({ isSecurityProtect: false })} />}
+            {!this.state.loading && !this.state.isSecurityProtect && this.state.hasWallet && <Root />}
+            {!this.state.loading && !this.state.hasWallet && <Welcome />}
           <Toast ref="toast" />
         </View>
       </Provider>
