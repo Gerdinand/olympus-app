@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import { View, ViewProperties } from 'react-native';
 
 interface InternalProps extends ViewProperties {
-  margin: number;
-  marginVertical: number;
-  marginHorizontal: number;
+  margin?: number;
+  marginVertical?: number;
+  marginHorizontal?: number;
 }
 
 export class Margin extends PureComponent<InternalProps> {

@@ -10,11 +10,12 @@ import {
   List,
   ListItem,
 } from 'react-native-elements';
-
+import {connect} from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
 import { removeItem } from '../../Utils/KeyStore';
 import { EventRegister } from 'react-native-event-listeners';
 import { WalletService, EthereumService } from '../../Services';
+import WalletActions from '../Wallet/WalletActions';
 
 const list1 = [
   {
@@ -48,13 +49,16 @@ const destructiveButtonIndex = 0;
 interface InternalProps {
   navigation: any; // Navigation Object
 }
-export default class MeView extends React.Component<InternalProps> {
+interface ReduxProps {
+  logout: () => void;
+}
+class MeView extends React.Component<InternalProps & ReduxProps> {
 
   public refs = {
     actionSheet: ActionSheet,
   };
 
-  public constructor(props: InternalProps) {
+  public constructor(props) {
     super(props);
   }
 
@@ -74,7 +78,7 @@ export default class MeView extends React.Component<InternalProps> {
       }
     } else if (list === list3) {
       if (index === 0) {
-        // sign out
+        // logout out
         // let _ = this;
         this.refs.actionSheet.show();
         /* ActionSheetIOS.showActionSheetWithOptions({
@@ -93,12 +97,14 @@ export default class MeView extends React.Component<InternalProps> {
     }
   }
 
-  public handlePress(buttonIndex) {
+  public actionSheetHandle(buttonIndex) {
+    // Logout from Actionsheet
     if (0 === buttonIndex) {
       EthereumService.getInstance().invalidateTimer();
       WalletService.getInstance().resetActiveWallet();
       removeItem('wallets');
       EventRegister.emit('hasWallet', false);
+      this.props.logout();
     }
   }
 
@@ -153,9 +159,17 @@ export default class MeView extends React.Component<InternalProps> {
           options={options}
           cancelButtonIndex={CANCEL_INDEX}
           destructiveButtonIndex={destructiveButtonIndex}
-          onPress={(buttonIndex) => this.handlePress(buttonIndex)}
+          onPress={(buttonIndex) => this.actionSheetHandle(buttonIndex)}
         />
       </ScrollView>
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    logout: () => dispatch(WalletActions.logout()), // If we import the wallet, we understand was backuped
+  };
+};
+
+export default connect(null, mapDispatchToProps)(MeView);

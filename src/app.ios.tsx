@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 
-import { TabNavigator } from 'react-navigation';
+import { TabNavigator, StackNavigator } from 'react-navigation';
 import { EventRegister } from 'react-native-event-listeners';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
@@ -19,9 +19,9 @@ import Welcome from './Pages/Welcome/Welcome';
 import { WalletService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import { Store } from './Store';
-import ConfirmationWallet from './Pages/Welcome/partials/ConfirmationWallet';
+import WalletSuccess from './Pages/WalletSuccess/WalletSuccess';
 
-const Root = TabNavigator(
+const TabRoot = TabNavigator(
   {
     WalletTab: {
       screen: WalletTab,
@@ -64,6 +64,19 @@ const Root = TabNavigator(
   },
 );
 
+const Root = StackNavigator({
+  tabs: {
+    screen: TabRoot, navigationOptions: { header: null },
+  },
+  WalletSuccess: {
+    screen: WalletSuccess,
+    path: '/confirmation',
+    navigationOptions: {
+      headerLeft: null,
+      title: 'Wallet Success',
+    },
+  },
+});
 interface InternalState {
   loading: boolean;
   hasWallet: boolean;

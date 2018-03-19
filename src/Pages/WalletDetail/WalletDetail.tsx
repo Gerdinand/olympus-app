@@ -21,7 +21,6 @@ import {
 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ActionSheet from 'react-native-actionsheet';
-import QRCodeScanner from 'react-native-qrcode-scanner';
 import BigNumber from 'bignumber.js';
 import { EventRegister } from 'react-native-event-listeners';
 import { EthereumService, WalletService } from '../../Services';

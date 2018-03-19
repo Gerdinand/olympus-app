@@ -20,6 +20,8 @@ import { AppState } from '../../Store';
 interface InternalProps {
   navigation: any;
   balanceVisibility: boolean;
+  newWalletWarning: boolean;
+  walletWarningDisplayed: () => void;
 }
 
 interface InternalState {
@@ -44,12 +46,12 @@ class WalletView extends React.Component<InternalProps, InternalState> {
   }
 
   public componentWillMount() {
-    const _ = this;
+
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
-      if (_.state.wallet.length && wallet.txs.length !== _.state.wallet.length) {
+      if (this.state.wallet.length && wallet.txs.length !== this.state.wallet.length) {
         DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');
       }
-      _.setState({ wallet, refreshing: false });
+      this.setState({ wallet, refreshing: false });
     });
 
     this.setState({ wallet: WalletService.getInstance().wallet });
@@ -64,6 +66,11 @@ class WalletView extends React.Component<InternalProps, InternalState> {
     EventRegister.removeEventListener(this.walletListener);
   }
 
+  public componentDidMount() {
+    if (!this.props.newWalletWarning) {
+      this.props.navigation.navigate('WalletSuccess');
+    }
+  }
   private fetchData() {
     EthereumService.getInstance().sync(WalletService.getInstance().wallet);
   }
@@ -138,6 +145,7 @@ class WalletView extends React.Component<InternalProps, InternalState> {
 const mapReduxStateToProps = (state: AppState) => {
   return {
     balanceVisibility: state.wallet.balanceVisibility,
+    newWalletWarning: state.wallet.warningBackUpDone,
   };
 };
 

@@ -14,7 +14,6 @@ import { StackNavigator } from 'react-navigation';
 import CreateWalletView from './partials/CreateWallet';
 import ImportWalletView from './partials/ImportWallet';
 import PropTypes from 'prop-types';
-import ConfirmationWallet from './partials/ConfirmationWallet';
 
 interface InternalProps {
   navigation;
@@ -59,7 +58,6 @@ const WelcomeNav = StackNavigator({
   Home: { screen: WelcomeView },
   CreateWallet: { screen: CreateWalletView },
   ImportWallet: { screen: ImportWalletView },
-  ConfirmationWallet: { screen: ConfirmationWallet },
 
 }, { cardStyle: { backgroundColor: 'white' } });
 

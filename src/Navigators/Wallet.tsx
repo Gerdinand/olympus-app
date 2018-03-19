@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
-import Wallet from '../Pages/Wallet/Wallet';
+import WalletView from '../Pages/Wallet/Wallet';
 import WalletDetail from '../Pages/WalletDetail/WalletDetail';
 
 const WalletScreen = ({ navigation }) => (
-  <Wallet navigation={navigation} />
+  <WalletView navigation={navigation} />
 );
 
 const WalletDetailScreen = ({ navigation }) => (
@@ -14,6 +14,7 @@ const WalletDetailScreen = ({ navigation }) => (
 );
 
 const WalletTab = StackNavigator({
+
   WalletHome: {
     screen: WalletScreen,
     path: '/',
