@@ -246,10 +246,9 @@ export default class Olympus extends React.Component<null, InternalState> {
           {!this.state.loading && !this.state.isSecurityProtect && this.state.hasWallet && <Root />}
           {!this.state.loading && !this.state.hasWallet && <Welcome />}
           < Toast ref="toast" />
-        </View>;
-      </Provider>;
-    )
+        </View>
+      </Provider>
+    );
   }
 }
 AppRegistry.registerComponent('Olympus', () => Olympus);
-``
