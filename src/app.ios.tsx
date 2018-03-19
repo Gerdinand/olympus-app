@@ -158,11 +158,11 @@ export default class Olympus extends React.Component<null, InternalState> {
     return (
       <Provider store={Store}>
         <View style={{ flex: 1, zIndex: 100 }}>
-            {this.state.loading && <View />}
-            {!this.state.loading && this.state.isSecurityProtect && this.state.hasWallet
-                && <LoginGesture loginSucceed={() => this.setState({ isSecurityProtect: false })} />}
-            {!this.state.loading && !this.state.isSecurityProtect && this.state.hasWallet && <Root />}
-            {!this.state.loading && !this.state.hasWallet && <Welcome />}
+          {this.state.loading && <View />}
+          {!this.state.loading && this.state.isSecurityProtect && this.state.hasWallet
+            && <LoginGesture loginSucceed={() => this.setState({ isSecurityProtect: false })} />}
+          {!this.state.loading && !this.state.isSecurityProtect && this.state.hasWallet && <Root />}
+          {!this.state.loading && !this.state.hasWallet && <Welcome />}
           <Toast ref="toast" />
         </View>
       </Provider>

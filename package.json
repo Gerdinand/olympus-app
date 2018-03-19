@@ -17,6 +17,8 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "@types/react-redux": "^5.0.15",
+    "@types/redux": "^3.6.0",
     "abi-decoder": "^1.0.9",
     "assert": "^1.4.1",
     "bignumber.js": "^6.0.0",

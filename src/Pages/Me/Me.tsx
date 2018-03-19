@@ -4,6 +4,7 @@ import React from 'react';
 import {
   ScrollView,
   Linking,
+  View,
   // ActionSheetIOS,
 } from 'react-native';
 import {
@@ -40,21 +41,21 @@ const list3 = [
     title: 'Gesture',
   },
   {
-    icon: { name: 'ios-hand', type: 'ionicon'  },
+    icon: { name: 'ios-hand', type: 'ionicon' },
     title: 'Fingerprint',
   },
 ];
 
-// const list4 = [
-//   {
-//     icon: { name: 'log-out', type: 'entypo' },
-//     title: 'Sign out',
-//   },
-// ];
+const list4 = [
+  {
+    icon: { name: 'log-out', type: 'entypo' },
+    title: 'Sign out',
+  },
+];
 
-// const options = ['Sign out', 'Cancel'];
-// const CANCEL_INDEX = 1;
-// const destructiveButtonIndex = 0;
+const options = ['Sign out', 'Cancel'];
+const CANCEL_INDEX = 1;
+const destructiveButtonIndex = 0;
 
 interface InternalProps {
   navigation: any; // Navigation Object
@@ -89,24 +90,11 @@ export default class MeView extends React.Component<InternalProps> {
       } else if (index === 1) {
         // to do
       }
-    // } else if (list === list4) {
-    //   if (index === 0) {
-    //     // sign out
-    //     // let _ = this;
-    //     this.refs.actionSheet.show();
-    //     /* ActionSheetIOS.showActionSheetWithOptions({
-    //       options: ['Sign out', 'Cancel'],
-    //       destructiveButtonIndex: 0,
-    //       cancelButtonIndex: 1,
-    //     }, (buttonIndex) => {
-    //       if (0 === buttonIndex) {
-    //         EthereumService.getInstance().invalidateTimer();
-    //         WalletService.getInstance().resetActiveWallet();
-    //         removeItem('wallets');
-    //         EventRegister.emit('hasWallet', false);
-    //       }
-    //     }); */
-    //   }
+    } else if (list === list4) {
+      if (index === 0) {
+        // sign out
+        this.refs.actionSheet.show();
+      }
     }
   }
 
@@ -119,6 +107,38 @@ export default class MeView extends React.Component<InternalProps> {
     }
   }
 
+  private renderLogout() {
+    if (!__DEV__) {
+      return null;
+    }
+    // Only for local testing
+    return (
+      <View>
+        <List>
+          {
+            list4.map((l, i) => (
+              <ListItem
+                key={i}
+                leftIcon={l.icon}
+                title={l.title}
+                onPress={() => {
+                  this.onPress(list4, i);
+                }}
+              />
+            ))
+          }
+        </List>
+        <ActionSheet
+          ref="actionSheet"
+          title={''}
+          options={options}
+          cancelButtonIndex={CANCEL_INDEX}
+          destructiveButtonIndex={destructiveButtonIndex}
+          onPress={(buttonIndex) => this.handlePress(buttonIndex)}
+        />
+      </View>
+    );
+  }
   public render() {
     return (
       <ScrollView style={{ backgroundColor: '#F5F5F5' }}>
@@ -164,28 +184,7 @@ export default class MeView extends React.Component<InternalProps> {
             ))
           }
         </List>
-        {/* <List>
-          {
-            list4.map((l, i) => (
-              <ListItem
-                key={i}
-                leftIcon={l.icon}
-                title={l.title}
-                onPress={() => {
-                  this.onPress(list4, i);
-                }}
-              />
-            ))
-          }
-        </List> */}
-        {/* <ActionSheet
-          ref="actionSheet"
-          title={''}
-          options={options}
-          cancelButtonIndex={CANCEL_INDEX}
-          destructiveButtonIndex={destructiveButtonIndex}
-          onPress={(buttonIndex) => this.handlePress(buttonIndex)}
-        /> */}
+        {this.renderLogout()}
       </ScrollView>
     );
   }
