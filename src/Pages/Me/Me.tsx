@@ -45,16 +45,16 @@ const list3 = [
   },
 ];
 
-const list4 = [
-  {
-    icon: { name: 'log-out', type: 'entypo' },
-    title: 'Sign out',
-  },
-];
+// const list4 = [
+//   {
+//     icon: { name: 'log-out', type: 'entypo' },
+//     title: 'Sign out',
+//   },
+// ];
 
-const options = ['Sign out', 'Cancel'];
-const CANCEL_INDEX = 1;
-const destructiveButtonIndex = 0;
+// const options = ['Sign out', 'Cancel'];
+// const CANCEL_INDEX = 1;
+// const destructiveButtonIndex = 0;
 
 interface InternalProps {
   navigation: any; // Navigation Object
@@ -89,24 +89,24 @@ export default class MeView extends React.Component<InternalProps> {
       } else if (index === 1) {
         // to do
       }
-    } else if (list === list4) {
-      if (index === 0) {
-        // sign out
-        // let _ = this;
-        this.refs.actionSheet.show();
-        /* ActionSheetIOS.showActionSheetWithOptions({
-          options: ['Sign out', 'Cancel'],
-          destructiveButtonIndex: 0,
-          cancelButtonIndex: 1,
-        }, (buttonIndex) => {
-          if (0 === buttonIndex) {
-            EthereumService.getInstance().invalidateTimer();
-            WalletService.getInstance().resetActiveWallet();
-            removeItem('wallets');
-            EventRegister.emit('hasWallet', false);
-          }
-        }); */
-      }
+    // } else if (list === list4) {
+    //   if (index === 0) {
+    //     // sign out
+    //     // let _ = this;
+    //     this.refs.actionSheet.show();
+    //     /* ActionSheetIOS.showActionSheetWithOptions({
+    //       options: ['Sign out', 'Cancel'],
+    //       destructiveButtonIndex: 0,
+    //       cancelButtonIndex: 1,
+    //     }, (buttonIndex) => {
+    //       if (0 === buttonIndex) {
+    //         EthereumService.getInstance().invalidateTimer();
+    //         WalletService.getInstance().resetActiveWallet();
+    //         removeItem('wallets');
+    //         EventRegister.emit('hasWallet', false);
+    //       }
+    //     }); */
+    //   }
     }
   }
 
@@ -164,7 +164,7 @@ export default class MeView extends React.Component<InternalProps> {
             ))
           }
         </List>
-        <List>
+        {/* <List>
           {
             list4.map((l, i) => (
               <ListItem
@@ -177,15 +177,15 @@ export default class MeView extends React.Component<InternalProps> {
               />
             ))
           }
-        </List>
-        <ActionSheet
+        </List> */}
+        {/* <ActionSheet
           ref="actionSheet"
           title={''}
           options={options}
           cancelButtonIndex={CANCEL_INDEX}
           destructiveButtonIndex={destructiveButtonIndex}
           onPress={(buttonIndex) => this.handlePress(buttonIndex)}
-        />
+        /> */}
       </ScrollView>
     );
   }
