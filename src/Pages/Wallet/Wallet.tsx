@@ -6,7 +6,6 @@ import {
   StyleSheet,
   RefreshControl,
   DeviceEventEmitter,
-  Text,
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -19,6 +18,7 @@ import { EventRegister } from 'react-native-event-listeners';
 import WalletHeader from './partials/WalletHeader';
 import { WalletService, EthereumService } from '../../Services';
 import { AppState } from '../../Store';
+import { Text } from '../_shared/layout/Text';
 
 interface InternalProps {
   navigation: any;
