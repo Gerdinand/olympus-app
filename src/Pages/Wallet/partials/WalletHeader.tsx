@@ -92,7 +92,10 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
-export default connect(mapReduxStateToProps, mapDispatchToProps)(WalletHeader);
+const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
+  return { ...ownProps, ...reduxStatePros, ...dispatchProps };
+};
+export default connect(mapReduxStateToProps, mapDispatchToProps, mergeProps)(WalletHeader);
 
 const styles = StyleSheet.create({
   container: {

@@ -4,6 +4,7 @@ import React from 'react';
 import {
   ScrollView,
   Linking,
+  View,
   // ActionSheetIOS,
 } from 'react-native';
 import {
@@ -40,7 +41,7 @@ const list3 = [
     title: 'Gesture',
   },
   {
-    icon: { name: 'ios-hand', type: 'ionicon'  },
+    icon: { name: 'ios-hand', type: 'ionicon' },
     title: 'Fingerprint',
   },
 ];
@@ -92,20 +93,7 @@ export default class MeView extends React.Component<InternalProps> {
     } else if (list === list4) {
       if (index === 0) {
         // sign out
-        // let _ = this;
         this.refs.actionSheet.show();
-        /* ActionSheetIOS.showActionSheetWithOptions({
-          options: ['Sign out', 'Cancel'],
-          destructiveButtonIndex: 0,
-          cancelButtonIndex: 1,
-        }, (buttonIndex) => {
-          if (0 === buttonIndex) {
-            EthereumService.getInstance().invalidateTimer();
-            WalletService.getInstance().resetActiveWallet();
-            removeItem('wallets');
-            EventRegister.emit('hasWallet', false);
-          }
-        }); */
       }
     }
   }
@@ -119,6 +107,38 @@ export default class MeView extends React.Component<InternalProps> {
     }
   }
 
+  private renderLogout() {
+    if (!__DEV__) {
+      return null;
+    }
+    // Only for local testing
+    return (
+      <View>
+        <List>
+          {
+            list4.map((l, i) => (
+              <ListItem
+                key={i}
+                leftIcon={l.icon}
+                title={l.title}
+                onPress={() => {
+                  this.onPress(list4, i);
+                }}
+              />
+            ))
+          }
+        </List>
+        <ActionSheet
+          ref="actionSheet"
+          title={''}
+          options={options}
+          cancelButtonIndex={CANCEL_INDEX}
+          destructiveButtonIndex={destructiveButtonIndex}
+          onPress={(buttonIndex) => this.handlePress(buttonIndex)}
+        />
+      </View>
+    );
+  }
   public render() {
     return (
       <ScrollView style={{ backgroundColor: '#F5F5F5' }}>
@@ -164,28 +184,7 @@ export default class MeView extends React.Component<InternalProps> {
             ))
           }
         </List>
-        <List>
-          {
-            list4.map((l, i) => (
-              <ListItem
-                key={i}
-                leftIcon={l.icon}
-                title={l.title}
-                onPress={() => {
-                  this.onPress(list4, i);
-                }}
-              />
-            ))
-          }
-        </List>
-        <ActionSheet
-          ref="actionSheet"
-          title={''}
-          options={options}
-          cancelButtonIndex={CANCEL_INDEX}
-          destructiveButtonIndex={destructiveButtonIndex}
-          onPress={(buttonIndex) => this.handlePress(buttonIndex)}
-        />
+        {this.renderLogout()}
       </ScrollView>
     );
   }

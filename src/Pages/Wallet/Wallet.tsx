@@ -140,4 +140,7 @@ const mapReduxStateToProps = (state: AppState) => {
   };
 };
 
-export default connect(mapReduxStateToProps, null)(WalletView);
+const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
+  return { ...ownProps, ...reduxStatePros, ...dispatchProps };
+};
+export default connect(mapReduxStateToProps, null, mergeProps)(WalletView);
