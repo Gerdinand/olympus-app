@@ -256,11 +256,11 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private getMaxBalance(gasFee: number) {
     const token = this.state.token;
     const exchangeType = this.state.exchangeType;
-    const fee = new BigNumber((gasFee + GAS_MIN_BALANCE).toPrecision(15));
     const balance = new BigNumber(this.state.ETHBalance.toPrecision(15));
     let sendAmount;
     if (token.address === Constants.ETHER_ADDRESS || exchangeType === ExchangeType.ETH_TO_TOKEN) {
-      sendAmount = balance.minus(fee).toNumber();
+      const fee = new BigNumber((gasFee + GAS_MIN_BALANCE).toPrecision(15));
+      sendAmount = Math.max(0, balance.minus(fee).toNumber());
     } else {
       sendAmount = Number(token.balance);
     }
@@ -503,6 +503,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private updateSendAmountText(rawText: string, maxBalance: number) {
     const { text, textCorrect } = restrictTextToNumber(rawText);
     const sendAmount: any = filterStringLessThanNumber(text, maxBalance);
+    console.log('aaaa ', text, sendAmount, textCorrect);
     // Filtering non digital and dot characters
     if (!textCorrect) {
       return this.setState({ sendAmount });

@@ -111,7 +111,7 @@ export function restrictTextToNumber(text: string): { text: string, textCorrect:
 
 export function filterStringLessThanNumber(value: string, max: number) {
 
-  if (value === '' || value === '.' || (/^(\d)*\.$/.test(value)) || !Number(value)) {
+  if (value === '' || value === '.' || (/^(\d)*\.(0+)?$/.test(value)) || !Number(value)) {
     return value; // The cast would return no decimals, but that could be annoying
   }
 
