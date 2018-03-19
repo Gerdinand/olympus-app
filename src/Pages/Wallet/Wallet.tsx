@@ -100,30 +100,29 @@ class WalletView extends React.Component<InternalProps, InternalState> {
           containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0, borderBottomColor: 'transparent' }}
         >
           {
-            this.state.wallet.tokens.map((t, i) => (
+            this.state.wallet.tokens.filter((token) => !!token).map((token, i) => (
               <ListItem
                 roundAvatar
                 hideChevron={true}
-                avatar={{ uri: t.icon }}
+                avatar={{ uri: token.icon }}
                 avatarStyle={{ backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.5, padding: 2 }}
                 key={i}
-                title={t.symbol}
-                subtitle={t.name}
-                rightTitle={(0 === i || t.price === 0) ?
-                  (this.props.balanceVisibility ? t.balance.toFixed(6).toString() : '******') :
+                title={token.symbol}
+                subtitle={token.name}
+                rightTitle={(0 === i || token.price === 0) ?
+                  (this.props.balanceVisibility ? token.balance.toFixed(6).toString() : '******') :
                   (
                     this.props.balanceVisibility ?
-                      `${t.balance.toFixed(6).toString()}\n1 ETH = ${t.price} ${t.symbol}` :
-                      `******\n1 ETH = ${t.price} ${t.symbol}`
+                      `${token.balance.toFixed(6).toString()}\n1 ETH = ${token.price} ${token.symbol}` :
+                      `******\n1 ETH = ${token.price} ${token.symbol}`
                   )
                 }
                 rightTitleNumberOfLines={2}
                 rightTitleStyle={{ fontWeight: 'bold', color: '#4A4A4A', textAlign: 'right' }}
                 onPress={() => {
-                  console.log(`navigate to : ${t.symbol}`);
-
+                  console.log(`navigate to : ${token.symbol}`);
                   navigation.navigate('WalletDetail', {
-                    token: t,
+                    token,
                   });
                 }}
               />
