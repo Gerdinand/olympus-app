@@ -36,6 +36,17 @@ const list2 = [
 
 const list3 = [
   {
+    icon: { name: 'ios-grid', type: 'ionicon' },
+    title: 'Gesture',
+  },
+  {
+    icon: { name: 'ios-hand', type: 'ionicon'  },
+    title: 'Fingerprint',
+  },
+];
+
+const list4 = [
+  {
     icon: { name: 'log-out', type: 'entypo' },
     title: 'Sign out',
   },
@@ -73,6 +84,12 @@ export default class MeView extends React.Component<InternalProps> {
         Linking.openURL('https://olympuslabs.io/web/team');
       }
     } else if (list === list3) {
+      if (index === 0) {
+        this.props.navigation.navigate('SetGesture');
+      } else if (index === 1) {
+        // to do
+      }
+    } else if (list === list4) {
       if (index === 0) {
         // sign out
         // let _ = this;
@@ -142,6 +159,20 @@ export default class MeView extends React.Component<InternalProps> {
                 title={l.title}
                 onPress={() => {
                   this.onPress(list3, i);
+                }}
+              />
+            ))
+          }
+        </List>
+        <List>
+          {
+            list4.map((l, i) => (
+              <ListItem
+                key={i}
+                leftIcon={l.icon}
+                title={l.title}
+                onPress={() => {
+                  this.onPress(list4, i);
                 }}
               />
             ))

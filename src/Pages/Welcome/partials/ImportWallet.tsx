@@ -88,9 +88,9 @@ export default class ImportWalletView extends React.Component<null, InternalStat
                       throw new Error();
                     }
                     // await AsyncStorage.setItem('used', 'true');
-                    await WalletService.getInstance().getActiveWallet();
+                    const wallet = await WalletService.getInstance().getActiveWallet();
                     await AsyncStorage.setItem('used', 'true');
-                    EventRegister.emit('hasWallet', true);
+                    EventRegister.emit('hasWallet', wallet);
                   } catch (e) {
                     _.setState({ importButtonName: 'Import', importDisable: false });
                     DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
