@@ -13,6 +13,7 @@ import { PendingTx } from '../../../Models/Wallet';
 const TRADE = 'Trade';
 const ETHER_RECEIVAL = 'EtherReceival';
 const TOKEN_ETHER = 'ETH';
+const INPUT_DECIMALS = 18; // Input decimals are always 18, independent than number of decimlas of token
 const APPROVAL = 'Approval';
 interface InternalProps {
   onListItemPress: (txHash: string) => void;
@@ -30,7 +31,7 @@ export class TransactionList extends PureComponent<InternalProps> {
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
-  private getTransactionInformation(tx): { isSending: boolean, tokenAmount: any } {
+  private getTransactionInformation(tx: Tx): { isSending: boolean, tokenAmount: any } {
 
     let isSending;
     let tokenAmount;
@@ -38,8 +39,11 @@ export class TransactionList extends PureComponent<InternalProps> {
     // No logs case
     if (!tx.logs || tx.logs.length === 0) {
       return {
-        isSending: tx.from === this.props.token.ownerAddress,
-        tokenAmount: tx.value,
+        isSending:
+          typeof tx.input !== 'string' ?
+            tx.input.srcToken.symbol === this.props.token.symbol : // In a case of a exchange that fails, with no logs
+            tx.from === this.props.token.ownerAddress, // in last situation where there are no more hints
+        tokenAmount: this.amountfromInputAmount(tx) || tx.value, // input amount is better, in few cases is undefined,
       };
     }
 
@@ -58,7 +62,7 @@ export class TransactionList extends PureComponent<InternalProps> {
       return { isSending, tokenAmount };
     }
     // Second scenario is trade
-    if (trade) {
+    if (trade && typeof tx.input !== 'string') {
       isSending = isETH ?
         (tx.input.srcToken && tx.input.srcToken.symbol === TOKEN_ETHER) :
         (tx.input.srcToken && tx.input.srcToken.symbol === this.props.token.symbol);
@@ -68,13 +72,22 @@ export class TransactionList extends PureComponent<InternalProps> {
     }
     // Final case
     return {
-      tokenAmount: tx.input.amount,
+      tokenAmount: this.amountfromInputAmount(tx),
       isSending: tx.from === this.props.token.ownerAddress,
     };
 
   }
 
-  private renderLine(tx) {
+  // Nomrally decimals are just 18. In some cases like
+  // POWR, are 6, but in input are still 18. So here we remove the 12 missing.
+  private amountfromInputAmount(tx) {
+    if (!tx.input.amount) { return undefined; }
+
+    return new BigNumber(tx.input.amount).
+      div(Math.pow(10, INPUT_DECIMALS - this.props.token.decimals)).toString();
+  }
+
+  private renderLine(tx: Tx) {
 
     // Ignore approval logs
     if (tx.logs && tx.logs.find((log) => log.name === APPROVAL)) {
@@ -83,6 +96,7 @@ export class TransactionList extends PureComponent<InternalProps> {
 
     const { isSending, tokenAmount } = this.getTransactionInformation(tx);
     const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
+
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
     const direction = isSending ? '-' : '+';
@@ -97,7 +111,7 @@ export class TransactionList extends PureComponent<InternalProps> {
         key={tx.hash}
         title={dest}
         subtitle={time}
-        rightTitle={`${direction}${amount}`}
+        rightTitle={tx.isError === '1' ? 'Error' : `${direction}${amount}`}
         rightTitleStyle={{ fontWeight: 'bold', color: isSending ? 'red' : 'green' }}
         onPress={() => {
           this.props.onListItemPress && this.props.onListItemPress(tx.hash);

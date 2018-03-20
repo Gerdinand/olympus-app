@@ -83,13 +83,15 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.olympus"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         ndk {
@@ -105,7 +107,7 @@ android {
                 keyPassword MYAPP_RELEASE_KEY_PASSWORD
             }
         }
-    }    
+    }
     splits {
         abi {
             reset()
@@ -137,10 +139,14 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fingerprint-scanner')
+    compile project(':react-native-fcm')
+    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
+    compile project(':react-native-secure-randombytes')
     compile project(':react-native-vector-icons')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
-    compile project(':react-native-randombytes')
     compile project(':react-native-os')
     compile project(':react-native-keychain')
     compile project(':react-native-fast-crypto')
@@ -156,3 +162,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+apply plugin: 'com.google.gms.google-services'

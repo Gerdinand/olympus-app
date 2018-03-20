@@ -117,8 +117,8 @@ export default class CreateWalletView extends React.Component<null, InternalStat
                   /*const json = */
                   await this.eth.generateV3Wallet(name, password, { persistence: true });
                   await AsyncStorage.setItem('used', 'true');
-                  await WalletService.getInstance().getActiveWallet();
-                  EventRegister.emit('hasWallet', true);
+                  const wallet = await WalletService.getInstance().getActiveWallet();
+                  EventRegister.emit('hasWallet', wallet);
                 } catch (e) {
                   console.error(e);
                 }

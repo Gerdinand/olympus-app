@@ -102,18 +102,18 @@ class WalletView extends React.Component<InternalProps, InternalState> {
           style={{ height: 578 }}
           containerStyle={styles.listContainer}
         >
-          {this.state.wallet.tokens.map((t, i) => {
-            if (i === 0 || t.price === 0) {
+          {this.state.wallet.tokens.filter((token) => !!token).map((token, i) => {
+            if (i === 0 || token.price === 0) {
               return (
                 <ListItem
                   key={i}
                   hideChevron={true}
                   roundAvatar
-                  avatar={{ uri: t.icon }}
-                  title={t.symbol}
-                  subtitle={t.name}
-                  rightTitle={this.props.balanceVisibility ? t.balance.toFixed(6).toString() : '******'}
-                  onPress={() => navigation.navigate('WalletDetail', { token: t })}
+                  avatar={{ uri: token.icon }}
+                  title={token.symbol}
+                  subtitle={token.name}
+                  rightTitle={this.props.balanceVisibility ? token.balance.toFixed(6).toString() : '******'}
+                  onPress={() => navigation.navigate('WalletDetail', { token })}
                   containerStyle={styles.itemContainer}
                   avatarStyle={styles.itemAvatar}
                   titleStyle={styles.itemTitle}
@@ -127,20 +127,20 @@ class WalletView extends React.Component<InternalProps, InternalState> {
                 key={i}
                 hideChevron={true}
                 roundAvatar
-                avatar={{ uri: t.icon }}
+                avatar={{ uri: token.icon }}
                 title={
                   <View style={styles.itemFlex}>
-                    <Text style={styles.itemTitle}>{t.symbol}</Text>
+                    <Text style={styles.itemTitle}>{token.symbol}</Text>
                     <Text style={styles.itemTitle}>
-                      {this.props.balanceVisibility ? t.balance.toFixed(6).toString() : '******'}
+                      {this.props.balanceVisibility ? token.balance.toFixed(6).toString() : '******'}
                     </Text>
                   </View>}
                 subtitle={
                   <View style={styles.itemFlex}>
-                    <Text style={styles.subtitle}>{t.name}</Text>
-                    <Text style={styles.subtitle}>{`1 ETH = ${t.price} ${t.symbol}`}</Text>
+                    <Text style={styles.subtitle}>{token.name}</Text>
+                    <Text style={styles.subtitle}>{`1 ETH = ${token.price} ${token.symbol}`}</Text>
                   </View>}
-                onPress={() => navigation.navigate('WalletDetail', { token: t })}
+                onPress={() => navigation.navigate('WalletDetail', { token })}
                 containerStyle={styles.itemContainer}
                 avatarStyle={styles.itemAvatar}
               />);
@@ -157,7 +157,11 @@ const mapReduxStateToProps = (state: AppState) => {
   };
 };
 
-export default connect(mapReduxStateToProps, null)(WalletView);
+const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
+  return { ...ownProps, ...reduxStatePros, ...dispatchProps };
+};
+
+export default connect(mapReduxStateToProps, null, mergeProps)(WalletView);
 
 const styles = StyleSheet.create({
   listContainer: {

@@ -12,6 +12,7 @@ import { WalletService } from './WalletService';
 import { decodeTx } from '../Utils';
 import { Wallet } from '../Models/index.js';
 import { Tx } from '../Models/Tx.js';
+import { GAS_LIMIT } from '../Constants';
 
 let BigNumber;
 
@@ -68,8 +69,8 @@ export class EthereumService {
     return nonce;
   }
 
-  public async getGasPrice(): Promise<number> {
-    const gasPrice = await Promisify((cb) => this.rpc.eth.getGasPrice(cb)) as number;
+  public async getGasPrice(): Promise<BigNumber> {
+    const gasPrice = await Promisify((cb) => this.rpc.eth.getGasPrice(cb)) as BigNumber;
     return gasPrice;
   }
 
@@ -80,13 +81,12 @@ export class EthereumService {
     return gasLimit;
   }
 
-  public async generateTx(from, to, value, gasLimit = 0, txData = ''): Promise<Partial<Tx>> {
-    const gasPrice = await this.getGasPrice();
+  public async generateTx(from, to, value, gasPrice: string, txData = '') {
 
     const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
       gasPrice: this.rpc.toHex(gasPrice),
-      gasLimit: this.rpc.toHex(gasLimit),
+      gasLimit: this.rpc.toHex(GAS_LIMIT),
       to,
       value: this.rpc.toHex(this.rpc.toWei(value, 'ether')),
       data: txData,
@@ -100,7 +100,7 @@ export class EthereumService {
     return this.rpc.toAscii(hex);
   }
 
-  public async generateTokenTx(source, dest, value, decimals, contractAddress, gasLimit) {
+  public async generateTokenTx(source, dest, value, decimals, contractAddress, gasPrice) {
     console.log(dest);
     const bigValue = new BigNumber(value);
     const base = new BigNumber(10);
@@ -110,8 +110,8 @@ export class EthereumService {
     const rawTx = {
       from: source,
       nonce: this.rpc.toHex(await this.getNonce(source)),
-      gasPrice: this.rpc.toHex(await this.getGasPrice()),
-      gasLimit: this.rpc.toHex(gasLimit),
+      gasPrice: this.rpc.toHex(gasPrice),
+      gasLimit: this.rpc.toHex(GAS_LIMIT),
       to: contractAddress,
       value: '0x0',
       data: contract.transfer.getData(dest, amount),
@@ -181,7 +181,7 @@ export class EthereumService {
     wallet.tokens[0].balance = balance;
     console.log('ETH balance: ', wallet.balance);
 
-    wallet.gasLimit = await this.getGasLimit();
+    wallet.gasLimit = GAS_LIMIT;
     console.log('Gas limit: ', wallet.gasLimit);
 
     const ethPrice = await getETHPrice();
@@ -195,7 +195,6 @@ export class EthereumService {
       const token = wallet.tokens[i];
       const tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
       token.balance = tokenBalance;
-
       const priceInWei = await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address);
       console.log('Expected rate: ', priceInWei.toNumber());
 
@@ -247,8 +246,8 @@ export class EthereumService {
     minConversionRate,
     walletId,
     _throwOnFailure, // Need to be used later
-    gasLimit,
-    nonce): Promise<Partial<Tx>> {
+    gasPrice,
+    nonce) {
 
     const amount = this.rpc.toWei(sourceAmount, 'ether');
     // address,uint256,address,address,uint256,uint256,address
@@ -266,8 +265,8 @@ export class EthereumService {
 
     const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(nonce),
-      gasPrice: this.rpc.toHex((await this.getGasPrice())),
-      gasLimit: this.rpc.toHex(gasLimit),
+      gasPrice: this.rpc.toHex(gasPrice),
+      gasLimit: this.rpc.toHex(GAS_LIMIT),
       to: this.kyberAddress,
       value: sourceToken === Constants.ETHER_ADDRESS ? this.rpc.toHex(amount) : 0,
       data: exchangeData,
@@ -280,15 +279,15 @@ export class EthereumService {
     return await this.getNonce(address);
   }
 
-  public async generateApproveTokenTx(sourceToken, sourceAmount, destAddress, gasLimit): Promise<Partial<Tx>> {
+  public async generateApproveTokenTx(sourceToken, sourceAmount, destAddress, gasPrice) {
     const amount = this.rpc.toWei(sourceAmount, 'ether');
     const tokenContract = this.erc20Contract.at(sourceToken);
     const approveData = tokenContract.approve.getData(this.kyberAddress, amount);
 
     const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(await this.newNonce(destAddress)),
-      gasPrice: this.rpc.toHex((await this.getGasPrice())),
-      gasLimit: this.rpc.toHex(gasLimit),
+      gasPrice: this.rpc.toHex(gasPrice),
+      gasLimit: this.rpc.toHex(GAS_LIMIT),
       to: sourceToken,
       value: 0,
       data: approveData,
@@ -300,7 +299,7 @@ export class EthereumService {
     return tx;
   }
 
-  public async generateTradeFromTokenToEtherTx(sourceToken, sourceAmount, destAddress, gasLimit) {
+  public async generateTradeFromTokenToEtherTx(sourceToken, sourceAmount, destAddress, gasPrice) {
     const tx = await this.generateTradeTx(
       sourceToken,
       sourceAmount,
@@ -310,14 +309,14 @@ export class EthereumService {
       await this.getExpectedRate(sourceToken, Constants.ETHER_ADDRESS),
       '0x0', // todo: use 0 for test, mainnet should apply to kyber.
       true,
-      gasLimit,
+      gasPrice,
       await this.newNonce(destAddress) + 1,
     );
 
     return tx;
   }
 
-  public async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress) {
+  public async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress, gasPrice) {
     const tx = await this.generateTradeTx(
       Constants.ETHER_ADDRESS,
       sourceAmount,
@@ -327,7 +326,7 @@ export class EthereumService {
       await this.getExpectedRate(Constants.ETHER_ADDRESS, destToken),
       '0x0', // 0 for testnet, mainnet should apply to kyber.
       true,
-      1000000,
+      gasPrice,
       await this.newNonce(destAddress),
     );
 

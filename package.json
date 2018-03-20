@@ -17,6 +17,8 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "@types/react-redux": "^5.0.15",
+    "@types/redux": "^3.6.0",
     "abi-decoder": "^1.0.9",
     "assert": "^1.4.1",
     "bignumber.js": "^6.0.0",
@@ -34,7 +36,7 @@
     "moment": "^2.19.4",
     "path-browserify": "0.0.0",
     "process": "^0.11.10",
-    "prop-types": "^15.6.0",
+    "prop-types": "^15.6.1",
     "querystring-es3": "^0.2.1",
     "react": "16.0.0-alpha.6",
     "react-native": "0.44.3",
@@ -46,6 +48,9 @@
     "react-native-elements": "^0.19.0",
     "react-native-event-listeners": "^1.0.3",
     "react-native-fast-crypto": "^1.2.4",
+    "react-native-fingerprint-scanner": "^2.3.2",
+    "react-native-gesture-password": "^0.3.2",
+    "react-native-fcm": "^14.1.0",
     "react-native-keychain": "^1.2.1",
     "react-native-level-fs": "^3.0.0",
     "react-native-os": "^1.1.0",
