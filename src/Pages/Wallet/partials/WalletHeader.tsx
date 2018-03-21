@@ -92,8 +92,10 @@ const mapDispatchToProps = (dispatch: any) => {
     changeBalanceVisibility: () => dispatch(WalletActions.setBalanceVisibility()),
   };
 };
-
-export default connect(mapReduxStateToProps, mapDispatchToProps)(WalletHeader);
+const mergeProps = (reduxProps, dispatchProps, ownProps) => {
+  return { ...reduxProps, ...dispatchProps, ...ownProps };
+};
+export default connect(mapReduxStateToProps, mapDispatchToProps, mergeProps)(WalletHeader);
 
 const styles = StyleSheet.create({
   container: {

@@ -17,8 +17,11 @@ import WalletHeader from './partials/WalletHeader';
 import { WalletService, EthereumService } from '../../Services';
 import { AppState } from '../../Store';
 
-interface InternalProps {
+interface OwnProps {
   navigation: any;
+
+}
+interface ReduxProps {
   balanceVisibility: boolean;
   newWalletWarning: boolean;
   walletWarningDisplayed: () => void;
@@ -28,7 +31,7 @@ interface InternalState {
   wallet: any; // TODO object?
   refreshing: boolean;
 }
-class WalletView extends React.Component<InternalProps, InternalState> {
+class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
 
   private walletListener;
 
@@ -148,5 +151,8 @@ const mapReduxStateToProps = (state: AppState) => {
     newWalletWarning: state.wallet.warningBackUpDone,
   };
 };
+const mergeProps = (reduxProps, dispatchProps, ownProps) => {
+  return { ...reduxProps, ...dispatchProps, ...ownProps };
+};
 
-export default connect(mapReduxStateToProps, null)(WalletView);
+export default connect(mapReduxStateToProps, null, mergeProps)(WalletView);

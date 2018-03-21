@@ -202,5 +202,7 @@ const mapDispatchToProps = (dispatch: any) => {
     logout: () => dispatch(WalletActions.logout()), // If we import the wallet, we understand was backuped
   };
 };
-
-export default connect(null, mapDispatchToProps)(MeView);
+const mergeProps = (reduxProps, dispatchProps, ownProps) => {
+  return { ...reduxProps, ...dispatchProps, ...ownProps };
+};
+export default connect(null, mapDispatchToProps, mergeProps)(MeView);
