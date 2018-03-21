@@ -1,22 +1,14 @@
 'use strict';
 
 import React from 'react';
-import {
-  View,
-  ScrollView,
-  DeviceEventEmitter,
-} from 'react-native';
-import {
-  FormLabel,
-  FormInput,
-  Button,
-} from 'react-native-elements';
-import { connect } from 'react-redux';
-import { WalletService, EthereumService } from '../../../Services';
+import { View, DeviceEventEmitter } from 'react-native';
+import { FormLabel, FormInput, Button } from 'react-native-elements';
 import { PasswordInput } from '../../_shared/inputs';
-import { updateWalletRedux } from '../../Wallet/WalletActions';
+import { WalletService, EthereumService } from '../../../Services';
 import { Wallet } from '../../../Models';
-
+interface InternalProps {
+  setWallet: (wallet: Wallet) => any;
+}
 interface InternalState {
   name: string | null;
   password: string | null;
@@ -24,19 +16,9 @@ interface InternalState {
   importDisable: boolean;
   importButtonName: string;
 }
-
-interface ReduxProps {
-  setWallet: (wallet: Wallet) => void;
-}
-class ImportWalletView extends React.Component<ReduxProps, InternalState> {
-
-  public static navigationOptions = {
-    title: 'Import wallet',
-  };
-
+export default class JSONImport extends React.Component<InternalProps, InternalState> {
   public constructor(props) {
     super(props);
-
     this.state = {
       name: null,
       password: null,
@@ -47,10 +29,8 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
   }
 
   public render() {
-    const _ = this;
-
     return (
-      <ScrollView keyboardShouldPersistTaps={'handled'}>
+      <View>
         <FormLabel>Name</FormLabel>
         <FormInput
           onChangeText={(name) => this.setState({ name })}
@@ -73,20 +53,20 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
             title={this.state.importButtonName}
             disabled={this.state.importDisable}
             onPress={() => {
-              _.setState({
+              this.setState({
                 importButtonName: 'Importing...',
                 importDisable: true,
               });
-              if (_.state.name != null &&
-                _.state.name.length !== 0 &&
-                _.state.password != null &&
-                _.state.password.length !== 0 &&
-                _.state.json != null &&
-                _.state.json.length !== 0) {
+              if (this.state.name != null &&
+                this.state.name.length !== 0 &&
+                this.state.password != null &&
+                this.state.password.length !== 0 &&
+                this.state.json != null &&
+                this.state.json.length !== 0) {
                 setTimeout(async () => {
                   try {
                     const done = await WalletService.getInstance()
-                      .importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
+                      .importV3Wallet(this.state.name, JSON.parse(this.state.json), this.state.password);
                     if (!done) {
                       throw new Error();
                     }
@@ -96,27 +76,20 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
                     this.props.setWallet(wallet);
 
                   } catch (e) {
-                    _.setState({ importButtonName: 'Import', importDisable: false });
+                    this.setState({ importButtonName: 'Import', importDisable: false });
                     DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
                   }
                 }, 100);
               } else {
                 setTimeout(() => {
-                  _.setState({ importButtonName: 'Import', importDisable: false });
+                  this.setState({ importButtonName: 'Import', importDisable: false });
                   DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
                 }, 1000);
               }
             }}
           />
         </View>
-      </ScrollView>
+      </View>
     );
   }
 }
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    setWallet: (wallet: Wallet) => dispatch(updateWalletRedux(wallet)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(ImportWalletView);

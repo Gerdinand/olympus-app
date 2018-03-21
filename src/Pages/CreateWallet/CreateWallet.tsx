@@ -12,10 +12,10 @@ import {
   Button,
 } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { WalletService } from '../../../Services';
-import { PasswordInput } from '../../_shared/inputs';
-import { Wallet } from '../../../Models';
-import { updateWalletRedux } from '../../Wallet/WalletActions';
+import { WalletService } from '../../Services';
+import { PasswordInput } from '../_shared/inputs';
+import { Wallet } from '../../Models';
+import { updateWalletRedux } from '../Wallet/WalletActions';
 
 interface InternalState {
   name: string | null;
