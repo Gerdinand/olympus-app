@@ -16,7 +16,7 @@ export interface Tx {
   chainId: number;
   isError: string;
   logs: any[]; // TODO
-  input: string | {
+  input: '0x0' | {
     destToken: Token;
     srcToken: Token;
     amount: string;
@@ -26,5 +26,5 @@ export interface Tx {
   to: string;
   transactionIndex: string;
   txreceipt_status: string;
-  value: number;
+  value: number | '0x0';
 }

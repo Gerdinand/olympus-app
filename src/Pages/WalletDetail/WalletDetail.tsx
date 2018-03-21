@@ -240,12 +240,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       this.setState({ exchangeType: ExchangeType.TOKEN_TO_ETH, exchangeModalVisible: true, balance });
     }
   }
-
-  // TODO not in use?
-  public formatAddress(address) {
-    return address.replace(/(0x.{6}).{29}/, '$1****');
-  }
-
   public onTapMax() {
 
     const sendAmount = this.getMaxBalance(this.state.gasFee).toString();
