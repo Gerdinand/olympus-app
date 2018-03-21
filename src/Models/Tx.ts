@@ -26,5 +26,5 @@ export interface Tx {
   to: string;
   transactionIndex: string;
   txreceipt_status: string;
-  value: number | '0x0';
+  value: number | '0x' | '0x0';
 }
