@@ -13,7 +13,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
 import { Row } from '../../_shared/layout';
-import { AppState, setBalanceVisibility } from '../../../Store';
+import { AppState } from '../../../reducer';
+import { setBalanceVisibility } from '../WalletActions';
 
 interface OwnProps {
   name: string;

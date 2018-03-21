@@ -12,6 +12,8 @@ import { WalletService } from './WalletService';
 import { decodeTx } from '../Utils';
 import { Wallet } from '../Models/index.js';
 import { Tx } from '../Models/Tx.js';
+import { updateWalletRedux } from '../Pages/Wallet/WalletActions';
+import { store } from '../reducer';
 import { GAS_LIMIT } from '../Constants';
 
 let BigNumber;
@@ -21,7 +23,7 @@ export class EthereumService {
   private erc20Contract;
   private kyberContract;
   private kyberAddress;
-  private intervalID;
+  private intervalID: number | null;
   private isSyncing;
 
   private constructor() {
@@ -40,6 +42,9 @@ export class EthereumService {
     this.getBalance = this.getBalance.bind(this);
   }
 
+  public get isWalletSyncing() {
+    return this.isSyncing;
+  }
   private static myInstance = null;
 
   public static getInstance(): EthereumService {
@@ -168,10 +173,11 @@ export class EthereumService {
 
   public invalidateTimer() {
     clearInterval(this.intervalID);
+    this.intervalID = null;
   }
 
   public async sync(wallet: Wallet): Promise<Wallet | {}> {
-    if (this.isSyncing) {
+    if (this.isSyncing || !wallet) {
       return {};
     }
     this.isSyncing = true;
@@ -223,8 +229,13 @@ export class EthereumService {
     );
 
     this.isSyncing = false;
-
+    // If the user logout while the update was already fired.
+    if (!this.intervalID) {
+      return {};
+    }
     EventRegister.emit('wallet.updated', wallet);
+    // We inform to redux that the wallet has been updated also
+    store.dispatch(updateWalletRedux(wallet));
     return wallet;
   }
 
