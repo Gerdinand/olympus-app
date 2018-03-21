@@ -86,7 +86,7 @@ export class EthereumService {
     return gasLimit;
   }
 
-  public async generateTx(from, to, value, gasPrice: string, txData = '') {
+  public async generateTx(from, to, value, gasPrice: string, txData = ''): Promise<Partial<Tx>> {
 
     const tx: Partial<Tx> = {
       nonce: this.rpc.toHex(await this.getNonce(from)),
@@ -105,14 +105,14 @@ export class EthereumService {
     return this.rpc.toAscii(hex);
   }
 
-  public async generateTokenTx(source, dest, value, decimals, contractAddress, gasPrice) {
+  public async generateTokenTx(source, dest, value, decimals, contractAddress, gasPrice): Promise<Partial<Tx>> {
     console.log(dest);
     const bigValue = new BigNumber(value);
     const base = new BigNumber(10);
     const amount = bigValue.times(base.pow(decimals));
     const contract = this.erc20Contract.at(contractAddress);
 
-    const rawTx = {
+    const tx: Partial<Tx> = {
       from: source,
       nonce: this.rpc.toHex(await this.getNonce(source)),
       gasPrice: this.rpc.toHex(gasPrice),
@@ -123,7 +123,6 @@ export class EthereumService {
       chainId: Constants.CHAIN_ID, // now we use ropsten, not kovan 42,
     };
 
-    const tx = new EthereumTx(rawTx);
     return tx;
   }
 
@@ -258,7 +257,7 @@ export class EthereumService {
     walletId,
     _throwOnFailure, // Need to be used later
     gasPrice,
-    nonce) {
+    nonce): Promise<Partial<Tx>> {
 
     const amount = this.rpc.toWei(sourceAmount, 'ether');
     // address,uint256,address,address,uint256,uint256,address
@@ -290,7 +289,7 @@ export class EthereumService {
     return await this.getNonce(address);
   }
 
-  public async generateApproveTokenTx(sourceToken, sourceAmount, destAddress, gasPrice) {
+  public async generateApproveTokenTx(sourceToken, sourceAmount, destAddress, gasPrice): Promise<Partial<Tx>> {
     const amount = this.rpc.toWei(sourceAmount, 'ether');
     const tokenContract = this.erc20Contract.at(sourceToken);
     const approveData = tokenContract.approve.getData(this.kyberAddress, amount);
@@ -310,7 +309,7 @@ export class EthereumService {
     return tx;
   }
 
-  public async generateTradeFromTokenToEtherTx(sourceToken, sourceAmount, destAddress, gasPrice) {
+  public async generateTradeFromTokenToEtherTx(sourceToken, sourceAmount, destAddress, gasPrice): Promise<Partial<Tx>> {
     const tx = await this.generateTradeTx(
       sourceToken,
       sourceAmount,
@@ -327,7 +326,7 @@ export class EthereumService {
     return tx;
   }
 
-  public async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress, gasPrice) {
+  public async generateTradeFromEtherToTokenTx(sourceAmount, destToken, destAddress, gasPrice): Promise<Partial<Tx>> {
     const tx = await this.generateTradeTx(
       Constants.ETHER_ADDRESS,
       sourceAmount,
