@@ -16,6 +16,11 @@ import { Token } from '.';
  *  Value is the ETH
  *
  * ===== Other token To ETH: =====
+ *  In this case of transactions 2 transactions happens:
+ *  a) Approval transactions, you tell to the system that you, as owner of this money, allow this quantity
+ *     to belong the other person.
+ *
+ *  b) Transaction it self.
  *   Logs has a lot of information:
  *       1. Transfer
  *       2. Transfer

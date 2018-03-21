@@ -356,7 +356,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           this.state.token.ownerAddress,
           this.state.gasPrice.toString(),
         ) as Tx;
-        debugger;
         try {
           await EthereumService.getInstance().sendTx(approveTx, privateKey);
 
