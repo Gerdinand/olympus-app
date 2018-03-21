@@ -1,5 +1,6 @@
 'use strict';
 import React, { PureComponent } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   List,
   ListItem,
@@ -115,6 +116,9 @@ export class TransactionList extends PureComponent<InternalProps> {
         onPress={() => {
           this.props.onListItemPress && this.props.onListItemPress(tx.hash);
         }}
+        containerStyle={styles.itemContainer}
+        titleStyle={styles.itemTitle}
+        subtitleStyle={styles.subtitle}
       />);
   }
 
@@ -135,6 +139,9 @@ export class TransactionList extends PureComponent<InternalProps> {
             onPress={() => {
               this.props.onListItemPress && this.props.onListItemPress(pendingTx.tx.hash);
             }}
+            containerStyle={styles.itemContainer}
+            titleStyle={styles.itemTitle}
+            subtitleStyle={styles.subtitle}
           />
         ),
         )
@@ -144,3 +151,18 @@ export class TransactionList extends PureComponent<InternalProps> {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  itemContainer: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#999',
+  },
+  itemTitle: {
+    color: '#4A4A4A',
+  },
+  subtitle: {
+    fontWeight: '300',
+    color: '#999',
+    fontSize: 12,
+  },
+});
