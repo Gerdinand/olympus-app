@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   View,
-  AsyncStorage,
   ScrollView,
   DeviceEventEmitter,
 } from 'react-native';
@@ -12,10 +11,11 @@ import {
   FormInput,
   Button,
 } from 'react-native-elements';
-import { EventRegister } from 'react-native-event-listeners';
-
-import { WalletService } from '../../../Services';
+import { connect } from 'react-redux';
+import { WalletService, EthereumService } from '../../../Services';
 import { PasswordInput } from '../../_shared/inputs';
+import { updateWalletRedux } from '../../Wallet/WalletActions';
+import { Wallet } from '../../../Models';
 
 interface InternalState {
   name: string | null;
@@ -25,7 +25,10 @@ interface InternalState {
   importButtonName: string;
 }
 
-export default class ImportWalletView extends React.Component<null, InternalState> {
+interface ReduxProps {
+  setWallet: (wallet: Wallet) => void;
+}
+class ImportWalletView extends React.Component<ReduxProps, InternalState> {
 
   public static navigationOptions = {
     title: 'Import wallet',
@@ -87,10 +90,11 @@ export default class ImportWalletView extends React.Component<null, InternalStat
                     if (!done) {
                       throw new Error();
                     }
-                    // await AsyncStorage.setItem('used', 'true');
-                    const wallet = await WalletService.getInstance().getActiveWallet();
-                    await AsyncStorage.setItem('used', 'true');
-                    EventRegister.emit('hasWallet', wallet);
+                    // Order of the calls matter
+                    const wallet = await WalletService.getInstance().wallet;
+                    EthereumService.getInstance().sync(wallet);
+                    this.props.setWallet(wallet);
+
                   } catch (e) {
                     _.setState({ importButtonName: 'Import', importDisable: false });
                     DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
@@ -109,3 +113,10 @@ export default class ImportWalletView extends React.Component<null, InternalStat
     );
   }
 }
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setWallet: (wallet: Wallet) => dispatch(updateWalletRedux(wallet)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ImportWalletView);

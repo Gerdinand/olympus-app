@@ -5,7 +5,6 @@ import {
   AppRegistry,
   View,
   Image,
-  AsyncStorage,
   DeviceEventEmitter,
   EmitterSubscription,
   AppState,
@@ -14,17 +13,19 @@ import {
 import { Provider } from 'react-redux';
 
 import { TabNavigator } from 'react-navigation';
-import { EventRegister } from 'react-native-event-listeners';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
-import { WalletService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import LoginGesture from './Pages/Security/LoginGesture';
-import { Store } from './Store';
+import { store, persistor, AppState as ReducerState } from './reducer';
+import { PersistGate } from 'redux-persist/integration/react';
+import { connect } from 'react-redux';
+import { Wallet } from './Models';
+import { WalletService } from './Services';
 
-const Root = TabNavigator(
+const RootNavigation = TabNavigator(
   {
     WalletTab: {
       screen: WalletTab,
@@ -67,6 +68,9 @@ const Root = TabNavigator(
   },
 );
 
+interface InternalProps {
+  wallet: Wallet;
+}
 interface InternalState {
   loading: boolean;
   isSecurityProtect: boolean;
@@ -74,9 +78,8 @@ interface InternalState {
   appState: AppStateStatus;
 }
 
-export default class Olympus extends React.Component<null, InternalState> {
+class Root extends React.Component<InternalProps, InternalState> {
 
-  private listener;
   private toastListener: EmitterSubscription;
   public refs: {
     toast: Toast;
@@ -91,19 +94,9 @@ export default class Olympus extends React.Component<null, InternalState> {
       isSecurityProtect: false,
       appState: AppState.currentState,
     };
-
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
-  }
-
-  public componentWillMount() {
-    this.loadingWallet();
-    AppState.addEventListener('change', this._handleAppStateChange);
-    this.listener = EventRegister.addEventListener('hasWallet', (data) => {
-      console.log('[event] hasWallet');
-      this.setState({
-        hasWallet: data ? true : false,
-      });
-    });
+    // Restore the wallet which came from redux , whatever is null or not.
+    WalletService.getInstance().setWallet(props.wallet);
   }
 
   public componentDidMount() {
@@ -128,8 +121,6 @@ export default class Olympus extends React.Component<null, InternalState> {
   }
 
   public componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
-    EventRegister.removeEventListener(this.listener);
     if (this.toastListener) {
       this.toastListener.remove();
     }
@@ -144,30 +135,43 @@ export default class Olympus extends React.Component<null, InternalState> {
     this.setState({ appState: nextAppState, isSecurityProtect });
   }
 
-  public async loadingWallet() {
-    const isUsed = await AsyncStorage.getItem('used');
-    if (isUsed) {
-      const wallet = await WalletService.getInstance().getActiveWallet();
-      this.setState({ loading: false, hasWallet: wallet != null });
-    } else {
-      this.setState({ loading: false, hasWallet: null });
-    }
-  }
-
   public render() {
+    const hasWallet = this.props.wallet !== null;
     return (
-      <Provider store={Store}>
-        <View style={{ flex: 1, zIndex: 100 }}>
-          {this.state.loading && <View />}
-          {!this.state.loading && this.state.isSecurityProtect && this.state.hasWallet
-            && <LoginGesture loginSucceed={() => this.setState({ isSecurityProtect: false })} />}
-          {!this.state.loading && !this.state.isSecurityProtect && this.state.hasWallet && <Root />}
-          {!this.state.loading && !this.state.hasWallet && <Welcome />}
-          <Toast ref="toast" />
-        </View>
-      </Provider>
+      <View style={{ flex: 1, zIndex: 100 }}>
+
+        {!hasWallet && <Welcome />}
+
+        {hasWallet && this.state.isSecurityProtect &&
+          <LoginGesture loginSucceed={() => this.setState({ isSecurityProtect: false })} />}
+
+        {hasWallet && !this.state.isSecurityProtect &&
+          <RootNavigation />}
+
+        <Toast ref="toast" />
+      </View>
     );
   }
 }
+const mapReduxStateToProps = (state: ReducerState) => {
+  return {
+    wallet: state.wallet.wallet,
+  };
+};
+const RootWithReducer = connect(mapReduxStateToProps, null)(Root);
+
+/* tslint:disable:max-classes-per-file */
+class Olympus extends React.PureComponent {
+  public render() {
+    return (
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <RootWithReducer />
+        </PersistGate >
+      </Provider >
+    );
+  }
+}
+/* tslint:enable:max-classes-per-file */
 
 AppRegistry.registerComponent('Olympus', () => Olympus);

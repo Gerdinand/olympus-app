@@ -13,9 +13,10 @@ import {
 } from 'react-native-elements';
 
 import ActionSheet from 'react-native-actionsheet';
-import { removeItem } from '../../Utils/KeyStore';
-import { EventRegister } from 'react-native-event-listeners';
+
 import { WalletService, EthereumService } from '../../Services';
+import { updateWalletRedux } from '../Wallet/WalletActions';
+import { connect } from 'react-redux';
 
 const list1 = [
   {
@@ -60,13 +61,18 @@ const destructiveButtonIndex = 0;
 interface InternalProps {
   navigation: any; // Navigation Object
 }
-export default class MeView extends React.Component<InternalProps> {
+
+interface ReduxProps {
+  resetWallet: () => void;
+}
+
+class MeView extends React.Component<InternalProps & ReduxProps> {
 
   public refs = {
     actionSheet: ActionSheet,
   };
 
-  public constructor(props: InternalProps) {
+  public constructor(props) {
     super(props);
   }
 
@@ -102,8 +108,7 @@ export default class MeView extends React.Component<InternalProps> {
     if (0 === buttonIndex) {
       EthereumService.getInstance().invalidateTimer();
       WalletService.getInstance().resetActiveWallet();
-      removeItem('wallets');
-      EventRegister.emit('hasWallet', false);
+      this.props.resetWallet();
     }
   }
 
@@ -189,3 +194,13 @@ export default class MeView extends React.Component<InternalProps> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    resetWallet: () => dispatch(updateWalletRedux(null)),
+  };
+};
+const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
+  return { ...ownProps, ...reduxStatePros, ...dispatchProps };
+};
+export default connect(null, mapDispatchToProps, mergeProps)(MeView);

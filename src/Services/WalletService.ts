@@ -8,11 +8,12 @@ window.randomBytes = asyncRandomBytes;
 
 import EthJs from 'ethereumjs-wallet-react-native';
 
-import { addressFromJSONString, unlock } from '../Utils/Keys';
+import { addressFromJSON, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
 import { SupportedTokens, GAS_LIMIT } from '../Constants/index.js';
 import { Token, Wallet } from '../Models/index.js';
 
+const WALLET_JSON_KEY = 'walletJson';
 export class WalletService {
 
   public wallet: Wallet;
@@ -31,55 +32,49 @@ export class WalletService {
     return this.myInstance;
   }
 
+  // When it comes restore from redux.
+  public setWallet(wallet: Wallet) {
+    this.wallet = wallet;
+  }
+
+  // Logout
   public resetActiveWallet() {
     this.wallet = null;
   }
 
-  public async getActiveWallet(): Promise<Wallet | null> {
-    const infoString = await readItem('wallets');
+  // Called on creation or on import
+  private async initializeWallet(name: string, address: string, walletJson: string) {
+    // Wallet default values
+    this.wallet = {
+      address,
+      name,
+      balance: 0,
+      balanceInUSD: 0,
+      gasLimit: GAS_LIMIT,
+      ethPrice: 0,
+      tokens: [],
+      txs: [],
+      pendingTxs: [],
+    } as Wallet;
 
-    if (infoString) {
-      const info = JSON.parse(infoString);
-
-      // TODO: select different wallet
-      // 1. build basic wallet
-      const wallet: Wallet = {
-        address: info[0].address,
-        name: info[0].name,
-        balance: 0,
-        balanceInUSD: 0,
-        gasLimit: GAS_LIMIT,
-        ethPrice: 0,
-        tokens: [],
-        txs: [],
-        pendingTxs: [],
-      };
-
-      // 2. add tokens
-      for (const tokenData of SupportedTokens) {
-        const token = new Token(tokenData.name,
-          tokenData.icon, tokenData.symbol,
-          tokenData.address, wallet.address, tokenData.decimals);
-        wallet.tokens.push(token);
-      }
-
-      this.wallet = wallet;
-
-      return wallet;
-    } else {
-      return null;
+    // Initalize the json
+    for (const tokenData of SupportedTokens) {
+      const token = new Token(tokenData.name,
+        tokenData.icon, tokenData.symbol,
+        tokenData.address, this.wallet.address, tokenData.decimals);
+      this.wallet.tokens.push(token);
     }
-  }
+    // Save the JSOn in a secure KeyChain
+    await saveItem(WALLET_JSON_KEY, JSON.stringify(walletJson));
 
+  }
   public async getSeed(password) {
-    const infoString = await readItem('wallets');
+    const infoString = await readItem(WALLET_JSON_KEY);
 
     if (infoString) {
       const info = JSON.parse(infoString);
-      console.log(info[0]);
-
       try {
-        const seed = unlock(info[0].v3, password, true);
+        const seed = unlock(info, password, true);
         return seed;
       } catch (e) {
         return null;
@@ -89,18 +84,15 @@ export class WalletService {
     }
   }
 
-  public async getWalletJson(password) {
-    const infoString = await readItem('wallets');
+  public async getWalletJson(password): Promise<object | null> {
+    const jsonString = await readItem(WALLET_JSON_KEY);
 
-    if (infoString) {
-      const info = JSON.parse(infoString);
-      console.log(info[0]);
-
+    if (jsonString) {
+      const json = JSON.parse(jsonString);
       try {
-        const seed = unlock(info[0].v3, password, true);
+        const seed = unlock(jsonString, password, true); // TODO, the result shall be directly the infostring
         console.log('seed: ', seed);
-
-        return info[0].v3;
+        return json;
       } catch (e) {
         return null;
       }
@@ -112,40 +104,21 @@ export class WalletService {
   public async importV3Wallet(name, json, password) {
     const wallet = await EthJs.fromV3(json, password);
     if (wallet) {
-      const keyString = JSON.stringify(json);
-      const address = addressFromJSONString(keyString);
-      const info = [
-        { address, name, v3: keyString },
-      ];
-
+      const address = addressFromJSON(json);
       // check if address equals.
       if (wallet.getAddressString() === `0x${json.address}`) {
-        const infoString = JSON.stringify(info);
-        this.wallet = { address, name } as Wallet;
-        await saveItem('wallets', infoString);
+        this.initializeWallet(name, address, json);
         return true;
       }
     }
     return false;
   }
 
-  public async generateV3Wallet(name, passphrase, options) {
+  public async generateV3Wallet(name, password) {
     const wallet = await EthJs.generate();
-    const json = await wallet.toV3(passphrase, { kdf: 'pbkdf2', c: 10240 });
-
-    if (options.persistence) {
-      const keyString = JSON.stringify(json);
-      const address = addressFromJSONString(keyString);
-      const info = [
-        { address, name, v3: keyString },
-      ];
-      const infoString = JSON.stringify(info);
-
-      this.wallet = { address, name } as Wallet;
-
-      await saveItem('wallets', infoString);
-    }
-
+    const json = await wallet.toV3(password, { kdf: 'pbkdf2', c: 10240 });
+    const address = addressFromJSON(json);
+    this.initializeWallet(name, address, json);
     return json;
   }
 

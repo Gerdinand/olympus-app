@@ -7,10 +7,9 @@ function decipherBuffer(decipher, data) {
   return Buffer.concat([decipher.update(data), decipher.final()]);
 }
 
-export function addressFromJSONString(jsonString) {
+export function addressFromJSON(walletJson) {
   try {
-    const keyObj = JSON.parse(jsonString);
-    const address = keyObj.address;
+    const address = walletJson.address;
     if (address === undefined || address === '') {
       throw new Error('Invalid keystore format');
     }

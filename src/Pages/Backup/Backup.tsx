@@ -63,10 +63,10 @@ export default class Backup extends React.PureComponent<InternalProps, InternalS
                 if (_.state.password != null && _.state.password.length !== 0) {
                   this.setState({ unlockButtonDisable: true });
                   const v3json = await WalletService.getInstance().getWalletJson(_.state.password);
-                  // console.log(v3json);
+                  // console.log('Backup JSON', v3json);
                   this.setState({ unlockButtonDisable: false });
                   if (v3json) {
-                    this.setState({ walletJson: v3json });
+                    this.setState({ walletJson: JSON.stringify(v3json) });
                     return;
                   }
                 }
@@ -85,17 +85,12 @@ export default class Backup extends React.PureComponent<InternalProps, InternalS
             }}
           >
             <Text style={styles.h1}> Notice</Text>
-            <Text
-              style={{
-                marginTop: 12,
-              }}
-            >
+            <Text style={{ marginTop: 12 }} >
               Please make sure you are alone without any camera around.
 
               Save the keystore to a safe place, offline is even better.
               Don't take screenshots or photos to save your keystore file.
               Don't send the keystore file through internet.
-
             </Text>
           </View>
           <Hr />
