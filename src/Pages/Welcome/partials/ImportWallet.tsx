@@ -17,9 +17,6 @@ import { PasswordInput } from '../../_shared/inputs';
 import WalletActions from '../../Wallet/WalletActions';
 import { Wallet } from '../../../Models';
 
-interface ReduxProps {
-  walletRestored: () => void;
-}
 interface InternalState {
   name: string | null;
   password: string | null;
@@ -118,7 +115,10 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     // If we import the wallet, we understand was backuped
-    walletRestored: () => dispatch(WalletActions.setWalletBackUpDone()),
+    setWallet: (wallet: Wallet) => {
+      dispatch(WalletActions.setWalletBackUpDone());
+      dispatch(WalletActions.updateWalletRedux(wallet));
+    },
   };
 };
 

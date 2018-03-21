@@ -12,7 +12,7 @@ import { Column, Text, Margin } from '../_shared/layout';
 import { Button } from 'react-native-elements';
 import { EventRegister } from 'react-native-event-listeners';
 import WalletActions from '../Wallet/WalletActions';
-import { AppState } from '../../Store';
+import { AppState } from '../../reducer';
 
 interface InternalProps {
   navigation: any;
