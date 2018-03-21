@@ -13,7 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
 import { Row } from '../../_shared/layout';
-import { AppState } from '../../../Store';
+import { AppState } from '../../../reducer';
 import WalletActions from '../WalletActions';
 
 interface OwnProps {

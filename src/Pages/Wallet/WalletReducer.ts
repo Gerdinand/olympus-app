@@ -1,28 +1,48 @@
 import WalletActions from './WalletActions';
 
+import { Wallet } from '../../Models';
+
 export interface WalletState {
   balanceVisibility: boolean;
   warningBackUpDone: boolean;
+  wallet: Wallet;
 }
 
 const initialWalletState: WalletState = {
   balanceVisibility: true,
   warningBackUpDone: false,
+  wallet: null,
 };
 
-export const walletReducer = (state: WalletState = initialWalletState, action: { type: string, payload: any }) => {
-  // For testing
-  console.log(state, action.type, action.payload);
+export const walletReducer = (state: WalletState = initialWalletState, action) => {
+  // Log in main reducer for testing
+  console.log('REDUCER ', state, action.type, action.payload);
+
   switch (action.type) {
+
     case WalletActions.BALANCE_VISIBILITY:
-      return {
-        ...state,
-        balanceVisibility: !state.balanceVisibility,
-      };
+      return { ...state, balanceVisibility: !state.balanceVisibility };
+
     case WalletActions.BACKUP_DONE: return { ...state, warningBackUpDone: true };
+
     case WalletActions.LOGOUT: return initialWalletState;
+
+    case WalletActions.UPDATE_WALLET: {
+      return { ...state, wallet: cloneWallet(action.payload) };
+    }
 
     default:
       return state;
   }
+};
+
+const cloneWallet = (wallet: Wallet): Wallet => {
+  if (!wallet) { return null; }
+
+  return {
+    ...wallet,
+    txs: [...wallet.txs], // logs is nested array, change in log wont update the wallet
+    tokens: [...wallet.tokens],
+    pendingTxs: [...wallet.pendingTxs],
+  };
 };

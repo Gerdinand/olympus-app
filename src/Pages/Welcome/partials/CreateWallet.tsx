@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   View,
-  AsyncStorage,
   ScrollView,
 } from 'react-native';
 import {
@@ -12,10 +11,11 @@ import {
   FormValidationMessage,
   Button,
 } from 'react-native-elements';
-import { EventRegister } from 'react-native-event-listeners';
-
+import { connect } from 'react-redux';
 import { WalletService } from '../../../Services';
 import { PasswordInput } from '../../_shared/inputs';
+import { Wallet } from '../../../Models';
+import WalletActions from '../../Wallet/WalletActions';
 
 interface InternalState {
   name: string | null;
@@ -26,7 +26,10 @@ interface InternalState {
   passwordErrorMessage2: string | null;
 }
 
-export default class CreateWalletView extends React.Component<null, InternalState> {
+interface ReduxProps {
+  setWallet: (wallet: Wallet) => void;
+}
+class CreateWalletView extends React.Component<ReduxProps, InternalState> {
 
   private eth: WalletService;
 
@@ -73,21 +76,18 @@ export default class CreateWalletView extends React.Component<null, InternalStat
 
   private async createWallet() {
 
-    {
-      if (this.isValidate()) {
-        const name = this.state.name;
-        const password = this.state.password1;
-        try {
-          await this.eth.generateV3Wallet(name, password, { persistence: true });
-          await AsyncStorage.setItem('used', 'true');
-          const wallet = await WalletService.getInstance().getActiveWallet();
-          EventRegister.emit('hasWallet', wallet);
-        } catch (e) {
-          console.error(e);
-        }
+    if (this.isValidate()) {
+      const name = this.state.name;
+      const password = this.state.password1;
+      try {
+        /*const json = */
+        await this.eth.generateV3Wallet(name, password);
+        const wallet = await WalletService.getInstance().wallet;
+        this.props.setWallet(wallet);
+      } catch (e) {
+        console.error(e);
       }
     }
-
   }
 
   public render() {
@@ -135,3 +135,10 @@ export default class CreateWalletView extends React.Component<null, InternalStat
     );
   }
 }
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setWallet: (wallet: Wallet) => dispatch(WalletActions.updateWalletRedux(wallet)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(CreateWalletView);

@@ -17,7 +17,8 @@ import {
 import { EventRegister } from 'react-native-event-listeners';
 import WalletHeader from './partials/WalletHeader';
 import { WalletService, EthereumService } from '../../Services';
-import { AppState } from '../../Store';
+import { AppState } from '../../reducer';
+import { Wallet } from '../../Models';
 import { Text } from '../_shared/layout/Text';
 
 interface OwnProps {
@@ -28,6 +29,7 @@ interface ReduxProps {
   balanceVisibility: boolean;
   newWalletWarning: boolean;
   walletWarningDisplayed: () => void;
+  previousWallet: Wallet;
 }
 
 interface InternalState {
@@ -38,16 +40,16 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
 
   private walletListener;
 
-  public constructor(props) {
+  public constructor(props: ReduxProps & OwnProps) {
     super(props);
 
     this.walletListener = null;
 
+    // Wallet is manage from the state, but we retreive from redux the storage wallet on starting
     this.state = {
-      wallet: null,
-      refreshing: false,
+      wallet: props.previousWallet,
+      refreshing: EthereumService.getInstance().isWalletSyncing,
     };
-
     this.fetchData = this.fetchData.bind(this);
   }
 
@@ -81,21 +83,24 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
     EthereumService.getInstance().sync(WalletService.getInstance().wallet);
   }
 
-  private _onRefresh() {
+  private onRefresh() {
     this.setState({ refreshing: true });
     this.fetchData();
   }
 
   public render() {
     const { navigation } = this.props;
-
+    // Safeward, when logout and component didn amount properly
+    if (!this.state.wallet) {
+      return null;
+    }
     return (
       <ScrollView
         style={{ backgroundColor: 'white' }}
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh.bind(this)}
+            onRefresh={() => this.onRefresh()}
           />
         }
       >
@@ -113,6 +118,7 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
           containerStyle={styles.listContainer}
         >
           {this.state.wallet.tokens.filter((token) => !!token).map((token, i) => {
+            // Ether and tokens with no price have different style
             if (i === 0 || token.price === 0) {
               return (
                 <ListItem
@@ -155,6 +161,7 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
                 avatarStyle={styles.itemAvatar}
               />);
           })}
+
         </List>
       </ScrollView>
     );
@@ -165,6 +172,7 @@ const mapReduxStateToProps = (state: AppState) => {
   return {
     balanceVisibility: state.wallet.balanceVisibility,
     newWalletWarning: state.wallet.warningBackUpDone,
+    previousWallet: state.wallet.wallet,
   };
 };
 const mergeProps = (reduxProps, dispatchProps, ownProps) => {

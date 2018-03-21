@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   View,
-  AsyncStorage,
   ScrollView,
   DeviceEventEmitter,
 } from 'react-native';
@@ -12,12 +11,11 @@ import {
   FormInput,
   Button,
 } from 'react-native-elements';
-import { EventRegister } from 'react-native-event-listeners';
-
-import { WalletService } from '../../../Services';
+import { connect } from 'react-redux';
+import { WalletService, EthereumService } from '../../../Services';
 import { PasswordInput } from '../../_shared/inputs';
 import WalletActions from '../../Wallet/WalletActions';
-import { connect } from 'react-redux';
+import { Wallet } from '../../../Models';
 
 interface ReduxProps {
   walletRestored: () => void;
@@ -28,6 +26,10 @@ interface InternalState {
   json: string;
   importDisable: boolean;
   importButtonName: string;
+}
+
+interface ReduxProps {
+  setWallet: (wallet: Wallet) => void;
 }
 class ImportWalletView extends React.Component<ReduxProps, InternalState> {
 
@@ -65,10 +67,11 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
           if (!done) {
             throw new Error();
           }
-          // await AsyncStorage.setItem('used', 'true');
-          const wallet = await WalletService.getInstance().getActiveWallet();
-          await AsyncStorage.setItem('used', 'true');
-          EventRegister.emit('hasWallet', wallet);
+          // Order of the calls matter
+          const wallet = await WalletService.getInstance().wallet;
+          EthereumService.getInstance().sync(wallet);
+          this.props.setWallet(wallet);
+
         } catch (e) {
           this.setState({ importButtonName: 'Import', importDisable: false });
           DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');

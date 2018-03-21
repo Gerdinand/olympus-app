@@ -13,8 +13,7 @@ import {
 } from 'react-native-elements';
 import { connect } from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
-import { removeItem } from '../../Utils/KeyStore';
-import { EventRegister } from 'react-native-event-listeners';
+
 import { WalletService, EthereumService } from '../../Services';
 import WalletActions from '../Wallet/WalletActions';
 
@@ -61,9 +60,11 @@ const destructiveButtonIndex = 0;
 interface InternalProps {
   navigation: any; // Navigation Object
 }
+
 interface ReduxProps {
   logout: () => void;
 }
+
 class MeView extends React.Component<InternalProps & ReduxProps> {
 
   public refs = {
@@ -107,8 +108,6 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
     if (0 === buttonIndex) {
       EthereumService.getInstance().invalidateTimer();
       WalletService.getInstance().resetActiveWallet();
-      removeItem('wallets');
-      EventRegister.emit('hasWallet', false);
       this.props.logout();
     }
   }
