@@ -4,6 +4,7 @@ import React from 'react';
 import {
   ScrollView,
   Linking,
+  View,
   // ActionSheetIOS,
 } from 'react-native';
 import {
@@ -95,21 +96,8 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
       }
     } else if (list === list4) {
       if (index === 0) {
-        // logout
-        // let _ = this;
+        // sign out
         this.refs.actionSheet.show();
-        /* ActionSheetIOS.showActionSheetWithOptions({
-          options: ['Sign out', 'Cancel'],
-          destructiveButtonIndex: 0,
-          cancelButtonIndex: 1,
-        }, (buttonIndex) => {
-          if (0 === buttonIndex) {
-            EthereumService.getInstance().invalidateTimer();
-            WalletService.getInstance().resetActiveWallet();
-            removeItem('wallets');
-            EventRegister.emit('hasWallet', false);
-          }
-        }); */
       }
     }
   }
@@ -125,6 +113,38 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
     }
   }
 
+  private renderLogout() {
+    if (!__DEV__) {
+      return null;
+    }
+    // Only for local testing
+    return (
+      <View>
+        <List>
+          {
+            list4.map((l, i) => (
+              <ListItem
+                key={i}
+                leftIcon={l.icon}
+                title={l.title}
+                onPress={() => {
+                  this.onPress(list4, i);
+                }}
+              />
+            ))
+          }
+        </List>
+        <ActionSheet
+          ref="actionSheet"
+          title={''}
+          options={options}
+          cancelButtonIndex={CANCEL_INDEX}
+          destructiveButtonIndex={destructiveButtonIndex}
+          onPress={(buttonIndex) => this.actionSheetHandle(buttonIndex)}
+        />
+      </View>
+    );
+  }
   public render() {
     return (
       <ScrollView style={{ backgroundColor: '#F5F5F5' }}>
@@ -170,29 +190,8 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
             ))
           }
         </List>
-        <List>
-          {
-            list4.map((l, i) => (
-              <ListItem
-                key={i}
-                leftIcon={l.icon}
-                title={l.title}
-                onPress={() => {
-                  this.onPress(list4, i);
-                }}
-              />
-            ))
-          }
-        </List>
-        <ActionSheet
-          ref="actionSheet"
-          title={''}
-          options={options}
-          cancelButtonIndex={CANCEL_INDEX}
-          destructiveButtonIndex={destructiveButtonIndex}
-          onPress={(buttonIndex) => this.actionSheetHandle(buttonIndex)}
-        />
-      </ScrollView>
+        {this.renderLogout()}
+      </ScrollView >
     );
   }
 }

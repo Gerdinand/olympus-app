@@ -17,6 +17,8 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "@types/react-redux": "^5.0.15",
+    "@types/redux": "^3.6.0",
     "abi-decoder": "^1.0.9",
     "assert": "^1.4.1",
     "bignumber.js": "^6.0.0",
@@ -43,7 +45,7 @@
     "react-native-camera": "^0.12.0",
     "react-native-crypto": "^2.1.1",
     "react-native-easy-toast": "^1.0.9",
-    "react-native-elements": "^0.18.4",
+    "react-native-elements": "^0.19.0",
     "react-native-event-listeners": "^1.0.3",
     "react-native-fast-crypto": "^1.2.4",
     "react-native-fingerprint-scanner": "^2.3.2",
