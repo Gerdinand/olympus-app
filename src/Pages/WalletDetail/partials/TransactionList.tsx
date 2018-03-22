@@ -31,11 +31,10 @@ export class TransactionList extends PureComponent<InternalProps> {
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
-  private getTransactionInformation(tx: Tx): { isSending: boolean, tokenAmount: any } {
+  private getTransactionInformation(tx: Tx): { isSending: boolean, tokenAmount: any, isExchange: boolean } {
 
     let isSending;
     let tokenAmount;
-
     // No logs case
     if (!tx.logs || tx.logs.length === 0) {
       return {
@@ -44,6 +43,7 @@ export class TransactionList extends PureComponent<InternalProps> {
             tx.input.srcToken.symbol === this.props.token.symbol : // In a case of a exchange that fails, with no logs
             tx.from === this.props.token.ownerAddress, // in last situation where there are no more hints
         tokenAmount: this.amountfromInputAmount(tx) || tx.value, // input amount is better, in few cases is undefined,
+        isExchange: typeof tx.input !== 'string' ? true : false,
       };
     }
 
@@ -59,7 +59,7 @@ export class TransactionList extends PureComponent<InternalProps> {
         isSending = true;
         tokenAmount = trade.events.find((evt) => evt.name === 'actualSrcAmount').value;
       }
-      return { isSending, tokenAmount };
+      return { isSending, tokenAmount, isExchange: true };
     }
     // Second scenario is trade
     if (trade && typeof tx.input !== 'string') {
@@ -68,12 +68,13 @@ export class TransactionList extends PureComponent<InternalProps> {
         (tx.input.srcToken && tx.input.srcToken.symbol === this.props.token.symbol);
       const eventAmountKey = isSending ? 'actualSrcAmount' : 'actualDestAmount';
       tokenAmount = trade.events.find((evt) => evt.name === eventAmountKey).value;
-      return { isSending, tokenAmount };
+      return { isSending, tokenAmount, isExchange: true };
     }
     // Final case
     return {
       tokenAmount: this.amountfromInputAmount(tx),
       isSending: tx.from === this.props.token.ownerAddress,
+      isExchange: false,
     };
 
   }
@@ -94,15 +95,20 @@ export class TransactionList extends PureComponent<InternalProps> {
       return null;
     }
 
-    const { isSending, tokenAmount } = this.getTransactionInformation(tx);
+    const { isSending, tokenAmount, isExchange } = this.getTransactionInformation(tx);
     const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
 
     const dest = this.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
     const direction = isSending ? '-' : '+';
+    const avatar = isExchange ?
+      require('../../../../images/exchange.png') // is transfer (recived or send)
+      : isSending ? require('../../../../images/flow-out.png') // is send
+        : require('../../../../images/flow-in.png'); // Is recived
+
     return (
       <ListItem
-        avatar={isSending ? require('../../../../images/flow-out.png') : require('../../../../images/flow-in.png')}
+        avatar={avatar}
         avatarStyle={{ width: 20, height: 20 }}
         avatarOverlayContainerStyle={{ backgroundColor: 'rgba(0,0,0,0)' }}
         avatarContainerStyle={

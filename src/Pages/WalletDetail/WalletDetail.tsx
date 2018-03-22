@@ -185,6 +185,11 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     const exchangeType = this.state.exchangeType;
     const ETHBalance = wallet.tokens.find((token) => token.address === Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
+      // In case of eth, there is no input object
+      if (this.state.token.address === Constants.ETHER_ADDRESS) {
+        return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
+          && ((typeof tx.input === 'string') || tx.input.destToken.symbol === Constants.ETH);
+      }
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
         && (typeof tx.input === 'object')
@@ -240,12 +245,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       this.setState({ exchangeType: ExchangeType.TOKEN_TO_ETH, exchangeModalVisible: true, balance });
     }
   }
-
-  // TODO not in use?
-  public formatAddress(address) {
-    return address.replace(/(0x.{6}).{29}/, '$1****');
-  }
-
   public onTapMax() {
 
     const sendAmount = this.getMaxBalance(this.state.gasFee).toString();
@@ -358,7 +357,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           this.state.token.ownerAddress,
           this.state.gasPrice.toString(),
         ) as Tx;
-
         try {
           await EthereumService.getInstance().sendTx(approveTx, privateKey);
 

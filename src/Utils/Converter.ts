@@ -110,10 +110,14 @@ export function restrictTextToNumber(text: string): { text: string, textCorrect:
 }
 
 export function filterStringLessThanNumber(value: string, max: number) {
-
-  if (value === '' || value === '.' || (/^(\d)*\.(0+)?$/.test(value)) || !Number(value)) {
-    return value; // The cast would return no decimals, but that could be annoying
-  }
+  const numberDotZeros = /^(\d)*\.(0+)?$/; // 1.000
+  const numberDotDecimalZeros = /^(\d)*\.(\d)*(0+)?$/;
+  if (value === ''
+    || value === '.'
+    || (numberDotZeros.test(value))
+    || numberDotDecimalZeros.test(value)) { // !Number(value)) {
+    return value;
+  } // The cast would return no decimals, but that could be annoying
 
   return Math.min(Number(value), max).toString();
 }
