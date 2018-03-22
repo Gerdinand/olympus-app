@@ -3,8 +3,10 @@
 import '../../shim.js';
 
 import { asyncRandomBytes } from 'react-native-secure-randombytes';
+import safeCrypto from 'react-native-safe-crypto';
 declare var window: any;
 window.randomBytes = asyncRandomBytes;
+window.scryptsy = safeCrypto.scrypt;
 
 import EthJs from 'ethereumjs-wallet-react-native';
 
@@ -14,6 +16,7 @@ import { SupportedTokens, GAS_LIMIT } from '../Constants/index.js';
 import { Token, Wallet } from '../Models/index.js';
 
 const WALLET_JSON_KEY = 'walletJson';
+const V3_WALLET_CRYPTO_OPTS = { kdf: 'pbkdf2', c: 10240 };
 export class WalletService {
 
   public wallet: Wallet;
@@ -116,10 +119,26 @@ export class WalletService {
 
   public async generateV3Wallet(name, password) {
     const wallet = await EthJs.generate();
-    const json = await wallet.toV3(password, { kdf: 'pbkdf2', c: 10240 });
+    const json = await wallet.toV3(password, V3_WALLET_CRYPTO_OPTS);
     const address = addressFromJSON(json);
     this.initializeWallet(name, address, json);
     return json;
+  }
+
+  public async HDKeyToV3Wallet(hdWallet, walletPassword) {
+    try {
+      const v3Wallet = await hdWallet.toV3(walletPassword, V3_WALLET_CRYPTO_OPTS);
+      // Guard for if something went wrong with the conversion to v3
+      if (!v3Wallet) {
+        return false;
+      }
+      const address = addressFromJSON(v3Wallet);
+      this.initializeWallet('Name is to be removed', address, v3Wallet);
+    } catch (e) {
+      console.error(e); // TODO, sentry
+      return false;
+    }
+    return true;
   }
 
 }
