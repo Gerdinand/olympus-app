@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 
-import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
@@ -28,7 +28,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
 import WalletSuccess from './Pages/WalletSuccess/WalletSuccess';
 
-const TabsNavigator = TabNavigator(
+const TabRoot = TabNavigator(
   {
     WalletTab: {
       screen: WalletTab,
@@ -92,9 +92,9 @@ const TabsNavigator = TabNavigator(
   },
 );
 
-const RootNavigation = TabsNavigator({
+const RootNavigation = StackNavigator({
   tabs: {
-    screen: TabsNavigator, navigationOptions: { header: null },
+    screen: TabRoot, navigationOptions: { header: null },
   },
   WalletSuccess: {
     screen: WalletSuccess,
