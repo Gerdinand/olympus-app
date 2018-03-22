@@ -185,6 +185,11 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     const exchangeType = this.state.exchangeType;
     const ETHBalance = wallet.tokens.find((token) => token.address === Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
+      // In case of eth, there is no input object
+      if (this.state.token.address === Constants.ETHER_ADDRESS) {
+        return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
+          && (typeof tx.input === 'string');
+      }
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
         && (typeof tx.input === 'object')
@@ -352,7 +357,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           this.state.token.ownerAddress,
           this.state.gasPrice.toString(),
         ) as Tx;
-
         try {
           await EthereumService.getInstance().sendTx(approveTx, privateKey);
 
