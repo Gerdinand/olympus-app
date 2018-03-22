@@ -188,7 +188,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       // In case of eth, there is no input object
       if (this.state.token.address === Constants.ETHER_ADDRESS) {
         return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
-          && (typeof tx.input === 'string');
+          && ((typeof tx.input === 'string') || tx.input.destToken.symbol === Constants.ETH);
       }
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)

@@ -807,6 +807,8 @@ export const KYBER_WALLET_DATA = '6060604052600a600655640ba43b7400600c556001600d
 export const EPSILON = 1000;
 export const RATE_EPSILON = 0.002;
 export const ETHER_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+export const ETH = 'ETH';
+
 // ropsten
 export const KYBER_NETWORK_ADDRESS = '0x65b1faad1b4d331fd0ea2a50d5be2c20abe42e50';
 export const TRADE_TOPIC = '0xec0d3e799aa270a144d7e3be084ccfc657450e33ecea1b1a4154c95cedaae5c3';
