@@ -21,9 +21,14 @@ import { AppState } from '../../reducer';
 import { Wallet } from '../../Models';
 import { Text } from '../_shared/layout/Text';
 
-interface InternalProps {
+interface OwnProps {
   navigation: any;
+
+}
+interface ReduxProps {
   balanceVisibility: boolean;
+  newWalletWarning: boolean;
+  walletWarningDisplayed: () => void;
   previousWallet: Wallet;
 }
 
@@ -31,11 +36,11 @@ interface InternalState {
   wallet: any; // TODO object?
   refreshing: boolean;
 }
-class WalletView extends React.Component<InternalProps, InternalState> {
+class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
 
   private walletListener;
 
-  public constructor(props: InternalProps) {
+  public constructor(props: ReduxProps & OwnProps) {
     super(props);
 
     this.walletListener = null;
@@ -49,6 +54,7 @@ class WalletView extends React.Component<InternalProps, InternalState> {
   }
 
   public componentWillMount() {
+
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
       if (this.state.wallet.length && wallet.txs.length !== this.state.wallet.length) {
         DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');
@@ -68,6 +74,11 @@ class WalletView extends React.Component<InternalProps, InternalState> {
     EventRegister.removeEventListener(this.walletListener);
   }
 
+  public componentDidMount() {
+    if (!this.props.newWalletWarning) {
+      this.props.navigation.navigate('WalletSuccess');
+    }
+  }
   private fetchData() {
     EthereumService.getInstance().sync(WalletService.getInstance().wallet);
   }
@@ -160,12 +171,12 @@ class WalletView extends React.Component<InternalProps, InternalState> {
 const mapReduxStateToProps = (state: AppState) => {
   return {
     balanceVisibility: state.wallet.balanceVisibility,
+    newWalletWarning: state.wallet.warningBackUpDone,
     previousWallet: state.wallet.wallet,
   };
 };
-
-const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
-  return { ...ownProps, ...reduxStatePros, ...dispatchProps };
+const mergeProps = (reduxProps, dispatchProps, ownProps) => {
+  return { ...reduxProps, ...dispatchProps, ...ownProps };
 };
 
 export default connect(mapReduxStateToProps, null, mergeProps)(WalletView);
@@ -185,7 +196,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginLeft: 10,
-    marginRight: 5,
+    marginRight: 6,
   },
   itemAvatar: {
     backgroundColor: 'white',

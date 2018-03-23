@@ -14,7 +14,7 @@ import {
 import { connect } from 'react-redux';
 import { WalletService, EthereumService } from '../../../Services';
 import { PasswordInput } from '../../_shared/inputs';
-import { updateWalletRedux } from '../../Wallet/WalletActions';
+import WalletActions from '../../Wallet/WalletActions';
 import { Wallet } from '../../../Models';
 
 interface InternalState {
@@ -46,8 +46,44 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
     };
   }
 
+  private importWallet() {
+    this.setState({
+      importButtonName: 'Importing...',
+      importDisable: true,
+    });
+    if (this.state.name != null &&
+      this.state.name.length !== 0 &&
+      this.state.password != null &&
+      this.state.password.length !== 0 &&
+      this.state.json != null &&
+      this.state.json.length !== 0) {
+      setTimeout(async () => {
+        try {
+          const done = await WalletService.getInstance()
+            .importV3Wallet(this.state.name, JSON.parse(this.state.json), this.state.password);
+          if (!done) {
+            throw new Error();
+          }
+          // Order of the calls matter
+          const wallet = await WalletService.getInstance().wallet;
+          EthereumService.getInstance().sync(wallet);
+          this.props.setWallet(wallet);
+
+        } catch (e) {
+          this.setState({ importButtonName: 'Import', importDisable: false });
+          DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
+        }
+      }, 100);
+    } else {
+      setTimeout(() => {
+        this.setState({ importButtonName: 'Import', importDisable: false });
+        DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
+      }, 1000);
+    }
+
+  }
+
   public render() {
-    const _ = this;
 
     return (
       <ScrollView keyboardShouldPersistTaps={'handled'}>
@@ -63,59 +99,26 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
           inputStyle={{ width: '100%', height: 150 }}
           onChangeText={(json) => this.setState({ json })}
         />
-        <View
-          style={{
-            padding: 10,
-          }}
-        >
+        <View style={{ padding: 10 }}>
           <Button
             buttonStyle={{ backgroundColor: '#5589FF' }}
             title={this.state.importButtonName}
             disabled={this.state.importDisable}
-            onPress={() => {
-              _.setState({
-                importButtonName: 'Importing...',
-                importDisable: true,
-              });
-              if (_.state.name != null &&
-                _.state.name.length !== 0 &&
-                _.state.password != null &&
-                _.state.password.length !== 0 &&
-                _.state.json != null &&
-                _.state.json.length !== 0) {
-                setTimeout(async () => {
-                  try {
-                    const done = await WalletService.getInstance()
-                      .importV3Wallet(_.state.name, JSON.parse(_.state.json), _.state.password);
-                    if (!done) {
-                      throw new Error();
-                    }
-                    // Order of the calls matter
-                    const wallet = await WalletService.getInstance().wallet;
-                    EthereumService.getInstance().sync(wallet);
-                    this.props.setWallet(wallet);
-
-                  } catch (e) {
-                    _.setState({ importButtonName: 'Import', importDisable: false });
-                    DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
-                  }
-                }, 100);
-              } else {
-                setTimeout(() => {
-                  _.setState({ importButtonName: 'Import', importDisable: false });
-                  DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
-                }, 1000);
-              }
-            }}
+            onPress={() => this.importWallet()}
           />
         </View>
       </ScrollView>
     );
   }
 }
+
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    setWallet: (wallet: Wallet) => dispatch(updateWalletRedux(wallet)),
+    // If we import the wallet, we understand was backuped
+    setWallet: (wallet: Wallet) => {
+      dispatch(WalletActions.setWalletBackUpDone());
+      dispatch(WalletActions.updateWalletRedux(wallet));
+    },
   };
 };
 

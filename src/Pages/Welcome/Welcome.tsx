@@ -58,6 +58,7 @@ const WelcomeNav = StackNavigator({
   Home: { screen: WelcomeView },
   CreateWallet: { screen: CreateWalletView },
   ImportWallet: { screen: ImportWalletView },
+
 }, { cardStyle: { backgroundColor: 'white' } });
 
 export default WelcomeNav;

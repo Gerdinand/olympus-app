@@ -39,7 +39,6 @@ export default class Backup extends React.PureComponent<InternalProps, InternalS
   }
 
   public render() {
-    const _ = this;
 
     return (
       <View>
@@ -60,9 +59,9 @@ export default class Backup extends React.PureComponent<InternalProps, InternalS
               title={'Unlock'}
               disabled={this.state.unlockButtonDisable}
               onPress={async () => {
-                if (_.state.password != null && _.state.password.length !== 0) {
+                if (this.state.password != null && this.state.password.length !== 0) {
                   this.setState({ unlockButtonDisable: true });
-                  const v3json = await WalletService.getInstance().getWalletJson(_.state.password);
+                  const v3json = await WalletService.getInstance().getWalletJson(this.state.password);
                   // console.log('Backup JSON', v3json);
                   this.setState({ unlockButtonDisable: false });
                   if (v3json) {

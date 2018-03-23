@@ -12,52 +12,53 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 
-import { TabNavigator } from 'react-navigation';
+import { TabNavigator, StackNavigator } from 'react-navigation';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import LoginGesture from './Pages/Security/LoginGesture';
+import WalletSuccess from './Pages/WalletSuccess/WalletSuccess';
+
 import { store, persistor, AppState as ReducerState } from './reducer';
 import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
 import { Wallet } from './Models';
 import { WalletService } from './Services';
 
-const RootNavigation = TabNavigator(
-  {
-    WalletTab: {
-      screen: WalletTab,
-      path: '/wallet',
-      navigationOptions: {
-        tabBarLabel: 'Wallet',
-        tabBarIcon: ({ tintColor }) => (
-          <Image source={require('../images/wallet.png')} style={{ tintColor }} />
-        ),
-      },
-    },
-    MarketTab: {
-      screen: MarketTab,
-      path: '/market',
-      navigationOptions: {
-        tabBarLabel: 'Market',
-        tabBarIcon: ({ tintColor }) => (
-          <Image source={require('../images/market.png')} style={{ tintColor }} />
-        ),
-      },
-    },
-    MeTab: {
-      screen: MeTab,
-      path: '/me',
-      navigationOptions: {
-        tabBarLabel: 'Me',
-        tabBarIcon: ({ tintColor }) => (
-          <Image source={require('../images/me.png')} style={{ tintColor }} />
-        ),
-      },
+const TabRoot = TabNavigator({
+  WalletTab: {
+    screen: WalletTab,
+    path: '/wallet',
+    navigationOptions: {
+      tabBarLabel: 'Wallet',
+      tabBarIcon: ({ tintColor }) => (
+        <Image source={require('../images/wallet.png')} style={{ tintColor }} />
+      ),
     },
   },
+  MarketTab: {
+    screen: MarketTab,
+    path: '/market',
+    navigationOptions: {
+      tabBarLabel: 'Market',
+      tabBarIcon: ({ tintColor }) => (
+        <Image source={require('../images/market.png')} style={{ tintColor }} />
+      ),
+    },
+  },
+  MeTab: {
+    screen: MeTab,
+    path: '/me',
+    navigationOptions: {
+      tabBarLabel: 'Me',
+      tabBarIcon: ({ tintColor }) => (
+        <Image source={require('../images/me.png')} style={{ tintColor }} />
+      ),
+    },
+  },
+},
   {
     initialRouteName: 'WalletTab',
     animationEnabled: false,
@@ -68,6 +69,19 @@ const RootNavigation = TabNavigator(
   },
 );
 
+const RootNavigation = StackNavigator({
+  tabs: {
+    screen: TabRoot, navigationOptions: { header: null },
+  },
+  WalletSuccess: {
+    screen: WalletSuccess,
+    path: '/confirmation',
+    navigationOptions: {
+      headerLeft: null,
+      title: 'Wallet Success',
+    },
+  },
+});
 interface InternalProps {
   wallet: Wallet;
 }

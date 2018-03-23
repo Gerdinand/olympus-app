@@ -11,12 +11,11 @@ import {
   List,
   ListItem,
 } from 'react-native-elements';
-
+import { connect } from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
 
 import { WalletService, EthereumService } from '../../Services';
-import { updateWalletRedux } from '../Wallet/WalletActions';
-import { connect } from 'react-redux';
+import WalletActions from '../Wallet/WalletActions';
 
 const list1 = [
   {
@@ -63,7 +62,7 @@ interface InternalProps {
 }
 
 interface ReduxProps {
-  resetWallet: () => void;
+  logout: () => void;
 }
 
 class MeView extends React.Component<InternalProps & ReduxProps> {
@@ -104,11 +103,12 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
     }
   }
 
-  public handlePress(buttonIndex) {
+  public actionSheetHandle(buttonIndex) {
+    // Logout from Actionsheet
     if (0 === buttonIndex) {
       EthereumService.getInstance().invalidateTimer();
       WalletService.getInstance().resetActiveWallet();
-      this.props.resetWallet();
+      this.props.logout();
     }
   }
 
@@ -139,7 +139,7 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
           options={options}
           cancelButtonIndex={CANCEL_INDEX}
           destructiveButtonIndex={destructiveButtonIndex}
-          onPress={(buttonIndex) => this.handlePress(buttonIndex)}
+          onPress={(buttonIndex) => this.actionSheetHandle(buttonIndex)}
         />
       </View>
     );
@@ -190,17 +190,17 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
           }
         </List>
         {this.renderLogout()}
-      </ScrollView>
+      </ScrollView >
     );
   }
 }
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    resetWallet: () => dispatch(updateWalletRedux(null)),
+    logout: () => dispatch(WalletActions.logout()), // If we import the wallet, we understand was backuped
   };
 };
-const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
-  return { ...ownProps, ...reduxStatePros, ...dispatchProps };
+const mergeProps = (reduxProps, dispatchProps, ownProps) => {
+  return { ...reduxProps, ...dispatchProps, ...ownProps };
 };
 export default connect(null, mapDispatchToProps, mergeProps)(MeView);

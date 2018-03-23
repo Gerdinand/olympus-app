@@ -1,20 +1,30 @@
 import { Wallet } from '../../Models';
 
-export const BALANCE_VISIBILITY = 'balance_visibility';
-export const UPDATE_WALLET = 'update_wallet';
+export default class WalletActions {
 
-export const setBalanceVisibility = () => {
-  return {
-    type: BALANCE_VISIBILITY,
-  };
-};
+  public static BALANCE_VISIBILITY = 'balance_visibility';
+  public static BACKUP_DONE = 'backup_done';
+  public static LOGOUT = 'LOGOUT';
+  public static UPDATE_WALLET = 'UPDATE_WALLET';
+  public static setBalanceVisibility() {
+    return {
+      type: this.BALANCE_VISIBILITY,
+    };
+  }
 
-/**
- * @param wallet  Wallet object or null to reset
- */
-export const updateWalletRedux = (wallet: Wallet | null) => {
-  return {
-    type: UPDATE_WALLET,
-    payload: wallet,
-  };
-};
+  public static setWalletBackUpDone() {
+    return { type: this.BACKUP_DONE };
+  }
+
+  // TODO that shall be into AppActions in next loop
+  public static logout() {
+    return { type: this.LOGOUT };
+  }
+
+  /**
+   * @param wallet  Wallet object or null to reset
+   */
+  public static updateWalletRedux(wallet: Wallet | null) {
+    return { type: this.UPDATE_WALLET, payload: wallet };
+  }
+}
