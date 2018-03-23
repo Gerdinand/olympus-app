@@ -12,9 +12,9 @@ import { WalletService } from './WalletService';
 import { decodeTx } from '../Utils';
 import { Wallet } from '../Models/index.js';
 import { Tx } from '../Models/Tx.js';
-import { updateWalletRedux } from '../Pages/Wallet/WalletActions';
 import { store } from '../reducer';
 import { GAS_LIMIT } from '../Constants';
+import WalletActions from '../Pages/Wallet/WalletActions.js';
 
 let BigNumber;
 
@@ -234,7 +234,7 @@ export class EthereumService {
     }
     EventRegister.emit('wallet.updated', wallet);
     // We inform to redux that the wallet has been updated also
-    store.dispatch(updateWalletRedux(wallet));
+    store.dispatch(WalletActions.updateWalletRedux(wallet));
     return wallet;
   }
 

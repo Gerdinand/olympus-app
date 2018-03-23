@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
 import { Row } from '../../_shared/layout';
 import { AppState } from '../../../reducer';
-import { setBalanceVisibility } from '../WalletActions';
+import WalletActions from '../WalletActions';
 
 interface OwnProps {
   name: string;
@@ -89,7 +89,7 @@ const mapReduxStateToProps = (state: AppState) => {
 };
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    changeBalanceVisibility: () => dispatch(setBalanceVisibility()),
+    changeBalanceVisibility: () => dispatch(WalletActions.setBalanceVisibility()),
   };
 };
 

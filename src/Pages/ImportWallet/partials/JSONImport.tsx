@@ -28,6 +28,43 @@ export default class JSONImport extends React.Component<InternalProps, InternalS
     };
   }
 
+  private importWallet() {
+    this.setState({
+      importButtonName: 'Importing...',
+      importDisable: true,
+    });
+    if (this.state.name != null &&
+      this.state.name.length !== 0 &&
+      this.state.password != null &&
+      this.state.password.length !== 0 &&
+      this.state.json != null &&
+      this.state.json.length !== 0) {
+      setTimeout(async () => {
+        try {
+          const done = await WalletService.getInstance()
+            .importV3Wallet(this.state.name, JSON.parse(this.state.json), this.state.password);
+          if (!done) {
+            throw new Error();
+          }
+          // Order of the calls matter
+          const wallet = await WalletService.getInstance().wallet;
+          EthereumService.getInstance().sync(wallet);
+          this.props.setWallet(wallet);
+
+        } catch (e) {
+          this.setState({ importButtonName: 'Import', importDisable: false });
+          DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
+        }
+      }, 100);
+    } else {
+      setTimeout(() => {
+        this.setState({ importButtonName: 'Import', importDisable: false });
+        DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
+      }, 1000);
+    }
+
+  }
+
   public render() {
     return (
       <View>
@@ -43,50 +80,12 @@ export default class JSONImport extends React.Component<InternalProps, InternalS
           inputStyle={{ width: '100%', height: 150 }}
           onChangeText={(json) => this.setState({ json })}
         />
-        <View
-          style={{
-            padding: 10,
-          }}
-        >
+        <View style={{ padding: 10 }}>
           <Button
             buttonStyle={{ backgroundColor: '#5589FF' }}
             title={this.state.importButtonName}
             disabled={this.state.importDisable}
-            onPress={() => {
-              this.setState({
-                importButtonName: 'Importing...',
-                importDisable: true,
-              });
-              if (this.state.name != null &&
-                this.state.name.length !== 0 &&
-                this.state.password != null &&
-                this.state.password.length !== 0 &&
-                this.state.json != null &&
-                this.state.json.length !== 0) {
-                setTimeout(async () => {
-                  try {
-                    const done = await WalletService.getInstance()
-                      .importV3Wallet(this.state.name, JSON.parse(this.state.json), this.state.password);
-                    if (!done) {
-                      throw new Error();
-                    }
-                    // Order of the calls matter
-                    const wallet = await WalletService.getInstance().wallet;
-                    EthereumService.getInstance().sync(wallet);
-                    this.props.setWallet(wallet);
-
-                  } catch (e) {
-                    this.setState({ importButtonName: 'Import', importDisable: false });
-                    DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
-                  }
-                }, 100);
-              } else {
-                setTimeout(() => {
-                  this.setState({ importButtonName: 'Import', importDisable: false });
-                  DeviceEventEmitter.emit('showToast', 'Failed to import, check your JSON and password.');
-                }, 1000);
-              }
-            }}
+            onPress={() => this.importWallet()}
           />
         </View>
       </View>

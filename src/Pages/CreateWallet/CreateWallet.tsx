@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import { WalletService } from '../../Services';
 import { PasswordInput } from '../_shared/inputs';
 import { Wallet } from '../../Models';
-import { updateWalletRedux } from '../Wallet/WalletActions';
+import WalletActions from '../Wallet/WalletActions';
 
 interface InternalState {
   name: string | null;
@@ -74,6 +74,22 @@ class CreateWalletView extends React.Component<ReduxProps, InternalState> {
     return false;
   }
 
+  private async createWallet() {
+
+    if (this.isValidate()) {
+      const name = this.state.name;
+      const password = this.state.password1;
+      try {
+        /*const json = */
+        await this.eth.generateV3Wallet(name, password);
+        const wallet = await WalletService.getInstance().wallet;
+        this.props.setWallet(wallet);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
   public render() {
     return (
       <ScrollView keyboardShouldPersistTaps={'handled'} >
@@ -112,20 +128,7 @@ class CreateWalletView extends React.Component<ReduxProps, InternalState> {
           <Button
             buttonStyle={{ backgroundColor: '#5589FF' }}
             title={'Create New Wallet'}
-            onPress={async () => {
-              if (this.isValidate()) {
-                const name = this.state.name;
-                const password = this.state.password1;
-                try {
-                  /*const json = */
-                  await this.eth.generateV3Wallet(name, password);
-                  const wallet = await WalletService.getInstance().wallet;
-                  this.props.setWallet(wallet);
-                } catch (e) {
-                  console.error(e);
-                }
-              }
-            }}
+            onPress={() => this.createWallet()}
           />
         </View>
       </ScrollView>
@@ -134,7 +137,7 @@ class CreateWalletView extends React.Component<ReduxProps, InternalState> {
 }
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    setWallet: (wallet: Wallet) => dispatch(updateWalletRedux(wallet)),
+    setWallet: (wallet: Wallet) => dispatch(WalletActions.updateWalletRedux(wallet)),
   };
 };
 

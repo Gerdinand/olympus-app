@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 
-import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
@@ -26,8 +26,9 @@ import { Wallet } from './Models';
 import { store, persistor, AppState as ReducerState } from './reducer';
 import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
+import WalletSuccess from './Pages/WalletSuccess/WalletSuccess';
 
-const RootNavigation = TabNavigator(
+const TabRoot = TabNavigator(
   {
     WalletTab: {
       screen: WalletTab,
@@ -90,6 +91,20 @@ const RootNavigation = TabNavigator(
     },
   },
 );
+
+const RootNavigation = StackNavigator({
+  tabs: {
+    screen: TabRoot, navigationOptions: { header: null },
+  },
+  WalletSuccess: {
+    screen: WalletSuccess,
+    path: '/confirmation',
+    navigationOptions: {
+      headerLeft: null,
+      title: 'Wallet Success',
+    },
+  },
+});
 let FcmNotificationListener;
 interface InternalState {
   loading: boolean;

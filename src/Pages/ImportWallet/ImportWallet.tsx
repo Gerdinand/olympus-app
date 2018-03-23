@@ -5,7 +5,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { updateWalletRedux } from '../Wallet/WalletActions';
+import WalletActions from '../Wallet/WalletActions';
 import { Wallet } from '../../Models';
 import ImportWalletHeader, { ACTIVE_TABS } from './partials/ImportWalletHeader';
 import MnemonicImport from './partials/MnemonicImport';
@@ -52,7 +52,11 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
 }
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    setWallet: (wallet: Wallet) => dispatch(updateWalletRedux(wallet)),
+    // If we import the wallet, we understand was backuped
+    setWallet: (wallet: Wallet) => {
+      dispatch(WalletActions.setWalletBackUpDone());
+      dispatch(WalletActions.updateWalletRedux(wallet));
+    },
   };
 };
 
