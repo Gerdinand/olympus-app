@@ -2,7 +2,7 @@ export default {
   buttonBlue: '#5589FF',
   errorText: 'red',
   gray: '#ccc',
-  modal: 'rgba(70, 70, 70, 0.63)',
+  modalBackground: 'rgba(70, 70, 70, 0.63)',
   seedBackground: '#FCFCFC',
   borderColor: '#D5DBE5',
   inputUnderline: '#DDDDDD',

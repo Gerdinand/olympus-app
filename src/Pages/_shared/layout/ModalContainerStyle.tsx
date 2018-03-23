@@ -9,7 +9,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.modal,
+    backgroundColor: Colors.modalBackground,
   },
   modal: {
     marginHorizontal: 16,
