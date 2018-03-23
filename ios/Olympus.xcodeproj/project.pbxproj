@@ -653,6 +653,8 @@
 				51DA5E18205B9BDB00DB875B /* libReactNativeFingerprintScanner.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
 		302B3F67532EFB9B3C2DFB60 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
