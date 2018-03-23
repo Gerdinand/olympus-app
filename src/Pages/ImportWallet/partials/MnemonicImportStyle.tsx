@@ -3,14 +3,17 @@ import Colors from '../../../Constants/Colors';
 // Style
 export default StyleSheet.create({
   seedWordsInput: {
-    borderBottomWidth: 1,
-    borderColor: Colors.gray,
-    padding: 8,
+    borderWidth: 1,
+    borderColor: Colors.inputUnderline,
+    backgroundColor: Colors.seedBackground,
+    paddingHorizontal: 12,
+    paddingTop: 10,
     height: 64,
     fontSize: 14,
-    marginBottom: 8,
+    marginBottom: 26,
   },
   passwordInput: {
+    fontSize: 14,
     marginTop: 8,
     flex: 5,
     alignItems: 'center',
@@ -20,6 +23,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: Colors.inputUnderline,
+    paddingBottom: 4,
     marginBottom: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -36,6 +40,7 @@ export default StyleSheet.create({
     marginBottom: 16,
   },
   startImportButton: {
+    borderRadius: 4,
     paddingTop: 15,
     backgroundColor: Colors.buttonBlue,
   },
@@ -51,7 +56,7 @@ export default StyleSheet.create({
     alignSelf: 'center',
   },
   modalInnerContainer: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'column',
     paddingHorizontal: 10,
     alignSelf: 'stretch',
@@ -97,7 +102,11 @@ export default StyleSheet.create({
   },
   eyeSize: {
     marginTop: 8,
+    marginRight: 8,
     width: 20,
     height: 20,
+  },
+  termsAgreeText: {
+    fontSize: 12,
   },
 });

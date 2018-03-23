@@ -39,6 +39,7 @@ interface InternalState {
   modalVisible: boolean;
   mnemonic: string;
   password: string;
+  passwordSecure: boolean;
   errorMessage: string;
   derivePaths: Array<{ path: string, wallets: string }>;
   walletPassword: string;
@@ -47,13 +48,14 @@ interface InternalState {
   walletPasswordConfirmationSecure: boolean;
 }
 export default class MnemonicImport extends React.Component<InternalProps, InternalState> {
-  private testRef;
+  private hdWallet: Wallet;
   public constructor(props) {
     super(props);
     this.state = {
       modalVisible: true,
       mnemonic: '',
       password: '',
+      passwordSecure: true,
       errorMessage: '',
       derivePaths,
       walletPassword: '',
@@ -70,13 +72,6 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
     return true;
 
   }
-  private validatePasswords() {
-    if (this.state.walletPassword !== this.state.walletPasswordConfirmation) {
-      this.setState({ errorMessage: 'Wallet passwords do not match' });
-      return false;
-    }
-    return true;
-  }
 
   private async recoverWallet() {
     // Guard
@@ -85,30 +80,69 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
     }
     this.setState({ errorMessage: '' });
     let seed;
-    let hdWallet;
     try {
       seed = bip39.mnemonicToSeed(this.state.mnemonic.trim(), this.state.password);
-      hdWallet = hdkey.fromMasterSeed(seed).derivePath(this.state.derivePaths[0].path).getWallet();
+      this.hdWallet = hdkey.fromMasterSeed(seed).derivePath(this.state.derivePaths[0].path).getWallet();
+      this.setState({
+        modalVisible: true,
+      });
     } catch (error) {
       this.setState({ errorMessage: (error as Error).message });
       return;
     }
-    try {
-      await WalletService.getInstance()
-        .HDKeyToV3Wallet(hdWallet, this.state.walletPassword);
-      const wallet = await WalletService.getInstance().wallet;
-      EthereumService.getInstance().sync(wallet);
-      this.props.setWallet(wallet);
-    } catch (e) {
-      console.error(e);
-    }
+
     return;
   }
 
-  private switchPasswordSecure() {
+  private async confirmTransactionPassword() {
+    if (this.state.walletPassword !== this.state.walletPasswordConfirmation) {
+      this.setState({ errorMessage: 'Wallet passwords do not match' });
+      return false;
+    }
+    try {
+      await WalletService.getInstance()
+        .HDKeyToV3Wallet(this.hdWallet, this.state.walletPassword);
+      const wallet = await WalletService.getInstance().wallet;
+      EthereumService.getInstance().sync(wallet);
+      this.props.setWallet(wallet);
+
+    } catch (e) {
+      this.setState({ errorMessage: e && e.message ? e.message : 'Something went wrong' });
+      return false;
+    }
+    return true;
+  }
+
+  private switchWalletPasswordSecure() {
+    // Hackfix for ios, because of the issues with the secure entry and whitespaces
     this.setState({
       walletPasswordSecure: !this.state.walletPasswordSecure,
-    }, () => this.testRef.blur());
+      walletPassword: this.state.walletPassword + ' ',
+    }, () => this.setState({
+      walletPassword: this.state.walletPassword.substring(0, this.state.walletPassword.length - 1),
+    }));
+  }
+
+  private switchWalletPasswordConfirmationSecure() {
+    // Hackfix for ios, because of the issues with the secure entry and whitespaces
+    this.setState({
+      walletPasswordConfirmationSecure: !this.state.walletPasswordConfirmationSecure,
+      walletPasswordConfirmation: this.state.walletPasswordConfirmation + ' ',
+    }, () => this.setState({
+      walletPasswordConfirmation:
+        this.state.walletPasswordConfirmation.substring(
+          0, this.state.walletPasswordConfirmation.length - 1),
+    }));
+  }
+
+  private switchPasswordSecure() {
+    // Hackfix for ios, because of the issues with the secure entry and whitespaces
+    this.setState({
+      passwordSecure: !this.state.passwordSecure,
+      password: this.state.password + ' ',
+    }, () => this.setState({
+      password: this.state.password.substring(0, this.state.password.length - 1),
+    }));
   }
 
   public render() {
@@ -120,7 +154,6 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             <View style={[styles.passwordInputContainer, styles.marginTop]}>
               <Image source={require('../../../../images/lock_icon.jpg')} style={[styles.image, styles.lockSize]} />
               <TextInput
-                ref={(ref) => this.testRef = ref}
                 placeholder={`Create a transaction password`}
                 placeholderTextColor={Colors.inactiveText}
                 style={styles.passwordInput}
@@ -131,7 +164,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
                 }}
               />
               <TouchableOpacity
-                onPress={() => this.switchPasswordSecure()}
+                onPress={() => this.switchWalletPasswordSecure()}
               >
                 <Image
                   source={
@@ -141,20 +174,29 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
                 />
               </TouchableOpacity>
             </View>
-            {/* <View style={[styles.passwordInputContainer, styles.marginBottom]}>
-              <Image source={require('../../../../images/lock_icon.jpg')} />
+            <View style={styles.passwordInputContainer}>
+              <Image source={require('../../../../images/lock_icon.jpg')} style={[styles.image, styles.lockSize]} />
               <TextInput
                 placeholder={`Repeat password`}
                 placeholderTextColor={Colors.inactiveText}
                 style={styles.passwordInput}
                 value={this.state.walletPasswordConfirmation}
-                secureTextEntry={true}
+                secureTextEntry={this.state.walletPasswordConfirmationSecure}
                 onChangeText={(walletPasswordConfirmation) => {
                   this.setState({ walletPasswordConfirmation });
                 }}
               />
-              <Image source={require('../../../../images/eye_icon.jpg')} />
-            </View> */}
+              <TouchableOpacity
+                onPress={() => this.switchWalletPasswordConfirmationSecure()}
+              >
+                <Image
+                  source={
+                    this.state.walletPasswordConfirmationSecure ? require('../../../../images/eye_icon.jpg')
+                      : require('../../../../images/eye_closed_icon.jpg')}
+                  style={[styles.image, styles.eyeSize]}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -165,13 +207,16 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             >
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton}>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={() => this.confirmTransactionPassword()}
+            >
               <Text style={styles.confirmText}>OK</Text>
             </TouchableOpacity>
           </View>
         </ModalContainer>
         <TextInput
-          placeholder={`Insert your seed words, separated by spaces, here.`}
+          placeholder={`Please enter your mnemonic phrase`}
           placeholderTextColor={Colors.inactiveText}
           multiline={true}
           style={styles.seedWordsInput}
@@ -180,23 +225,40 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             this.setState({ mnemonic });
           }}
         />
-        <TextInput
-          placeholder={`Phrase Password (if applicable)`}
-          placeholderTextColor={Colors.inactiveText}
-          style={styles.passwordInput}
-          value={this.state.password}
-          secureTextEntry={true}
-          onChangeText={(password) => {
-            this.setState({ password });
-          }}
-        />
+        <View style={styles.passwordInputContainer}>
+          <Image
+            source={require('../../../../images/lock_icon.jpg')}
+            style={[styles.image, styles.lockSize]}
+          />
+          <TextInput
+            placeholder={`Please enter your password (optional)`}
+            placeholderTextColor={Colors.inactiveText}
+            style={[styles.passwordInput]}
+            value={this.state.password}
+            secureTextEntry={this.state.passwordSecure}
+            onChangeText={(password) => {
+              this.setState({ password });
+            }}
+          />
+          <TouchableOpacity
+            onPress={() => this.switchPasswordSecure()}
+          >
+            <Image
+              source={
+                this.state.passwordSecure ? require('../../../../images/eye_icon.jpg')
+                  : require('../../../../images/eye_closed_icon.jpg')}
+              style={[styles.image, styles.eyeSize]}
+            />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.termsAgreeText}>I have carefuly read and agree to the terms and conditions</Text>
 
         {!!this.state.errorMessage &&
           <Text style={styles.errorText}>{this.state.errorMessage}</Text>
         }
         <Button
           buttonStyle={styles.startImportButton}
-          title="Start importing wallet"
+          title="Start importing"
           onPress={() => this.recoverWallet()}
         />
       </View>
