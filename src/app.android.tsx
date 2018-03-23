@@ -21,12 +21,14 @@ import Welcome from './Pages/Welcome/Welcome';
 import { WalletService, FcmService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import LoginGesture from './Pages/Security/LoginGesture';
-import { FCM, FCMEvent } from './fcm';
+// tslint:disable-next-line:max-line-length
+import FCM, { FCMEvent } from 'react-native-fcm';
 import { Wallet } from './Models';
 import { store, persistor, AppState as ReducerState } from './reducer';
 import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
 import WalletSuccess from './Pages/WalletSuccess/WalletSuccess';
+import RealmService from './Services/RealmService';
 
 const TabRoot = TabNavigator(
   {
@@ -158,33 +160,37 @@ class Root extends React.Component<InternalProps, InternalState> {
           });
       })
       .catch((error) => console.log(error.message));
-    FCM.requestPermissions().then(
-      () => console.log('granted')).catch(() => console.log('notification permission rejected'));
+    // RequestPermissions
+    FCM.requestPermissions()
+      .then(() => console.log('granted'))
+      .catch(() => console.log('notification permission rejected'));
 
+    // RefreshToken
     FCM.getFCMToken().then((token) => {
       FcmService.uploadFcmToken(token, this.props.wallet);
       this.setState({
         token,
       });
     });
-
+    // RefreshToken
+    FCM.on(FCMEvent.RefreshToken, (token) => {
+      FcmService.uploadFcmToken(token, this.props.wallet);
+      this.setState({
+        token,
+      });
+    });
+    // FcmNotificationListener
     FcmNotificationListener = FCM.on(FCMEvent.Notification, async (notification) => {
       console.log('notification' + JSON.stringify(notification));
+      // save notification to database
+      const realm = await RealmService.instance();
+      realm.write(() => {
+        realm.create('Notification', notification.notification);
+        realm.create('Transation', { ...JSON.parse(notification.transation), stringify: notification.transation });
+      });
       notification.finish();
     });
 
-    /*
-     initial notification contains the notification that launchs the app.
-    If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
-     sometimes Android kills activity when app goes to background,
-      and when resume it broadcasts notification before JS is run.
-      You can use FCM.getInitialNotification() to capture those missed events.
-     initial notification will be triggered all the time even
-     when open app by icon so send some action identifier when you send notification
-    */
-    FCM.getInitialNotification().then((notif) => {
-      console.log(notif);
-    });
   }
 
   public componentWillUnmount() {
