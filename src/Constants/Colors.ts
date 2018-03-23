@@ -1,5 +1,11 @@
 export default {
-  blue: 'blue',
+  buttonBlue: '#5589FF',
+  errorText: 'red',
   gray: '#ccc',
-  modal: 'rgba(0, 0, 0, 0.6)',
+  modal: 'rgba(70, 70, 70, 0.63)',
+  seedBackground: '#FCFCFC',
+  borderColor: '#D5DBE5',
+  inputUnderline: '#DDDDDD',
+  inactiveText: '#AAAAAA',
+  activeText: '#444444',
 };

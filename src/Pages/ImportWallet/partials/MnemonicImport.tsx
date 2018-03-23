@@ -36,6 +36,7 @@ interface InternalProps {
   setWallet: (wallet: Wallet) => any;
 }
 interface InternalState {
+  modalVisible: boolean;
   mnemonic: string;
   password: string;
   errorMessage: string;
@@ -47,6 +48,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
   public constructor(props) {
     super(props);
     this.state = {
+      modalVisible: true,
       mnemonic: '',
       password: '',
       errorMessage: '',
@@ -101,55 +103,51 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
   public render() {
     return (
       <View>
-        <ModalContainer visible={true} style={{ flex: 1, flexDirection: 'column' }}>
-          <Text style={styles.modalTitle}>Create a password</Text>
-          <TextInput
-            placeholder={`Create a transaction password`}
-            style={[styles.passwordInput, styles.marginTop]}
-            value={this.state.walletPassword}
-            secureTextEntry={true}
-            onChangeText={(walletPassword) => {
-              this.setState({ walletPassword });
-            }}
-          />
-          <TextInput
-            placeholder={`Repeat password`}
-            style={[styles.passwordInput, styles.marginBottom]}
-            value={this.state.walletPasswordConfirmation}
-            secureTextEntry={true}
-            onChangeText={(walletPasswordConfirmation) => {
-              this.setState({ walletPasswordConfirmation });
-            }}
-          />
-          <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'flex-end' }}>
-            <TouchableOpacity
-              style={
-                {
-                  flex: 1,
-                  flexDirection: 'column',
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
-                }
-              }
-            >
-              <Text>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                {
-                  flex: 1,
-                  flexDirection: 'column',
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
+        <ModalContainer visible={this.state.modalVisible} style={styles.modalStyle}>
+          <View style={styles.modalInnerContainer}>
+            <Text style={styles.modalTitle}>Create a password</Text>
+            <View style={[styles.passwordInputContainer, styles.marginTop]}>
+              <TextInput
+                placeholder={`Create a transaction password`}
+                placeholderTextColor={Colors.inactiveText}
+                style={styles.passwordInput}
+                value={this.state.walletPassword}
+                secureTextEntry={true}
+                onChangeText={(walletPassword) => {
+                  this.setState({ walletPassword });
                 }}
+              />
+            </View>
+            <View style={[styles.passwordInputContainer, styles.marginBottom]}>
+              <TextInput
+                placeholder={`Repeat password`}
+                placeholderTextColor={Colors.inactiveText}
+                style={styles.passwordInput}
+                value={this.state.walletPasswordConfirmation}
+                secureTextEntry={true}
+                onChangeText={(walletPasswordConfirmation) => {
+                  this.setState({ walletPasswordConfirmation });
+                }}
+              />
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => {
+                this.setState({ modalVisible: false });
+              }}
             >
-              <Text>OK</Text>
+              <Text style={styles.cancelText}> Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.confirmButton}>
+              <Text style={styles.confirmText}>OK</Text>
             </TouchableOpacity>
           </View>
         </ModalContainer>
         <TextInput
           placeholder={`Insert your seed words, separated by spaces, here.`}
-          placeholderTextColor={Colors.gray}
+          placeholderTextColor={Colors.inactiveText}
           multiline={true}
           style={styles.seedWordsInput}
           value={this.state.mnemonic}
@@ -159,6 +157,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
         />
         <TextInput
           placeholder={`Phrase Password (if applicable)`}
+          placeholderTextColor={Colors.inactiveText}
           style={styles.passwordInput}
           value={this.state.password}
           secureTextEntry={true}

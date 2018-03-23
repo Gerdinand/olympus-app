@@ -3,8 +3,7 @@ import Colors from '../../../Constants/Colors';
 // Style
 export default StyleSheet.create({
   seedWordsInput: {
-    borderRadius: 4,
-    borderWidth: 1,
+    borderBottomWidth: 1,
     borderColor: Colors.gray,
     padding: 8,
     height: 64,
@@ -12,30 +11,74 @@ export default StyleSheet.create({
     marginBottom: 8,
   },
   passwordInput: {
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: Colors.gray,
-    padding: 8,
+    paddingHorizontal: 8,
     height: 32,
     fontSize: 14,
+  },
+  passwordInputContainer: {
+    borderBottomWidth: 1,
+    borderColor: Colors.inputUnderline,
     marginBottom: 8,
   },
   marginTop: {
     marginTop: 32,
   },
   marginBottom: {
-    marginBottom: 80,
+    marginBottom: 40,
   },
   errorText: {
-    color: 'red',
+    color: Colors.errorText,
     alignSelf: 'center',
     marginBottom: 16,
   },
   startImportButton: {
     paddingTop: 15,
-    backgroundColor: '#5589FF',
+    backgroundColor: Colors.buttonBlue,
+  },
+  modalStyle: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 0,
   },
   modalTitle: {
+    marginTop: 18,
     fontSize: 16,
+    color: Colors.activeText,
+    alignSelf: 'center',
+  },
+  modalInnerContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
+    alignSelf: 'stretch',
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+  },
+  cancelButton: {
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderColor: Colors.borderColor,
+    paddingVertical: 16,
+    flex: 1,
+    flexDirection: 'column',
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  confirmButton: {
+    borderTopWidth: 1,
+    borderColor: Colors.borderColor,
+    paddingVertical: 16,
+    flex: 1,
+    flexDirection: 'column',
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  cancelText: {
+    color: Colors.inactiveText,
+  },
+  confirmText: {
+    color: Colors.buttonBlue,
   },
 });

@@ -8,10 +8,9 @@ interface ModalContainerProps {
   visible: boolean;
   style?: any;
 }
-const MODAL_MARGIN = 24;
 
-const DEFAULT_WIDTH = Dimensions.get('window').width - MODAL_MARGIN;
-const DEFAULT_HEIGHT = 300;
+const DEFAULT_WIDTH = Dimensions.get('window').width;
+const DEFAULT_HEIGHT = 250;
 
 export default class ModalContainer extends Component<ModalContainerProps> {
 

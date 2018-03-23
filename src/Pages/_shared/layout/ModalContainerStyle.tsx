@@ -12,15 +12,12 @@ export default StyleSheet.create({
     backgroundColor: Colors.modal,
   },
   modal: {
+    marginHorizontal: 16,
     paddingHorizontal: 16,
     backgroundColor: 'white',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
-    shadowColor: 'black',
-    shadowOffset: { width: 4, height: 4 },
-    shadowRadius: 4,
-    shadowOpacity: 0.4,
   },
 });
