@@ -109,4 +109,41 @@ export default StyleSheet.create({
   termsAgreeText: {
     fontSize: 12,
   },
+  textLink: {
+    color: Colors.buttonBlue,
+  },
+  agreementRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dropdown: {
+    flex: 1,
+    marginBottom: 8,
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    alignContent: 'space-between',
+  },
+  dropdownMainText: {
+    flex: 10,
+    fontSize: 14,
+    color: Colors.activeText,
+  },
+  dropdownText: {
+    color: Colors.inactiveText,
+    alignSelf: 'center',
+  },
+  dropdownListItem: {
+    borderWidth: 1,
+    borderColor: Colors.borderColor,
+    backgroundColor: Colors.seedBackground,
+    padding: 8,
+  },
+  dropdownIcon: {
+    flex: 1,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    height: 8,
+  },
 });

@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, Text, TouchableOpacity, Image } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { Button } from 'react-native-elements';
+import CheckBox from 'react-native-checkbox';
 import styles from './MnemonicImportStyle';
 import Colors from '../../../Constants/Colors';
 
@@ -25,43 +26,47 @@ import ModalContainer from '../../_shared/layout/ModalContainer';
 const derivePaths: Array<{ path: string, wallets: string }> = [
   {
     path: `m/44'/60'/0'/0/0`,
-    wallets: 'Jaxx, Metamask, Exodus, imToken, TREZOR (ETH) & Digital Bitbox',
+    wallets: 'imToken,Jaxx,Metamask,Trezor (Default)',
   },
   {
     path: `m/44'/60'/0'`,
-    wallets: `Ledger (ETH)`,
+    wallets: `Ledger`,
   },
 ];
 interface InternalProps {
   setWallet: (wallet: Wallet) => any;
 }
 interface InternalState {
+  showDropdown: boolean;
   modalVisible: boolean;
   mnemonic: string;
   password: string;
   passwordSecure: boolean;
   errorMessage: string;
-  derivePaths: Array<{ path: string, wallets: string }>;
+  derivePath: { path: string, wallets: string };
   walletPassword: string;
   walletPasswordSecure: boolean;
   walletPasswordConfirmation: string;
   walletPasswordConfirmationSecure: boolean;
+  termsAgreed: boolean;
 }
 export default class MnemonicImport extends React.Component<InternalProps, InternalState> {
   private hdWallet: Wallet;
   public constructor(props) {
     super(props);
     this.state = {
-      modalVisible: true,
+      showDropdown: false,
+      modalVisible: false,
       mnemonic: '',
       password: '',
       passwordSecure: true,
       errorMessage: '',
-      derivePaths,
+      derivePath: derivePaths[0],
       walletPassword: '',
       walletPasswordSecure: true,
       walletPasswordConfirmation: '',
       walletPasswordConfirmationSecure: true,
+      termsAgreed: false,
     };
   }
   private validateMnemonic() {
@@ -73,6 +78,16 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
 
   }
 
+  private renderCustomRow(rowData) {
+    return (
+      <View style={{ width: Dimensions.get('window').width, alignSelf: 'stretch' }}>
+        <Text style={{ alignSelf: 'center' }}>
+          {rowData}
+        </Text>
+      </View >
+    );
+  }
+
   private async recoverWallet() {
     // Guard
     if (!this.validateMnemonic()) {
@@ -82,7 +97,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
     let seed;
     try {
       seed = bip39.mnemonicToSeed(this.state.mnemonic.trim(), this.state.password);
-      this.hdWallet = hdkey.fromMasterSeed(seed).derivePath(this.state.derivePaths[0].path).getWallet();
+      this.hdWallet = hdkey.fromMasterSeed(seed).derivePath(this.state.derivePath.path).getWallet();
       this.setState({
         modalVisible: true,
       });
@@ -225,6 +240,27 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             this.setState({ mnemonic });
           }}
         />
+        <TouchableOpacity
+          style={styles.dropdown}
+          onPress={() => this.setState({ showDropdown: !this.state.showDropdown })}
+        >
+          <Text style={styles.dropdownMainText}>{this.state.derivePath.wallets}</Text>
+          <Image
+            source={require('../../../../images/arrow-select.png')}
+            style={styles.dropdownIcon}
+          />
+        </TouchableOpacity>
+        {this.state.showDropdown && derivePaths.map((path, index) => {
+          return (
+            <TouchableOpacity
+              key={path.wallets}
+              style={[styles.dropdownListItem, derivePaths.length === index + 1 && { marginTop: -1, marginBottom: 8 }]}
+              onPress={() => this.setState({ derivePath: path, showDropdown: false })}
+            >
+              <Text style={styles.dropdownText}>{path.wallets}</Text>
+            </TouchableOpacity>);
+        })
+        }
         <View style={styles.passwordInputContainer}>
           <Image
             source={require('../../../../images/lock_icon.jpg')}
@@ -251,13 +287,24 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.termsAgreeText}>I have carefuly read and agree to the terms and conditions</Text>
+        <View style={styles.agreementRow}>
+          <CheckBox
+            label={null}
+            checked={this.state.termsAgreed}
+            onChange={(termsAgreed) => this.setState({ termsAgreed: !termsAgreed })}
+            checkedImage={require('../../../../images/checked.png')}
+            uncheckedImage={require('../../../../images/unchecked.png')}
+            style={{ alignSelf: 'center' }}
+          />
+          <Text style={styles.termsAgreeText}>I have carefully read and agree to the
+          <Text style={styles.textLink}>terms and conditions</Text></Text>
+        </View>
 
         {!!this.state.errorMessage &&
           <Text style={styles.errorText}>{this.state.errorMessage}</Text>
         }
         <Button
-          buttonStyle={styles.startImportButton}
+          buttonStyle={[styles.startImportButton, !this.state.termsAgreed && { backgroundColor: 'lightgray' }]}
           title="Start importing"
           onPress={() => this.recoverWallet()}
         />
