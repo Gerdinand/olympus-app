@@ -18,6 +18,9 @@ export default StyleSheet.create({
     flex: 5,
     alignItems: 'center',
   },
+  mnemonicPassword: {
+    marginTop: 20,
+  },
   passwordInputContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -41,6 +44,7 @@ export default StyleSheet.create({
   },
   startImportButton: {
     borderRadius: 4,
+    marginTop: 80,
     paddingTop: 15,
     backgroundColor: Colors.buttonBlue,
   },
@@ -117,6 +121,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 12,
   },
   dropdown: {
     flex: 1,

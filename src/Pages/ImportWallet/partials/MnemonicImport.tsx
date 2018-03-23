@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import CheckBox from 'react-native-checkbox';
 import styles from './MnemonicImportStyle';
@@ -76,16 +76,6 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
     }
     return true;
 
-  }
-
-  private renderCustomRow(rowData) {
-    return (
-      <View style={{ width: Dimensions.get('window').width, alignSelf: 'stretch' }}>
-        <Text style={{ alignSelf: 'center' }}>
-          {rowData}
-        </Text>
-      </View >
-    );
   }
 
   private async recoverWallet() {
@@ -261,7 +251,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             </TouchableOpacity>);
         })
         }
-        <View style={styles.passwordInputContainer}>
+        <View style={[styles.passwordInputContainer, styles.mnemonicPassword]}>
           <Image
             source={require('../../../../images/lock_icon.jpg')}
             style={[styles.image, styles.lockSize]}
@@ -297,7 +287,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             style={{ alignSelf: 'center' }}
           />
           <Text style={styles.termsAgreeText}>I have carefully read and agree to the
-          <Text style={styles.textLink}>terms and conditions</Text></Text>
+          <Text style={styles.textLink}> terms and conditions</Text></Text>
         </View>
 
         {!!this.state.errorMessage &&
