@@ -11,14 +11,18 @@ export default StyleSheet.create({
     marginBottom: 8,
   },
   passwordInput: {
-    paddingHorizontal: 8,
-    height: 32,
-    fontSize: 14,
+    marginTop: 8,
+    flex: 5,
+    alignItems: 'center',
   },
   passwordInputContainer: {
+    flex: 1,
+    flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: Colors.inputUnderline,
     marginBottom: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   marginTop: {
     marginTop: 32,
@@ -48,6 +52,7 @@ export default StyleSheet.create({
   },
   modalInnerContainer: {
     flex: 1,
+    flexDirection: 'column',
     paddingHorizontal: 10,
     alignSelf: 'stretch',
   },
@@ -80,5 +85,19 @@ export default StyleSheet.create({
   },
   confirmText: {
     color: Colors.buttonBlue,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
+  lockSize: {
+    width: 24,
+    height: 24,
+  },
+  eyeSize: {
+    marginTop: 8,
+    width: 20,
+    height: 20,
   },
 });

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import styles from './MnemonicImportStyle';
 import Colors from '../../../Constants/Colors';
@@ -42,9 +42,12 @@ interface InternalState {
   errorMessage: string;
   derivePaths: Array<{ path: string, wallets: string }>;
   walletPassword: string;
+  walletPasswordSecure: boolean;
   walletPasswordConfirmation: string;
+  walletPasswordConfirmationSecure: boolean;
 }
 export default class MnemonicImport extends React.Component<InternalProps, InternalState> {
+  private testRef;
   public constructor(props) {
     super(props);
     this.state = {
@@ -54,7 +57,9 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
       errorMessage: '',
       derivePaths,
       walletPassword: '',
+      walletPasswordSecure: true,
       walletPasswordConfirmation: '',
+      walletPasswordConfirmationSecure: true,
     };
   }
   private validateMnemonic() {
@@ -100,6 +105,12 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
     return;
   }
 
+  private switchPasswordSecure() {
+    this.setState({
+      walletPasswordSecure: !this.state.walletPasswordSecure,
+    }, () => this.testRef.blur());
+  }
+
   public render() {
     return (
       <View>
@@ -107,18 +118,31 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
           <View style={styles.modalInnerContainer}>
             <Text style={styles.modalTitle}>Create a password</Text>
             <View style={[styles.passwordInputContainer, styles.marginTop]}>
+              <Image source={require('../../../../images/lock_icon.jpg')} style={[styles.image, styles.lockSize]} />
               <TextInput
+                ref={(ref) => this.testRef = ref}
                 placeholder={`Create a transaction password`}
                 placeholderTextColor={Colors.inactiveText}
                 style={styles.passwordInput}
                 value={this.state.walletPassword}
-                secureTextEntry={true}
+                secureTextEntry={this.state.walletPasswordSecure}
                 onChangeText={(walletPassword) => {
                   this.setState({ walletPassword });
                 }}
               />
+              <TouchableOpacity
+                onPress={() => this.switchPasswordSecure()}
+              >
+                <Image
+                  source={
+                    this.state.walletPasswordSecure ? require('../../../../images/eye_icon.jpg')
+                      : require('../../../../images/eye_closed_icon.jpg')}
+                  style={[styles.image, styles.eyeSize]}
+                />
+              </TouchableOpacity>
             </View>
-            <View style={[styles.passwordInputContainer, styles.marginBottom]}>
+            {/* <View style={[styles.passwordInputContainer, styles.marginBottom]}>
+              <Image source={require('../../../../images/lock_icon.jpg')} />
               <TextInput
                 placeholder={`Repeat password`}
                 placeholderTextColor={Colors.inactiveText}
@@ -129,7 +153,8 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
                   this.setState({ walletPasswordConfirmation });
                 }}
               />
-            </View>
+              <Image source={require('../../../../images/eye_icon.jpg')} />
+            </View> */}
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -138,7 +163,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
                 this.setState({ modalVisible: false });
               }}
             >
-              <Text style={styles.cancelText}> Cancel</Text>
+              <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.confirmButton}>
               <Text style={styles.confirmText}>OK</Text>
