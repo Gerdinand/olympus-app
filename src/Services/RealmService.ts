@@ -1,4 +1,4 @@
-import Realm from 'realm';
+import * as Realm from 'realm';
 
 const Notification = {
     name: 'Notification',
