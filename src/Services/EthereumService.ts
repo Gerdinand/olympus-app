@@ -176,65 +176,77 @@ export class EthereumService {
   }
 
   public async sync(wallet: Wallet): Promise<Wallet | {}> {
-    if (this.isSyncing || !wallet) {
+
+    if (this.isSyncing) {
       return {};
     }
-    this.isSyncing = true;
+    console.log('Wallet Sync Started: ', wallet);
 
-    const balance = await this.getBalance(wallet.address);
-    wallet.balance = balance;
-    wallet.tokens[0].balance = balance;
-    console.log('ETH balance: ', wallet.balance);
+    if (!wallet || wallet.tokens.length === 0) {
+      EventRegister.emit('wallet.updated', {});
+      return {};
+    }
+    try {
+      this.isSyncing = true;
 
-    wallet.gasLimit = GAS_LIMIT;
-    console.log('Gas limit: ', wallet.gasLimit);
+      const balance = await this.getBalance(wallet.address);
+      wallet.balance = balance;
 
-    const ethPrice = await getETHPrice();
-    wallet.ethPrice = ethPrice;
-    console.log('ETH price: ', ethPrice);
+      wallet.tokens[0].balance = balance;
+      console.log('ETH balance: ', wallet.balance);
 
-    let balanceInUSD = ethPrice * balance;
-    console.log('USD: ', balanceInUSD);
+      wallet.gasLimit = GAS_LIMIT;
+      console.log('Gas limit: ', wallet.gasLimit);
 
-    for (let i = 1; i < wallet.tokens.length; i++) {
-      const token = wallet.tokens[i];
-      const tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
-      token.balance = tokenBalance;
-      const priceInWei = await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address);
-      console.log('Expected rate: ', priceInWei.toNumber());
+      const ethPrice = await getETHPrice();
+      wallet.ethPrice = ethPrice;
+      console.log('ETH price: ', ethPrice);
 
-      const tokenPrice = this.rpc.fromWei(priceInWei, 'ether').toFixed(2);
-      token.price = tokenPrice;
+      let balanceInUSD = ethPrice * balance;
+      console.log('USD: ', balanceInUSD);
 
-      if (tokenPrice !== 0) {
-        balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
+      for (let i = 1; i < wallet.tokens.length; i++) {
+        const token = wallet.tokens[i];
+        const tokenBalance = await this.getTokenBalance(token.address, token.ownerAddress, token.decimals);
+        token.balance = tokenBalance;
+        const priceInWei = await this.getExpectedRate(Constants.ETHER_ADDRESS, token.address);
+        console.log('Expected rate: ', priceInWei.toNumber());
+
+        const tokenPrice = Number(this.rpc.fromWei(priceInWei, 'ether').toFixed(2));
+        token.price = tokenPrice;
+
+        if (tokenPrice !== 0) {
+          balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
+        }
+
+        console.log(`${token.symbol} price: ${token.price}  balance: ${token.balance}`);
       }
 
-      console.log(`${token.symbol} price: ${token.price}`);
-      console.log(`${token.symbol} balance: ${token.balance}`);
+      wallet.balanceInUSD = Number(balanceInUSD !== 0 ? balanceInUSD.toFixed(2) : 0);
+      console.log('USD1: ', wallet.balanceInUSD);
+
+      // tslint:disable-next-line:max-line-length
+      const url = `https://api-${Constants.CHAIN_NAME}.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
+      const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
+      wallet.txs = response ? (await response.json()).result : [];
+      await Promise.all(wallet.txs.map(decodeTx));
+      // Update pending transactions
+      wallet.pendingTxs = wallet.pendingTxs.filter((pendingTx) =>
+        !wallet.txs.find((tx) => tx.hash === pendingTx.tx.hash),
+      );
+
+      this.isSyncing = false;
+      // If the user logout while the update was already fired.
+      if (!this.intervalID) {
+        return {};
+      }
+      EventRegister.emit('wallet.updated', wallet);
+      // We inform to redux that the wallet has been updated also
+      store.dispatch(WalletActions.updateWalletRedux(wallet));
+    } catch (e) {
+      EventRegister.emit('wallet.updated', {});
+      console.log('Error on sync', e);
     }
-
-    wallet.balanceInUSD = Number(balanceInUSD !== 0 ? balanceInUSD.toFixed(2) : 0);
-    console.log('USD1: ', wallet.balanceInUSD);
-
-    // tslint:disable-next-line:max-line-length
-    const url = `https://api-${Constants.CHAIN_NAME}.etherscan.io/api?module=account&action=txlist&address=${wallet.address}&sort=desc&apikey=18V3SM2K3YVPRW83BBX2ICYWM6HY4YARK4`;
-    const response = await fetch(url, { method: 'GET' }).catch(console.warn.bind(console));
-    wallet.txs = response ? (await response.json()).result : [];
-    await Promise.all(wallet.txs.map(decodeTx));
-    // Update pending transactions
-    wallet.pendingTxs = wallet.pendingTxs.filter((pendingTx) =>
-      !wallet.txs.find((tx) => tx.hash === pendingTx.tx.hash),
-    );
-
-    this.isSyncing = false;
-    // If the user logout while the update was already fired.
-    if (!this.intervalID) {
-      return {};
-    }
-    EventRegister.emit('wallet.updated', wallet);
-    // We inform to redux that the wallet has been updated also
-    store.dispatch(WalletActions.updateWalletRedux(wallet));
     return wallet;
   }
 

@@ -141,8 +141,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     };
     this.scanner = null;
 
-    // bind methods
-    this.reloadTxs = this.reloadTxs.bind(this);
   }
 
   public componentWillMount() {
@@ -181,6 +179,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   }
 
   private reloadTxs(wallet: Wallet) {
+    if (!this.state) { return; } // Async call after component unmounted
+
     const token = wallet.tokens.find((token) => token.address === this.state.token.address);
     const exchangeType = this.state.exchangeType;
     const ETHBalance = wallet.tokens.find((token) => token.address === Constants.ETHER_ADDRESS).balance;
@@ -188,7 +188,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       // In case of eth, there is no input object
       if (this.state.token.address === Constants.ETHER_ADDRESS) {
         return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
-          && ((typeof tx.input === 'string') || tx.input.destToken.symbol === Constants.ETH);
+          && ((typeof tx.input === 'string') || (tx.input.destToken && tx.input.destToken.symbol === Constants.ETH));
       }
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)

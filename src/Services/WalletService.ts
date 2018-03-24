@@ -10,8 +10,10 @@ import EthJs from 'ethereumjs-wallet-react-native';
 
 import { addressFromJSON, unlock } from '../Utils/Keys';
 import { saveItem, readItem } from '../Utils/KeyStore';
-import { SupportedTokens, GAS_LIMIT } from '../Constants/index.js';
+import { GAS_LIMIT } from '../Constants/index.js';
 import { Token, Wallet } from '../Models/index.js';
+import { MasterDataService } from './index.js';
+import { TokenExchanges } from '../Models/Token.js';
 
 const WALLET_JSON_KEY = 'walletJson';
 export class WalletService {
@@ -56,14 +58,16 @@ export class WalletService {
       txs: [],
       pendingTxs: [],
     } as Wallet;
-
+    const { supportedTokens } = await MasterDataService.getMasterData();
     // Initalize the json
-    for (const tokenData of SupportedTokens) {
-      const token = new Token(tokenData.name,
-        tokenData.icon, tokenData.symbol,
-        tokenData.address, this.wallet.address, tokenData.decimals);
-      this.wallet.tokens.push(token);
-    }
+    supportedTokens
+      .filter((token) => token.supportedExchanges.indexOf(TokenExchanges.KYBER) > -1)
+      .forEach((tokenData) => {
+        const token = new Token(tokenData.name,
+          tokenData.icon, tokenData.symbol,
+          tokenData.address, this.wallet.address, tokenData.decimals);
+        this.wallet.tokens.push(token);
+      });
     // Save the JSOn in a secure KeyChain
     await saveItem(WALLET_JSON_KEY, JSON.stringify(walletJson));
 
@@ -107,7 +111,7 @@ export class WalletService {
       const address = addressFromJSON(json);
       // check if address equals.
       if (wallet.getAddressString() === `0x${json.address}`) {
-        this.initializeWallet(name, address, json);
+        await this.initializeWallet(name, address, json);
         return true;
       }
     }
@@ -118,7 +122,7 @@ export class WalletService {
     const wallet = await EthJs.generate();
     const json = await wallet.toV3(password, { kdf: 'pbkdf2', c: 10240 });
     const address = addressFromJSON(json);
-    this.initializeWallet(name, address, json);
+    await this.initializeWallet(name, address, json);
     return json;
   }
 

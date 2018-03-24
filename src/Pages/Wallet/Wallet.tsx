@@ -20,6 +20,7 @@ import { WalletService, EthereumService } from '../../Services';
 import { AppState } from '../../reducer';
 import { Wallet } from '../../Models';
 import { Text } from '../_shared/layout/Text';
+import _ from 'lodash';
 
 interface OwnProps {
   navigation: any;
@@ -33,7 +34,7 @@ interface ReduxProps {
 }
 
 interface InternalState {
-  wallet: any; // TODO object?
+  wallet: Wallet;
   refreshing: boolean;
 }
 class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
@@ -56,7 +57,12 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
   public componentWillMount() {
 
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
-      if (this.state.wallet.length && wallet.txs.length !== this.state.wallet.length) {
+      if (_.isEmpty(wallet)) {
+        DeviceEventEmitter.emit('showToast', 'Syncronization failed');
+        this.setState({ refreshing: false });
+        return;
+      }
+      if (this.state.wallet.txs.length && wallet.txs.length !== this.state.wallet.txs.length) {
         DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');
       }
       this.setState({ wallet, refreshing: false });
@@ -90,10 +96,7 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
 
   public render() {
     const { navigation } = this.props;
-    // Safeward, when logout and component didn amount properly
-    if (!this.state.wallet) {
-      return null;
-    }
+
     return (
       <ScrollView
         style={{ backgroundColor: 'white' }}
@@ -113,6 +116,13 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
               this.state.wallet.ethPrice ? `$ ${this.state.wallet.balanceInUSD}` : '$ --'
           }
         />
+        {!this.state.wallet.ethPrice && !this.state.refreshing &&
+          <View >
+            <Text numberOfLines={3} style={styles.errorText}>
+              Error updating your wallet, try to refresh or import it one more time.
+              </Text>
+          </View>
+        }
         <List
           style={{ height: 578 }}
           containerStyle={styles.listContainer}
@@ -211,5 +221,11 @@ const styles = StyleSheet.create({
   subtitle: {
     color: '#999',
     fontSize: 12,
+  },
+  errorText: {
+    padding: 24,
+    color: '#898989',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });

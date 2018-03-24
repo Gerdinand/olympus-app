@@ -25,7 +25,7 @@ import { store, persistor, AppState as ReducerState } from './reducer';
 import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
 import { Wallet } from './Models';
-import { WalletService } from './Services';
+import { WalletService, MasterDataService } from './Services';
 
 const TabRoot = TabNavigator({
   WalletTab: {
@@ -113,7 +113,7 @@ class Root extends React.Component<InternalProps, InternalState> {
     WalletService.getInstance().setWallet(props.wallet);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
       this.refs.toast.show(text, DURATION.LENGTH_LONG);
     });
@@ -132,6 +132,8 @@ class Root extends React.Component<InternalProps, InternalState> {
           });
       })
       .catch((error) => console.log(error.message));
+
+    MasterDataService.updateMasterData();
   }
 
   public componentWillUnmount() {

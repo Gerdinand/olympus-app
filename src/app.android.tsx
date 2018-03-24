@@ -18,7 +18,7 @@ import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
-import { WalletService, FcmService } from './Services';
+import { WalletService, FcmService, MasterDataService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import LoginGesture from './Pages/Security/LoginGesture';
 import { FCM, FCMEvent } from './fcm';
@@ -139,7 +139,7 @@ class Root extends React.Component<InternalProps, InternalState> {
     WalletService.getInstance().setWallet(props.wallet);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
       this.refs.toast.show(text, DURATION.LENGTH_LONG);
     });
@@ -172,6 +172,7 @@ class Root extends React.Component<InternalProps, InternalState> {
       console.log('notification' + JSON.stringify(notification));
       notification.finish();
     });
+    await MasterDataService.updateMasterData();
 
     /*
      initial notification contains the notification that launchs the app.

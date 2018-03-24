@@ -1,5 +1,9 @@
 'use strict';
 
+export enum TokenExchanges {
+  KYBER = 'Kyber',
+  SPACE_SHIFT = 'Space_shift',
+}
 export class Token {
   public name: string;
   public icon: string;
@@ -9,7 +13,7 @@ export class Token {
   public decimals: number;
   public balance: number;
   public price: number;
-
+  public supportedExchanges: TokenExchanges[];
   constructor(
     name: string,
     icon: string,
@@ -18,7 +22,8 @@ export class Token {
     ownerAddress: string,
     decimals: number = 18,
     balance: number = 0,
-    price: number = 0) {
+    price: number = 0,
+    supportedExchanges: TokenExchanges[] = []) {
 
     this.name = name;
     this.icon = icon;
@@ -28,5 +33,6 @@ export class Token {
     this.decimals = decimals;
     this.balance = balance;
     this.price = price;
+    this.supportedExchanges = supportedExchanges;
   }
 }
