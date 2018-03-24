@@ -4,7 +4,7 @@ import Config from '../Config/env';
 import _ from 'lodash';
 
 const MASTER_DATA_KEY = 'master_data_key';
-const BASE_URL = Config.local.server + '/api';
+const BASE_URL = Config[process.env.NODE_ENV].server + '/api';
 
 const headers = {
   'Accept': 'application/json',
