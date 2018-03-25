@@ -90,7 +90,6 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
       this.setState({ errorMessage: (error as Error).message });
       return;
     }
-
     return;
   }
 
@@ -105,7 +104,6 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
       const wallet = await WalletService.getInstance().wallet;
       EthereumService.getInstance().sync(wallet);
       this.props.setWallet(wallet);
-
     } catch (e) {
       this.setState({ errorMessage: e && e.message ? e.message : 'Something went wrong' });
       return false;
@@ -128,6 +126,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
               placeholder={`Repeat password`}
               onTextChange={(walletPasswordConfirmation) => this.setState({ walletPasswordConfirmation })}
             />
+            <Text style={styles.errorText}>{this.state.errorMessage}</Text>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -190,7 +189,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
           <Text style={styles.errorText}>{this.state.errorMessage}</Text>
         }
         <Button
-          buttonStyle={[styles.startImportButton, !this.state.termsAgreed && { backgroundColor: 'lightgray' }]}
+          buttonStyle={[styles.startImportButton, !this.state.termsAgreed && { backgroundColor: Colors.lightgray }]}
           title="Start importing"
           onPress={() => this.recoverWallet()}
         />

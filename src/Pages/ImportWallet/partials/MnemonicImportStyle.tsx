@@ -5,7 +5,7 @@ export default StyleSheet.create({
   seedWordsInput: {
     borderWidth: 1,
     borderColor: Colors.inputUnderline,
-    backgroundColor: Colors.seedBackground,
+    backgroundColor: Colors.textAreaBackground,
     paddingHorizontal: 12,
     paddingTop: 10,
     height: 64,
@@ -24,7 +24,6 @@ export default StyleSheet.create({
   errorText: {
     color: Colors.errorText,
     alignSelf: 'center',
-    marginBottom: 16,
   },
   startImportButton: {
     borderRadius: 4,
@@ -98,7 +97,7 @@ export default StyleSheet.create({
   dropdownListItem: {
     borderWidth: 1,
     borderColor: Colors.borderColor,
-    backgroundColor: Colors.seedBackground,
+    backgroundColor: Colors.textAreaBackground,
     padding: 8,
   },
   dropdownIcon: {
