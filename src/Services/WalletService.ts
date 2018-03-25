@@ -125,6 +125,14 @@ export class WalletService {
     return json;
   }
 
+  public async recoverFromPrivateKey(privateKey, newPassword) {
+    const wallet = EthJs.fromPrivateKey(Buffer.from(privateKey, 'hex'));
+    const json = await wallet.toV3(newPassword, V3_WALLET_CRYPTO_OPTS);
+    const address = addressFromJSON(json);
+    this.initializeWallet('Name is to be removed', address, json);
+    return json;
+  }
+
   public async HDKeyToV3Wallet(hdWallet, walletPassword) {
     try {
       const v3Wallet = await hdWallet.toV3(walletPassword, V3_WALLET_CRYPTO_OPTS);
