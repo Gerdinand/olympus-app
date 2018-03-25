@@ -13,6 +13,7 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
+    paddingBottom: 8,
   },
   selected: {
     borderBottomWidth: 1,
