@@ -58,7 +58,7 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
 
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
       if (_.isEmpty(wallet)) {
-        DeviceEventEmitter.emit('showToast', 'Syncronization failed');
+        DeviceEventEmitter.emit('showToast', 'Synchronization failed');
         this.setState({ refreshing: false });
         return;
       }
