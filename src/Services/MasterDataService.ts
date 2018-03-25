@@ -4,7 +4,7 @@ import Config from '../Config/env';
 import _ from 'lodash';
 
 const MASTER_DATA_KEY = 'master_data_key';
-const BASE_URL = Config.local.server + '/api';
+const BASE_URL = Config[process.env.NODE_ENV].server + '/api';
 
 const headers = {
   'Accept': 'application/json',
@@ -25,7 +25,7 @@ export class MasterDataService {
     const version = masterData ? masterData.version : '';
 
     try {
-      const response = await fetch(`${BASE_URL}/authenticate/master-data/${''}`, { method: 'GET', headers });
+      const response = await fetch(`${BASE_URL}/authenticate/master-data/${version}`, { method: 'GET', headers });
 
       const { result } = await response.json() as { result: { masterData: MasterData } };
       if (_.isEmpty(result.masterData)) {
