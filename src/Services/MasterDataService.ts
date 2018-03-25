@@ -34,7 +34,7 @@ export class MasterDataService {
       }
       console.log('Masterdata updated to ' + result.masterData.version);
       AsyncStorage.setItem(MASTER_DATA_KEY, JSON.stringify(result.masterData));
-    } catch (e) { console.log('Loading Masterdata', e); }
+    } catch (e) { console.warn(' Error Loading Masterdata', e); }
 
   }
 }
