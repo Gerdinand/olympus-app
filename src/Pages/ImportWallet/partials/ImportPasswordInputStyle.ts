@@ -24,6 +24,7 @@ export default StyleSheet.create({
     alignSelf: 'center',
   },
   lockSize: {
+    flex: 0.5,
     width: 24,
     height: 24,
   },

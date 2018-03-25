@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, Text } from 'react-native';
+import { View, TextInput, Text, DeviceEventEmitter } from 'react-native';
 import Colors from '../../../Constants/Colors';
-import PasswordInput from './PasswordInput';
+import ImportPasswordInput from './ImportPasswordInput';
 import AgreeWithTerms from './AgreeWithTerms';
 import { Button } from 'react-native-elements';
 import styles from './PrivateKeyImportStyle';
@@ -18,7 +18,6 @@ interface InternalState {
   walletPassword: string;
   walletPasswordConfirmation: string;
   termsAgreed: boolean;
-  errorMessage: string;
 }
 export default class PrivateKeyImport extends React.Component<InternalProps, InternalState> {
   public constructor(props) {
@@ -28,16 +27,27 @@ export default class PrivateKeyImport extends React.Component<InternalProps, Int
       walletPassword: '',
       walletPasswordConfirmation: '',
       termsAgreed: false,
-      errorMessage: '',
     };
   }
 
   private async recoverWallet() {
-    await WalletService.getInstance()
-      .recoverFromPrivateKey(this.state.privateKey, this.state.walletPassword);
-    const wallet = await WalletService.getInstance().wallet;
-    EthereumService.getInstance().sync(wallet);
-    this.props.setWallet(wallet);
+    const wsInstance = WalletService.getInstance();
+    const passwordValidation =
+      wsInstance.validatePassword(this.state.walletPassword, this.state.walletPasswordConfirmation);
+    if (passwordValidation !== true) {
+      DeviceEventEmitter.emit('showToast', passwordValidation);
+      return;
+    }
+    try {
+      await wsInstance
+        .recoverFromPrivateKey(this.state.privateKey, this.state.walletPassword);
+      const wallet = await WalletService.getInstance().wallet;
+      EthereumService.getInstance().sync(wallet);
+      this.props.setWallet(wallet);
+    } catch (e) {
+      DeviceEventEmitter.emit('showToast', 'Invalid private key.');
+    }
+
   }
 
   public render() {
@@ -53,21 +63,17 @@ export default class PrivateKeyImport extends React.Component<InternalProps, Int
             this.setState({ privateKey });
           }}
         />
-        <PasswordInput
+        <ImportPasswordInput
           placeholder={`Create a transaction password`}
           onTextChange={(walletPassword) => this.setState({ walletPassword })}
         />
-        <PasswordInput
+        <ImportPasswordInput
           placeholder={`Repeat password`}
           onTextChange={(walletPasswordConfirmation) => this.setState({ walletPasswordConfirmation })}
         />
         <AgreeWithTerms
           toggleAgreed={() => this.setState({ termsAgreed: !this.state.termsAgreed })}
         />
-
-        {!!this.state.errorMessage &&
-          <Text style={styles.errorText}>{this.state.errorMessage}</Text>
-        }
         <Button
           buttonStyle={[styles.startImportButton, !this.state.termsAgreed && { backgroundColor: Colors.lightgray }]}
           title="Start importing"

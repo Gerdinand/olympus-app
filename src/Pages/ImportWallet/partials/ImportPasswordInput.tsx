@@ -4,7 +4,7 @@ import React from 'react';
 import Colors from '../../../Constants/Colors';
 import { TextInput, TouchableOpacity, View, Image } from 'react-native';
 
-import styles from './PasswordInputStyle';
+import styles from './ImportPasswordInputStyle';
 
 interface InternalProps {
   onTextChange: (password: string) => any;
@@ -15,7 +15,7 @@ interface InternalState {
   passwordSecure: boolean;
   password: string;
 }
-export default class PasswordInput extends React.Component<InternalProps, InternalState> {
+export default class ImportPasswordInput extends React.Component<InternalProps, InternalState> {
   public constructor(props) {
     super(props);
     this.state = {

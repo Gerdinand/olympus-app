@@ -43,7 +43,7 @@ export default StyleSheet.create({
     alignSelf: 'center',
   },
   modalInnerContainer: {
-    flex: 2,
+    flex: 4,
     flexDirection: 'column',
     paddingHorizontal: 10,
     alignSelf: 'stretch',

@@ -29,7 +29,7 @@ export default class AgreeWithTerms extends React.Component<InternalProps, Inter
           }
           checkedImage={require('../../../../images/checked.png')}
           uncheckedImage={require('../../../../images/unchecked.png')}
-          style={{ alignSelf: 'center' }}
+          style={{ alignSelf: 'center', flex: 0.5 }}
         />
         <Text style={styles.termsAgreeText}>I have carefully read and agree to the
         <Text style={styles.textLink}> terms and conditions</Text></Text>

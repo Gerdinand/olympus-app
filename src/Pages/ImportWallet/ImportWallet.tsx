@@ -10,7 +10,7 @@ import { Wallet } from '../../Models';
 import ImportWalletHeader, { ACTIVE_TABS } from './partials/ImportWalletHeader';
 import MnemonicImport from './partials/MnemonicImport';
 import PrivateKeyImport from './partials/PrivateKeyImport';
-import JSONImport from './partials/JSONImport';
+import KeystoreWallet from './partials/KeystoreImport';
 
 interface InternalState {
   activeTab: ACTIVE_TABS;
@@ -45,7 +45,7 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
           <MnemonicImport setWallet={(wallet: Wallet) => this.props.setWallet(wallet)} /> :
           this.state.activeTab === ACTIVE_TABS.PRIVATE_KEY ?
             <PrivateKeyImport setWallet={(wallet: Wallet) => this.props.setWallet(wallet)} /> :
-            <JSONImport setWallet={(wallet: Wallet) => this.props.setWallet(wallet)} />}
+            <KeystoreWallet setWallet={(wallet: Wallet) => this.props.setWallet(wallet)} />}
       </ScrollView>
     );
   }

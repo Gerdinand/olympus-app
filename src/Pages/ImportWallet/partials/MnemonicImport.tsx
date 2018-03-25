@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, Text, TouchableOpacity, Image } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, Image, DeviceEventEmitter } from 'react-native';
 import { Button } from 'react-native-elements';
 import styles from './MnemonicImportStyle';
 import Colors from '../../../Constants/Colors';
@@ -12,7 +12,7 @@ import hdkey from 'ethereumjs-wallet-react-native/hdkey';
 import { WalletService, EthereumService } from '../../../Services';
 import ModalContainer from '../../_shared/layout/ModalContainer';
 import AgreeWithTerms from './AgreeWithTerms';
-import PasswordInput from './PasswordInput';
+import ImportPasswordInput from './ImportPasswordInput';
 
 // Derive PATH should be the following:
 // https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#path-levels.
@@ -42,7 +42,6 @@ interface InternalState {
   modalVisible: boolean;
   mnemonic: string;
   password: string;
-  errorMessage: string;
   derivePath: { path: string, wallets: string };
   walletPassword: string;
   walletPasswordConfirmation: string;
@@ -57,7 +56,6 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
       modalVisible: false,
       mnemonic: '',
       password: '',
-      errorMessage: '',
       derivePath: derivePaths[0],
       walletPassword: '',
       walletPasswordConfirmation: '',
@@ -66,7 +64,8 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
   }
   private validateMnemonic() {
     if (!(bip39.validateMnemonic(this.state.mnemonic.trim()))) {
-      this.setState({ errorMessage: 'Invalid seed phrase' });
+      DeviceEventEmitter.emit('showToast', 'Invalid seed phrase');
+
       return false;
     }
     return true;
@@ -78,7 +77,6 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
     if (!this.validateMnemonic()) {
       return;
     }
-    this.setState({ errorMessage: '' });
     let seed;
     try {
       seed = bip39.mnemonicToSeed(this.state.mnemonic.trim(), this.state.password);
@@ -87,25 +85,29 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
         modalVisible: true,
       });
     } catch (error) {
-      this.setState({ errorMessage: (error as Error).message });
+      DeviceEventEmitter.emit('showToast', error && error.message ? error.message : error);
       return;
     }
     return;
   }
 
   private async confirmTransactionPassword() {
-    if (this.state.walletPassword !== this.state.walletPasswordConfirmation) {
-      this.setState({ errorMessage: 'Wallet passwords do not match' });
+    const wsInstance = WalletService.getInstance();
+    const passwordValidation =
+      wsInstance.validatePassword(this.state.walletPassword, this.state.walletPasswordConfirmation);
+    if (passwordValidation !== true) {
+      DeviceEventEmitter.emit('showToast', passwordValidation);
+
       return false;
     }
     try {
-      await WalletService.getInstance()
+      await wsInstance
         .HDKeyToV3Wallet(this.hdWallet, this.state.walletPassword);
       const wallet = await WalletService.getInstance().wallet;
       EthereumService.getInstance().sync(wallet);
       this.props.setWallet(wallet);
     } catch (e) {
-      this.setState({ errorMessage: e && e.message ? e.message : 'Something went wrong' });
+      DeviceEventEmitter.emit('showToast', e && e.message ? e.message : 'Something went wrong');
       return false;
     }
     return true;
@@ -117,16 +119,15 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
         <ModalContainer visible={this.state.modalVisible} style={styles.modalStyle}>
           <View style={styles.modalInnerContainer}>
             <Text style={styles.modalTitle}>Create a password</Text>
-            <PasswordInput
+            <ImportPasswordInput
               placeholder={`Create a transaction password`}
               onTextChange={(walletPassword) => this.setState({ walletPassword })}
               style={styles.marginTop}
             />
-            <PasswordInput
+            <ImportPasswordInput
               placeholder={`Repeat password`}
               onTextChange={(walletPasswordConfirmation) => this.setState({ walletPasswordConfirmation })}
             />
-            <Text style={styles.errorText}>{this.state.errorMessage}</Text>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -176,7 +177,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             </TouchableOpacity>);
         })
         }
-        <PasswordInput
+        <ImportPasswordInput
           onTextChange={(password) => this.setState({ password })}
           placeholder={`Please enter your password (optional)`}
           style={styles.mnemonicPassword}
@@ -185,9 +186,6 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
           toggleAgreed={() => this.setState({ termsAgreed: !this.state.termsAgreed })}
         />
 
-        {!!this.state.errorMessage && !this.state.modalVisible &&
-          <Text style={styles.errorText}>{this.state.errorMessage}</Text>
-        }
         <Button
           buttonStyle={[styles.startImportButton, !this.state.termsAgreed && { backgroundColor: Colors.lightgray }]}
           title="Start importing"

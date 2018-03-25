@@ -17,12 +17,12 @@ interface InternalProps {
 const availableTabs = [
   ACTIVE_TABS.MNEMONIC,
   ACTIVE_TABS.PRIVATE_KEY,
-  ACTIVE_TABS.JSONWALLET,
+  ACTIVE_TABS.KEYSTORE_WALLET,
 ];
 export const enum ACTIVE_TABS {
   MNEMONIC = 'Mnemonic',
   PRIVATE_KEY = 'Private key',
-  JSONWALLET = 'JSON',
+  KEYSTORE_WALLET = 'Keystore',
 }
 
 export default class ImportWalletHeader extends React.Component<InternalProps, InternalState> {

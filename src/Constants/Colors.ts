@@ -9,4 +9,5 @@ export default {
   inactiveText: '#AAAAAA',
   activeText: '#444444',
   lightgray: 'lightgray',
+  attentionDisclaimerText: '#EC5F02',
 };
