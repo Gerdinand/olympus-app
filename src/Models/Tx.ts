@@ -85,3 +85,4 @@ export interface Tx {
   txreceipt_status: string;
   value: number | '0x' | '0x0';
 }
+

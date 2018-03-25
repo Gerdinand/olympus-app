@@ -63,15 +63,14 @@ export class WalletService {
     supportedTokens
       .filter((token) => token.supportedExchanges.indexOf(TokenExchanges.KYBER) > -1)
       .forEach((tokenData) => {
-        const token = new Token(tokenData.name,
-          tokenData.icon, tokenData.symbol,
-          tokenData.address, this.wallet.address, tokenData.decimals);
+        const token = Token.initTokenForWallet(tokenData, address);
         this.wallet.tokens.push(token);
       });
     // Save the JSOn in a secure KeyChain
     await saveItem(WALLET_JSON_KEY, JSON.stringify(walletJson));
 
   }
+
   public async getSeed(password) {
     const infoString = await readItem(WALLET_JSON_KEY);
 

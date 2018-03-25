@@ -18,10 +18,10 @@ import { EventRegister } from 'react-native-event-listeners';
 import WalletHeader from './partials/WalletHeader';
 import { WalletService, EthereumService } from '../../Services';
 import { AppState } from '../../reducer';
-import { Wallet } from '../../Models';
+import { Wallet, Token } from '../../Models';
 import { Text } from '../_shared/layout/Text';
 import _ from 'lodash';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 interface OwnProps {
   navigation: any;
 
@@ -40,6 +40,18 @@ interface InternalState {
 class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
 
   private walletListener;
+
+  public static navigationOptions = ({ navigation }) => ({
+    title: 'Wallet',
+    headerRight: (
+      <Icon
+        name="ios-add-circle"
+        size={12}
+        color="#5589FF"
+        onPress={() => navigation.navigate('AddToken')}
+      />
+    ),
+  })
 
   public constructor(props: ReduxProps & OwnProps) {
     super(props);
@@ -128,8 +140,10 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
           containerStyle={styles.listContainer}
         >
           {this.state.wallet.tokens.filter((token) => !!token).map((token, i) => {
+            const hasRightSubtitle = i === 0 || (token.price === 0 && Token.supportExchange(token));
+
             // Ether and tokens with no price have different style
-            if (i === 0 || token.price === 0) {
+            if (hasRightSubtitle) {
               return (
                 <ListItem
                   key={i}
@@ -164,7 +178,10 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
                 subtitle={
                   <View style={styles.itemFlex}>
                     <Text style={styles.subtitle}>{token.name}</Text>
-                    <Text style={styles.subtitle}>{`1 ETH = ${token.price} ${token.symbol}`}</Text>
+                    <Text style={[styles.subtitle, { textAlign: 'left' }]}>
+                      {!Token.supportExchange(token) && `Exchange not supported`}
+                      {token.price > 0 && `1 ETH = ${token.price} ${token.symbol}`}
+                    </Text>
                   </View>}
                 onPress={() => navigation.navigate('WalletDetail', { token })}
                 containerStyle={styles.itemContainer}
@@ -202,6 +219,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#999',
   },
   itemFlex: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -1,19 +1,22 @@
-'use strict';
+import { ETH } from '../Constants';
 
 export enum TokenExchanges {
   KYBER = 'Kyber',
   SPACE_SHIFT = 'Space_shift',
 }
 export class Token {
+  // Coming from masterdata
   public name: string;
   public icon: string;
   public symbol: string;
   public address: string;
-  public ownerAddress: string;
   public decimals: number;
+  public supportedExchanges: TokenExchanges[];
+  // Set on importing
+  public ownerAddress: string;
+  // Need to init
   public balance: number;
   public price: number;
-  public supportedExchanges: TokenExchanges[];
   constructor(
     name: string,
     icon: string,
@@ -35,4 +38,17 @@ export class Token {
     this.price = price;
     this.supportedExchanges = supportedExchanges;
   }
+
+  // Creates a clone of the token with the data required for the wallet
+  public static initTokenForWallet(token: Token, ownerAddress): Token {
+    return { ...token, balance: 0, price: 0, ownerAddress };
+  }
+
+  public static supportExchange(token: Token): boolean {
+    return token.supportedExchanges.length > 0;
+  }
+  public static isETH(token: Token): boolean {
+    return token.symbol === ETH;
+  }
+
 }

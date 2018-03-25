@@ -246,6 +246,8 @@ export class EthereumService {
     } catch (e) {
       EventRegister.emit('wallet.updated', {});
       console.log('Error on sync', e);
+      this.isSyncing = false;
+
     }
     return wallet;
   }
