@@ -16,7 +16,7 @@ export default StyleSheet.create({
     paddingBottom: 8,
   },
   selected: {
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
     borderBottomColor: Colors.buttonBlue,
   },
   bold: {
