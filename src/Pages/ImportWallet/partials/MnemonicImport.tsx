@@ -4,7 +4,6 @@ import React from 'react';
 import { Wallet } from '../../../Models';
 import { View, TextInput, Text, TouchableOpacity, Image } from 'react-native';
 import { Button } from 'react-native-elements';
-import CheckBox from 'react-native-checkbox';
 import styles from './MnemonicImportStyle';
 import Colors from '../../../Constants/Colors';
 
@@ -12,6 +11,8 @@ import bip39 from 'react-native-bip39';
 import hdkey from 'ethereumjs-wallet-react-native/hdkey';
 import { WalletService, EthereumService } from '../../../Services';
 import ModalContainer from '../../_shared/layout/ModalContainer';
+import AgreeWithTerms from './AgreeWithTerms';
+import PasswordInput from './PasswordInput';
 
 // Derive PATH should be the following:
 // https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#path-levels.
@@ -29,7 +30,7 @@ const derivePaths: Array<{ path: string, wallets: string }> = [
     wallets: 'imToken,Jaxx,Metamask,Trezor (Default)',
   },
   {
-    path: `m/44'/60'/0'`,
+    path: `m/44'/60'/0'`, // Does not comply with the bip-44 completely, but we do want to support it.
     wallets: `Ledger`,
   },
 ];
@@ -41,13 +42,10 @@ interface InternalState {
   modalVisible: boolean;
   mnemonic: string;
   password: string;
-  passwordSecure: boolean;
   errorMessage: string;
   derivePath: { path: string, wallets: string };
   walletPassword: string;
-  walletPasswordSecure: boolean;
   walletPasswordConfirmation: string;
-  walletPasswordConfirmationSecure: boolean;
   termsAgreed: boolean;
 }
 export default class MnemonicImport extends React.Component<InternalProps, InternalState> {
@@ -59,13 +57,10 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
       modalVisible: false,
       mnemonic: '',
       password: '',
-      passwordSecure: true,
       errorMessage: '',
       derivePath: derivePaths[0],
       walletPassword: '',
-      walletPasswordSecure: true,
       walletPasswordConfirmation: '',
-      walletPasswordConfirmationSecure: true,
       termsAgreed: false,
     };
   }
@@ -118,90 +113,21 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
     return true;
   }
 
-  private switchWalletPasswordSecure() {
-    // Hackfix for ios, because of the issues with the secure entry and whitespaces
-    this.setState({
-      walletPasswordSecure: !this.state.walletPasswordSecure,
-      walletPassword: this.state.walletPassword + ' ',
-    }, () => this.setState({
-      walletPassword: this.state.walletPassword.substring(0, this.state.walletPassword.length - 1),
-    }));
-  }
-
-  private switchWalletPasswordConfirmationSecure() {
-    // Hackfix for ios, because of the issues with the secure entry and whitespaces
-    this.setState({
-      walletPasswordConfirmationSecure: !this.state.walletPasswordConfirmationSecure,
-      walletPasswordConfirmation: this.state.walletPasswordConfirmation + ' ',
-    }, () => this.setState({
-      walletPasswordConfirmation:
-        this.state.walletPasswordConfirmation.substring(
-          0, this.state.walletPasswordConfirmation.length - 1),
-    }));
-  }
-
-  private switchPasswordSecure() {
-    // Hackfix for ios, because of the issues with the secure entry and whitespaces
-    this.setState({
-      passwordSecure: !this.state.passwordSecure,
-      password: this.state.password + ' ',
-    }, () => this.setState({
-      password: this.state.password.substring(0, this.state.password.length - 1),
-    }));
-  }
-
   public render() {
     return (
       <View>
         <ModalContainer visible={this.state.modalVisible} style={styles.modalStyle}>
           <View style={styles.modalInnerContainer}>
             <Text style={styles.modalTitle}>Create a password</Text>
-            <View style={[styles.passwordInputContainer, styles.marginTop]}>
-              <Image source={require('../../../../images/lock_icon.jpg')} style={[styles.image, styles.lockSize]} />
-              <TextInput
-                placeholder={`Create a transaction password`}
-                placeholderTextColor={Colors.inactiveText}
-                style={styles.passwordInput}
-                value={this.state.walletPassword}
-                secureTextEntry={this.state.walletPasswordSecure}
-                onChangeText={(walletPassword) => {
-                  this.setState({ walletPassword });
-                }}
-              />
-              <TouchableOpacity
-                onPress={() => this.switchWalletPasswordSecure()}
-              >
-                <Image
-                  source={
-                    this.state.walletPasswordSecure ? require('../../../../images/eye_icon.jpg')
-                      : require('../../../../images/eye_closed_icon.jpg')}
-                  style={[styles.image, styles.eyeSize]}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.passwordInputContainer}>
-              <Image source={require('../../../../images/lock_icon.jpg')} style={[styles.image, styles.lockSize]} />
-              <TextInput
-                placeholder={`Repeat password`}
-                placeholderTextColor={Colors.inactiveText}
-                style={styles.passwordInput}
-                value={this.state.walletPasswordConfirmation}
-                secureTextEntry={this.state.walletPasswordConfirmationSecure}
-                onChangeText={(walletPasswordConfirmation) => {
-                  this.setState({ walletPasswordConfirmation });
-                }}
-              />
-              <TouchableOpacity
-                onPress={() => this.switchWalletPasswordConfirmationSecure()}
-              >
-                <Image
-                  source={
-                    this.state.walletPasswordConfirmationSecure ? require('../../../../images/eye_icon.jpg')
-                      : require('../../../../images/eye_closed_icon.jpg')}
-                  style={[styles.image, styles.eyeSize]}
-                />
-              </TouchableOpacity>
-            </View>
+            <PasswordInput
+              placeholder={`Create a transaction password`}
+              onTextChange={(walletPassword) => this.setState({ walletPassword })}
+              style={styles.marginTop}
+            />
+            <PasswordInput
+              placeholder={`Repeat password`}
+              onTextChange={(walletPasswordConfirmation) => this.setState({ walletPasswordConfirmation })}
+            />
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -251,46 +177,16 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             </TouchableOpacity>);
         })
         }
-        <View style={[styles.passwordInputContainer, styles.mnemonicPassword]}>
-          <Image
-            source={require('../../../../images/lock_icon.jpg')}
-            style={[styles.image, styles.lockSize]}
-          />
-          <TextInput
-            placeholder={`Please enter your password (optional)`}
-            placeholderTextColor={Colors.inactiveText}
-            style={[styles.passwordInput]}
-            value={this.state.password}
-            secureTextEntry={this.state.passwordSecure}
-            onChangeText={(password) => {
-              this.setState({ password });
-            }}
-          />
-          <TouchableOpacity
-            onPress={() => this.switchPasswordSecure()}
-          >
-            <Image
-              source={
-                this.state.passwordSecure ? require('../../../../images/eye_icon.jpg')
-                  : require('../../../../images/eye_closed_icon.jpg')}
-              style={[styles.image, styles.eyeSize]}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.agreementRow}>
-          <CheckBox
-            label={null}
-            checked={this.state.termsAgreed}
-            onChange={(termsAgreed) => this.setState({ termsAgreed: !termsAgreed })}
-            checkedImage={require('../../../../images/checked.png')}
-            uncheckedImage={require('../../../../images/unchecked.png')}
-            style={{ alignSelf: 'center' }}
-          />
-          <Text style={styles.termsAgreeText}>I have carefully read and agree to the
-          <Text style={styles.textLink}> terms and conditions</Text></Text>
-        </View>
+        <PasswordInput
+          onTextChange={(password) => this.setState({ password })}
+          placeholder={`Please enter your password (optional)`}
+          style={styles.mnemonicPassword}
+        />
+        <AgreeWithTerms
+          toggleAgreed={() => this.setState({ termsAgreed: !this.state.termsAgreed })}
+        />
 
-        {!!this.state.errorMessage &&
+        {!!this.state.errorMessage && !this.state.modalVisible &&
           <Text style={styles.errorText}>{this.state.errorMessage}</Text>
         }
         <Button

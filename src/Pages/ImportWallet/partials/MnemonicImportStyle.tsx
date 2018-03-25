@@ -12,24 +12,8 @@ export default StyleSheet.create({
     fontSize: 14,
     marginBottom: 26,
   },
-  passwordInput: {
-    fontSize: 14,
-    marginTop: 8,
-    flex: 5,
-    alignItems: 'center',
-  },
   mnemonicPassword: {
     marginTop: 20,
-  },
-  passwordInputContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: Colors.inputUnderline,
-    paddingBottom: 4,
-    marginBottom: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   marginTop: {
     marginTop: 32,
@@ -94,34 +78,6 @@ export default StyleSheet.create({
   },
   confirmText: {
     color: Colors.buttonBlue,
-  },
-  image: {
-    flex: 1,
-    resizeMode: 'contain',
-    alignSelf: 'center',
-  },
-  lockSize: {
-    width: 24,
-    height: 24,
-  },
-  eyeSize: {
-    marginTop: 8,
-    marginRight: 8,
-    width: 20,
-    height: 20,
-  },
-  termsAgreeText: {
-    fontSize: 12,
-  },
-  textLink: {
-    color: Colors.buttonBlue,
-  },
-  agreementRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
   },
   dropdown: {
     flex: 1,
