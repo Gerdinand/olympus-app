@@ -3,9 +3,9 @@
 import React from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
 } from 'react-native';
+import { Text } from '../../_shared/layout/Text';
 import style from './ImportWalletHeaderStyle';
 interface InternalState {
   activeTab: ACTIVE_TABS;

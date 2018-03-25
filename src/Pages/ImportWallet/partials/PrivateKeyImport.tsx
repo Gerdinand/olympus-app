@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, Text, DeviceEventEmitter } from 'react-native';
+import { View, TextInput, DeviceEventEmitter } from 'react-native';
 import Colors from '../../../Constants/Colors';
 import ImportPasswordInput from './ImportPasswordInput';
 import AgreeWithTerms from './AgreeWithTerms';

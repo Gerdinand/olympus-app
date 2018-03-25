@@ -1,7 +1,8 @@
 'use strict';
 
 import React from 'react';
-import { View, DeviceEventEmitter, TextInput, Text } from 'react-native';
+import { View, DeviceEventEmitter, TextInput } from 'react-native';
+import { Text } from '../../_shared/layout/Text';
 import { Button } from 'react-native-elements';
 import { WalletService, EthereumService } from '../../../Services';
 import { Wallet } from '../../../Models';

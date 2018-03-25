@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { Text } from '../../_shared/layout/Text';
 import CheckBox from 'react-native-checkbox';
 import styles from './AgreeWithTermsStyle';
 interface InternalProps {

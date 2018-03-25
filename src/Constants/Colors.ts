@@ -1,6 +1,5 @@
 export default {
   buttonBlue: '#5589FF',
-  errorText: 'red',
   gray: '#ccc',
   modalBackground: 'rgba(70, 70, 70, 0.63)',
   textAreaBackground: '#FCFCFC',

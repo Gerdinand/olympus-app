@@ -21,10 +21,6 @@ export default StyleSheet.create({
   marginBottom: {
     marginBottom: 40,
   },
-  errorText: {
-    color: Colors.errorText,
-    alignSelf: 'center',
-  },
   startImportButton: {
     borderRadius: 4,
     marginTop: 80,

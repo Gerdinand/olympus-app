@@ -2,7 +2,9 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, Text, TouchableOpacity, Image, DeviceEventEmitter } from 'react-native';
+import { View, TextInput, TouchableOpacity, Image, DeviceEventEmitter } from 'react-native';
+import { Text } from '../../_shared/layout/Text';
+
 import { Button } from 'react-native-elements';
 import styles from './MnemonicImportStyle';
 import Colors from '../../../Constants/Colors';
