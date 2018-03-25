@@ -4,6 +4,7 @@ import React from 'react';
 import {
   ScrollView,
 } from 'react-native';
+import { Text } from '../_shared/layout/Text';
 import { connect } from 'react-redux';
 import WalletActions from '../Wallet/WalletActions';
 import { Wallet } from '../../Models';
@@ -11,6 +12,7 @@ import ImportWalletHeader, { ACTIVE_TABS } from './partials/ImportWalletHeader';
 import MnemonicImport from './partials/MnemonicImport';
 import PrivateKeyImport from './partials/PrivateKeyImport';
 import KeystoreWallet from './partials/KeystoreImport';
+import styles from './ImportWalletStyle';
 
 interface InternalState {
   activeTab: ACTIVE_TABS;
@@ -22,7 +24,7 @@ interface ReduxProps {
 class ImportWalletView extends React.Component<ReduxProps, InternalState> {
 
   public static navigationOptions = {
-    title: 'Import wallet',
+    header: null,
   };
 
   public constructor(props) {
@@ -35,7 +37,12 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
 
   public render() {
     return (
-      <ScrollView keyboardShouldPersistTaps={'handled'} style={{ padding: 10 }}>
+      <ScrollView keyboardShouldPersistTaps={'handled'} style={styles.pagePadding}>
+        <Text
+          style={styles.pageHeader}
+        >
+          Import my wallet
+        </Text>
         <ImportWalletHeader
           onChangeTab={(activeTab: ACTIVE_TABS) => {
             this.setState({ activeTab });

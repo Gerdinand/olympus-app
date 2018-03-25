@@ -47,7 +47,7 @@ export default class ImportWalletHeader extends React.Component<InternalProps, I
                 this.props.onChangeTab(tab);
               }}
             >
-              <Text style={this.state.activeTab === tab ? style.bold : {}}>
+              <Text style={this.state.activeTab === tab ? style.bold : style.text}>
                 {tab}
               </Text>
             </TouchableOpacity>);

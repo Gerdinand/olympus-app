@@ -9,4 +9,5 @@ export default {
   activeText: '#444444',
   lightgray: 'lightgray',
   attentionDisclaimerText: '#EC5F02',
+  pageTitleText: '#4A4A4A',
 };

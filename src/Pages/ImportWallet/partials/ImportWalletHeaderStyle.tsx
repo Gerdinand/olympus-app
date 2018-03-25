@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import Colors from '../../../Constants/Colors';
 // Style
 export default StyleSheet.create({
   flexRow: {
@@ -15,9 +16,14 @@ export default StyleSheet.create({
   },
   selected: {
     borderBottomWidth: 1,
-    borderBottomColor: '#000',
+    borderBottomColor: Colors.buttonBlue,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: Colors.buttonBlue,
+    fontSize: 16,
+  },
+  text: {
+    fontSize: 16,
   },
 });
