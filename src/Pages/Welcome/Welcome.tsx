@@ -43,11 +43,6 @@ class WelcomeView extends React.Component<InternalProps> {
           title="Import existing wallet"
           onPress={() => navigate('ImportWallet')}
         />
-        {/* <Button
-          buttonStyle={styles.button1}
-          title={'Create new wallet'}
-          onPress={() => navigate('CreateWallet')}
-        /> */}
       </View>
     );
   }
