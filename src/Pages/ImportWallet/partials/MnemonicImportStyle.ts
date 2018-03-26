@@ -9,7 +9,7 @@ export default StyleSheet.create({
     paddingHorizontal: 12,
     paddingTop: 10,
     height: 64,
-    fontSize: 14,
+    fontSize: 16,
   },
   startImportButton: {
     borderRadius: 4,
@@ -22,7 +22,7 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
   },
   modalTitle: {
-    fontSize: 16,
+    fontSize: 18,
     color: Colors.activeText,
     alignSelf: 'center',
   },
@@ -60,7 +60,7 @@ export default StyleSheet.create({
   },
   dropdownMainText: {
     flex: 10,
-    fontSize: 14,
+    fontSize: 16,
     color: Colors.activeText,
   },
   dropdownText: {
