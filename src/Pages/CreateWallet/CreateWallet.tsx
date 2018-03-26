@@ -12,10 +12,10 @@ import {
   Button,
 } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { WalletService } from '../../../Services';
-import { PasswordInput } from '../../_shared/inputs';
-import { Wallet } from '../../../Models';
-import WalletActions from '../../Wallet/WalletActions';
+import { WalletService } from '../../Services';
+import { PasswordInput } from '../_shared/inputs';
+import { Wallet } from '../../Models';
+import WalletActions from '../Wallet/WalletActions';
 
 interface InternalState {
   name: string | null;
@@ -77,11 +77,10 @@ class CreateWalletView extends React.Component<ReduxProps, InternalState> {
   private async createWallet() {
 
     if (this.isValidate()) {
-      const name = this.state.name;
       const password = this.state.password1;
       try {
         /*const json = */
-        await this.eth.generateV3Wallet(name, password);
+        await this.eth.generateV3Wallet(password);
         const wallet = await WalletService.getInstance().wallet;
         this.props.setWallet(wallet);
       } catch (e) {
