@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {
-  StyleSheet,
   View,
   Text,
 } from 'react-native';
@@ -11,8 +10,9 @@ import {
 } from 'react-native-elements';
 import { StackNavigator } from 'react-navigation';
 
-import CreateWalletView from './partials/CreateWallet';
-import ImportWalletView from './partials/ImportWallet';
+import CreateWalletView from '../CreateWallet/CreateWallet';
+import ImportWalletView from '../ImportWallet/ImportWallet';
+import styles from './WelcomeStyle';
 import PropTypes from 'prop-types';
 
 interface InternalProps {
@@ -40,14 +40,8 @@ class WelcomeView extends React.Component<InternalProps> {
         </View>
         <Button
           buttonStyle={styles.button1}
-          title={'Create new wallet'}
-          onPress={() => navigate('CreateWallet')}
-        />
-        <Button
-          buttonStyle={styles.button2}
-          title="Import exist wallet"
+          title="Import existing wallet"
           onPress={() => navigate('ImportWallet')}
-          color={'#4A4A4A'}
         />
       </View>
     );
@@ -62,39 +56,3 @@ const WelcomeNav = StackNavigator({
 }, { cardStyle: { backgroundColor: 'white' } });
 
 export default WelcomeNav;
-
-// Style
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 50,
-    marginBottom: 50,
-    marginLeft: 15,
-    marginRight: 15,
-    borderRadius: 10,
-    justifyContent: 'space-around',
-    alignItems: 'stretch',
-  },
-  titleContainer: {
-    flex: 2,
-  },
-  title: {
-    color: '#4A4A4A',
-    fontSize: 30,
-    textAlign: 'left',
-  },
-  bottomLine: {
-    marginTop: 10,
-    backgroundColor: '#5589FF',
-    width: 50,
-    height: 3,
-  },
-  button1: {
-    paddingTop: 15,
-    backgroundColor: '#5589FF',
-  },
-  button2: {
-    marginTop: 15,
-    backgroundColor: 'transparent',
-  },
-});

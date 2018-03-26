@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, TouchableOpacity, ViewProperties } from 'react-native';
+import { View, TouchableOpacity, ViewProperties, ViewStyle } from 'react-native';
 
 interface InternalProps extends ViewProperties {
-  style?: any; // Setting it as ViewStyle creates a strange type issue
+  style?: ViewStyle | ViewStyle[];
   onPress?: () => void;
   justifyContent?: string;
   alignItems?: string;
@@ -23,7 +23,7 @@ export class Row extends React.PureComponent<InternalProps> {
       justifyContent ? { justifyContent } : {},
       alignItems ? { alignItems } : {},
       alignSelf ? { alignSelf } : {},
-    ];
+    ] as ViewStyle[];
 
     return (
       <Tag
