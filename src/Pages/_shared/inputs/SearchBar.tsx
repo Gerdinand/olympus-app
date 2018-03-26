@@ -2,6 +2,7 @@ import React from 'react';
 
 import { SearchBar as NativeSearchBar, SearchBarProps } from 'react-native-elements';
 import { View, Image, StyleSheet } from 'react-native';
+import Colors from '../../../Constants/Colors';
 
 // SearchBar from elements but customized to our design
 export class SearchBar extends React.Component<SearchBarProps> {
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
   searchIcon: { bottom: 10, position: 'absolute', width: 20, height: 20, left: 16 },
   searchInput:
     {
-      backgroundColor: 'transparent', borderRadius: 4, borderWidth: 0.5, borderColor: '#AAAAAA',
+      backgroundColor: 'transparent', borderRadius: 4, borderWidth: 0.5, borderColor: Colors.borderColor,
       height: 40,
       margin: 0,
       paddingLeft: 20 + 16 + 4, // As per searchIcon size + searchIcon left + margin
