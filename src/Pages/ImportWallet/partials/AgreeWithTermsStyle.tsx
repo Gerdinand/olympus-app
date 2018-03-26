@@ -12,7 +12,19 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 12,
-    paddingLeft: 4,
+    height: 16,
+  },
+  checkbox: {
+    alignSelf: 'center',
+    resizeMode: 'contain',
+    width: 16,
+    height: 16,
+    maxWidth: 16,
+    maxHeight: 16,
+  },
+  checkboxContainer: {
+    marginTop: 4,
   },
 });

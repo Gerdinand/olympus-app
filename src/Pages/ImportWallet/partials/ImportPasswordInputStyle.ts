@@ -24,9 +24,10 @@ export default StyleSheet.create({
     alignSelf: 'center',
   },
   lockSize: {
+    marginTop: 4,
     flex: 0.5,
-    width: 24,
-    height: 24,
+    width: 16,
+    height: 16,
   },
   eyeSize: {
     marginTop: 8,

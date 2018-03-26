@@ -6,7 +6,8 @@ export default StyleSheet.create({
     fontSize: 30,
     fontWeight: '600',
     color: Colors.pageTitleText,
-    marginTop: 80,
+    marginTop: 60,
+    marginBottom: 20,
     marginLeft: 4,
   },
   pagePadding: {
