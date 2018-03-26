@@ -133,7 +133,7 @@ class Root extends React.Component<InternalProps, InternalState> {
       })
       .catch((error) => console.log(error.message));
 
-    MasterDataService.updateMasterData();
+    await MasterDataService.get().updateMasterData();
   }
 
   public componentWillUnmount() {

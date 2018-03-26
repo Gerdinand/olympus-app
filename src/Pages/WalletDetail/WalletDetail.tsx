@@ -170,7 +170,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   private reloadTxs(wallet: Wallet) {
     if (!this.state) { return; } // Async call after component unmounted
 
-    const token = wallet.tokens.find((token) => token.address === this.state.token.address);
+    const { token } = this.state;
     const exchangeType = this.state.exchangeType;
     const ETHBalance = wallet.tokens.find((token) => token.address === Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
@@ -193,7 +193,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       balance = token.balance;
     }
     this.setState({
-      token, txs, ETHBalance, balance,
+      txs, ETHBalance, balance,
     });
     this.updatePendingTransactions(wallet);
   }

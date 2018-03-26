@@ -6,6 +6,7 @@ import {
   RefreshControl,
   View,
   DeviceEventEmitter,
+  Dimensions,
 } from 'react-native';
 import {
   List,
@@ -34,21 +35,18 @@ interface InternalState {
 }
 class AddToken extends React.Component<InternalProps & ReduxProps, InternalState> {
 
-  public refs = {
-  };
-
   public constructor(props) {
     super(props);
     this.state = { tokens: [], searchText: '' };
   }
   public async componentWillMount() {
-    const { supportedTokens } = await MasterDataService.getMasterData();
+    const { supportedTokens } = MasterDataService.get().getMasterData();
     this.setState({ tokens: supportedTokens });
   }
 
   public onTokenPress(tokenSelected: Token) {
     if (tokenSelected.symbol === ETH) {
-      DeviceEventEmitter.emit('showToast', 'Etherium must be always selected');
+      DeviceEventEmitter.emit('showToast', 'Ethereum must be always selected');
       return;
     }
     const wallet = WalletService.getInstance().wallet;
@@ -58,6 +56,7 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
       wallet.tokens = wallet.tokens.filter((token) => token.symbol !== tokenSelected.symbol);
     } else { // Is not in the wallet, add it
       wallet.tokens.push(Token.initTokenForWallet(tokenSelected, wallet.address));
+      wallet.forceReoload = true;
     }
     this.props.updateWallet(wallet);
     this.setState({ tokens: this.state.tokens }); // refresh
@@ -71,7 +70,8 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
 
   public render() {
     const wallet = WalletService.getInstance().wallet;
-
+    const walletTokensSymbols = wallet.tokens.map((token) => token.symbol);
+    const tokens = this.state.searchText.length > 1 ? this.state.tokens.filter(this.tokenFilter) : wallet.tokens;
     return (
       <View style={{ backgroundColor: '#FFFFFF' }} >
         <Wrapper padding={16}>
@@ -79,6 +79,7 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
           <SearchBar
             onChangeText={(searchText) => this.setState({ searchText })}
             value={this.state.searchText}
+            placeholder="Type 2 characters to search"
           />
           <ScrollView
             refreshControl={
@@ -86,11 +87,13 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
                 refreshing={this.state.tokens.length === 0}
               />
             }
+            // HEIGHT - Header - SearchBar - TopPadding - BottomPadding
+            style={{ height: Dimensions.get('window').height - 45 - 40 - 16 - 16 }}
           >
             {this.state.tokens.length === 0 && <View style={{ height: 640 }} />}
             <List containerStyle={{ borderTopWidth: 0, marginTop: 4 }} >
-              {this.state.tokens.filter(this.tokenFilter).map((token, index) => {
-                const isSelected = _.find(wallet.tokens, { symbol: token.symbol });
+              {tokens.map((token, index) => {
+                const isSelected = walletTokensSymbols.indexOf(token.symbol) !== -1;
                 return (
                   <ListItem
                     containerStyle={{ borderBottomColor: '#DDDDDD', borderTopColor: '#DDDDDD' }}

@@ -58,7 +58,7 @@ export class WalletService {
       txs: [],
       pendingTxs: [],
     } as Wallet;
-    const { supportedTokens } = await MasterDataService.getMasterData();
+    const { supportedTokens } = MasterDataService.get().getMasterData();
     // Initalize the json
     supportedTokens
       .filter((token) => token.supportedExchanges.indexOf(TokenExchanges.KYBER) > -1)

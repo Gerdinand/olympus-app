@@ -172,7 +172,7 @@ class Root extends React.Component<InternalProps, InternalState> {
       console.log('notification' + JSON.stringify(notification));
       notification.finish();
     });
-    await MasterDataService.updateMasterData();
+    await MasterDataService.get().updateMasterData();
 
     /*
      initial notification contains the notification that launchs the app.

@@ -18,7 +18,7 @@ export const decodeTx = async (tx) => {
 
 export const decodeInput = async (tx) => {
   const txInput = tx.input;
-  const { supportedTokens } = await MasterDataService.getMasterData();
+  const { supportedTokens } = MasterDataService.get().getMasterData();
 
   if (typeof txInput === 'string') {
     const result = abiDecoder.decodeMethod(txInput);
@@ -42,6 +42,6 @@ export const decodeInput = async (tx) => {
   return txInput;
 };
 
-export const findToken = (supportedTokens, address): Promise<Token> => {
+export const findToken = (supportedTokens, address): Token => {
   return supportedTokens.find((t) => t.address === address);
 };

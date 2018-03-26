@@ -86,7 +86,15 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
     this.fetchData();
     EthereumService.getInstance().fireTimer();
   }
-
+  public componentWillReceiveProps(_newProps) {
+    // We detect some change in the wallet that require reloading.
+    const wallet = WalletService.getInstance().wallet;
+    if (wallet.forceReoload) {
+      wallet.forceReoload = false;
+      EthereumService.getInstance().sync(wallet);
+      this.setState({ refreshing: true, wallet });
+    }
+  }
   public componentWillUnmount() {
     EthereumService.getInstance().invalidateTimer();
     EventRegister.removeEventListener(this.walletListener);

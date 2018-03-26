@@ -50,6 +50,7 @@ const WalletTab = StackNavigator({
     navigationOptions: () => ({
       title: 'Add Token',
       tabBarVisible: false,
+
     }),
   },
 });
