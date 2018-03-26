@@ -26,7 +26,6 @@ export class MasterDataService {
 
     try {
       const response = await fetch(`${BASE_URL}/authenticate/master-data/${version}`, { method: 'GET', headers });
-
       const { result } = await response.json() as { result: { masterData: MasterData } };
       if (_.isEmpty(result.masterData)) {
         console.log('Masterdata using version ' + version);
