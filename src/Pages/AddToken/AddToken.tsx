@@ -7,6 +7,7 @@ import {
   View,
   DeviceEventEmitter,
   Dimensions,
+  StyleSheet,
 } from 'react-native';
 import {
   List,
@@ -74,7 +75,7 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
     const walletTokensSymbols = wallet.tokens.map((token) => token.symbol);
     const tokens = this.state.searchText.length > 1 ? this.state.tokens.filter(this.tokenFilter) : wallet.tokens;
     return (
-      <View style={{ backgroundColor: Colors.backgroundColor }} >
+      <View style={styles.page} >
         <Wrapper padding={16}>
 
           <SearchBar
@@ -89,10 +90,10 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
               />
             }
             // HEIGHT - Header - SearchBar - TopPadding - BottomPadding
-            style={{ height: Dimensions.get('window').height - 45 - 40 - 16 - 16 }}
+            style={styles.scrollBarHeight}
           >
             {this.state.tokens.length === 0 && <View style={{ height: 640 }} />}
-            <List containerStyle={{ borderTopWidth: 0, marginTop: 4 }} >
+            <List containerStyle={styles.tokenlistContainer} >
               {tokens.map((token, index) => {
                 // Dont show all FIX tokens (now ETH only)
                 if (token.symbol === ETH) {
@@ -104,7 +105,7 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
                     containerStyle={{ borderBottomColor: Colors.inputUnderline, borderTopColor: Colors.inputUnderline }}
                     key={index}
                     title={`${token.name}: ${token.symbol}`}
-                    titleStyle={{ fontSize: 14, marginLeft: 0 }}
+                    titleStyle={styles.tokenTitle}
                     titleContainerStyle={{ marginLeft: 0 }}
                     rightIcon={{
                       name: isSelected ? 'ios-star' : 'ios-star-outline',
@@ -134,3 +135,10 @@ const mergeProps = (reduxProps, dispatchProps, ownProps) => {
 };
 
 export default connect(null, mapDispatchToProps, mergeProps)(AddToken);
+
+const styles = StyleSheet.create({
+  page: { backgroundColor: Colors.backgroundColor },
+  scrollBarHeight: { height: Dimensions.get('window').height - 45 - 40 - 16 - 16 },
+  tokenTitle: { fontSize: 14, marginLeft: 0 },
+  tokenlistContainer: { borderTopWidth: 0, marginTop: 4 },
+});
