@@ -31,6 +31,7 @@ const MarketTab = StackNavigator({
   },
 }, {
     navigationOptions: {
+      headerStyle: { backgroundColor: 'white' },
       headerTintColor: Colors.navigationHeaderBack,
       headerTitleStyle: { color: Colors.navigationHeaderTitle },
     },

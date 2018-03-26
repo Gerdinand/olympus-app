@@ -58,6 +58,7 @@ const WelcomeNav = StackNavigator({
     cardStyle: { backgroundColor: 'white' },
     navigationOptions: {
       headerTintColor: Colors.navigationHeaderBack,
+      headerStyle: { backgroundColor: 'white' },
       headerTitleStyle: { color: Colors.navigationHeaderTitle },
     },
   });

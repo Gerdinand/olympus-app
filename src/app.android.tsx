@@ -103,6 +103,7 @@ const RootNavigation = StackNavigator({
     navigationOptions: {
       headerLeft: null,
       title: 'Wallet Success',
+      headerStyle: { backgroundColor: 'white' },
       headerTintColor: Colors.navigationHeaderBack,
       headerTitleStyle: { color: Colors.navigationHeaderTitle },
     },
