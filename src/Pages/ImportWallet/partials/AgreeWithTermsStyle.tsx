@@ -13,7 +13,6 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 12,
     height: 16,
   },
   checkbox: {
