@@ -34,24 +34,17 @@ export default StyleSheet.create({
   buttonContainer: {
     alignSelf: 'flex-end',
   },
-  cancelButton: {
-    borderTopWidth: 1,
-    borderRightWidth: 1,
-    borderColor: Colors.borderColor,
-    paddingVertical: 16,
+  modalButton: {
     flex: 1,
     flexDirection: 'column',
     alignSelf: 'flex-end',
     alignItems: 'center',
+    paddingVertical: 16,
+    borderColor: Colors.borderColor,
+    borderTopWidth: 1,
   },
-  confirmButton: {
-    borderTopWidth: 1,
-    borderColor: Colors.borderColor,
-    paddingVertical: 16,
-    flex: 1,
-    flexDirection: 'column',
-    alignSelf: 'flex-end',
-    alignItems: 'center',
+  cancelButton: {
+    borderRightWidth: 1,
   },
   cancelText: {
     color: Colors.inactiveText,

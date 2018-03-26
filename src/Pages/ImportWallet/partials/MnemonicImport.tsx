@@ -135,7 +135,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
           </Column>
           <Row style={styles.buttonContainer}>
             <TouchableOpacity
-              style={styles.cancelButton}
+              style={[styles.modalButton, styles.cancelButton]}
               onPress={() => {
                 this.setState({ modalVisible: false });
               }}
@@ -143,7 +143,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.confirmButton}
+              style={styles.modalButton}
               onPress={() => this.confirmTransactionPassword()}
             >
               <Text style={styles.confirmText}>OK</Text>
