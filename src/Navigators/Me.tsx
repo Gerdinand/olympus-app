@@ -5,6 +5,7 @@ import { StackNavigator } from 'react-navigation';
 import MeView from '../Pages/Me/Me';
 import Backup from '../Pages/Backup/Backup';
 import SetGesture from '../Pages/Security/SetGesture';
+import Colors from '../Constants/Colors';
 
 const MeScreen = ({ navigation }) => (
   <MeView navigation={navigation} />
@@ -40,6 +41,12 @@ const MeTab = StackNavigator({
       title: 'Set Gesture',
     }),
   },
-});
+}, {
+    navigationOptions: {
+      headerStyle: { backgroundColor: 'white' },
+      headerTintColor: Colors.navigationHeaderBack,
+      headerTitleStyle: { color: Colors.navigationHeaderTitle },
+    },
+  });
 
 export default MeTab;

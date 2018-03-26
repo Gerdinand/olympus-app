@@ -10,4 +10,6 @@ export default {
   lightgray: 'lightgray',
   attentionDisclaimerText: '#EC5F02',
   pageTitleText: '#4A4A4A',
+  navigationHeaderBack: '#888',
+  navigationHeaderTitle: '#444',
 };
