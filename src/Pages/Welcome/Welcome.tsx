@@ -28,11 +28,6 @@ class WelcomeView extends React.Component<InternalProps> {
     header: null,
   };
 
-  public componentWillMount() {
-    const { navigate } = this.props.navigation;
-    navigate('ImportWallet');
-  }
-
   public render() {
     const { navigate } = this.props.navigation;
     return (
