@@ -133,7 +133,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
               onTextChange={(walletPasswordConfirmation) => this.setState({ walletPasswordConfirmation })}
             />
           </Column>
-          <Row style={styles.buttonContainer}>
+          <Row style={styles.buttonRow}>
             <TouchableOpacity
               style={[styles.modalButton, styles.cancelButton]}
               onPress={() => {

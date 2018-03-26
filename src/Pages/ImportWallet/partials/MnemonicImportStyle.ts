@@ -31,7 +31,7 @@ export default StyleSheet.create({
     paddingHorizontal: 10,
     alignSelf: 'stretch',
   },
-  buttonContainer: {
+  buttonRow: {
     alignSelf: 'flex-end',
   },
   modalButton: {
