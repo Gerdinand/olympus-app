@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Modal, View, Dimensions, ViewStyle } from 'react-native';
-import style from './ModalContainerStyle';
+import { Modal, Dimensions, ViewStyle, StyleSheet } from 'react-native';
+import { Row, Column } from '.';
+import Colors from '../../../Constants/Colors';
 
 interface ModalContainerProps {
   width?: number;
@@ -24,10 +25,12 @@ export default class ModalContainer extends Component<ModalContainerProps> {
         visible={this.props.visible}
         transparent
       >
-        <View
+        <Row
           style={style.background}
+          alignItems={'center'}
+          justifyContent={'center'}
         >
-          <View
+          <Column
             style={[
               style.modal,
               {
@@ -36,11 +39,25 @@ export default class ModalContainer extends Component<ModalContainerProps> {
               },
               this.props.style ? this.props.style : {},
             ]}
+            justifyContent={'center'}
+            alignItems={'center'}
           >
             {this.props.children}
-          </View>
-        </View>
+          </Column>
+        </Row>
       </Modal>
     );
   }
 }
+
+const style = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: Colors.modalBackground,
+  },
+  modal: {
+    marginHorizontal: 16,
+    backgroundColor: 'white',
+    borderRadius: 4,
+  },
+});

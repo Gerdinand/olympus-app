@@ -19,7 +19,7 @@ export default StyleSheet.create({
   modalStyle: {
     flex: 1,
     flexDirection: 'column',
-    paddingHorizontal: 0,
+    paddingHorizontal: 16,
   },
   modalTitle: {
     fontSize: 16,
