@@ -25,7 +25,6 @@ interface ReduxProps {
 class ImportWalletView extends React.Component<ReduxProps, InternalState> {
 
   public static navigationOptions = {
-    header: null,
   };
 
   public constructor(props) {
@@ -39,7 +38,7 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
   public render() {
     return (
       <ScrollView keyboardShouldPersistTaps={'handled'} style={styles.pagePadding}>
-        <Margin marginTop={60} />
+        <Margin marginTop={20} />
         <Text
           style={styles.pageHeader}
         >
