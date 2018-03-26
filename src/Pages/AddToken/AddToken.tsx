@@ -112,7 +112,7 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
                       type: 'ionicon',
                       color: isSelected ? '#5589FF' : '#AAAAAA',
                     }}
-                    onPress={() => this.onTokenPress(token)}
+                    onPressRightIcon={() => this.onTokenPress(token)}
                   />);
               })}
 
