@@ -8,18 +8,18 @@ import {
 import { Text } from '../../_shared/layout/Text';
 import style from './ImportWalletHeaderStyle';
 interface InternalState {
-  activeTab: ActiveTabs;
+  activeTab: ImportWalletTabs;
 }
 interface InternalProps {
   onChangeTab: (newTab: string) => any;
 }
 
 const availableTabs = [
-  ActiveTabs.MNEMONIC,
-  ActiveTabs.PRIVATE_KEY,
-  ActiveTabs.KEYSTORE_WALLET,
+  ImportWalletTabs.MNEMONIC,
+  ImportWalletTabs.PRIVATE_KEY,
+  ImportWalletTabs.KEYSTORE_WALLET,
 ];
-export const enum ActiveTabs {
+export const enum ImportWalletTabs {
   MNEMONIC = 'Mnemonic',
   PRIVATE_KEY = 'Private key',
   KEYSTORE_WALLET = 'Keystore',
@@ -30,7 +30,7 @@ export default class ImportWalletHeader extends React.Component<InternalProps, I
     super(props);
 
     this.state = {
-      activeTab: ActiveTabs.MNEMONIC,
+      activeTab: ImportWalletTabs.MNEMONIC,
     };
   }
 
