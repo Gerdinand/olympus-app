@@ -1,7 +1,6 @@
 'use strict';
 
 import BigNumber from 'bignumber.js';
-import { SupportedTokens } from './SupportedTokens';
 
 // abis
 export const ERC20 = [{
@@ -819,8 +818,8 @@ export const INIT_EXCHANGE_FORM_STATE = {
   sourceToken: ETHER_ADDRESS,
   sourceTokenSymbol: 'ETH',
   sourceAmount: 0,
-  destToken: SupportedTokens[0].address,
-  destTokenSymbol: SupportedTokens[0].symbol,
+  destToken: '',
+  destTokenSymbol: '',
   minConversionRate: 0,
   destAddress: '',
   minDestAmount: 0,

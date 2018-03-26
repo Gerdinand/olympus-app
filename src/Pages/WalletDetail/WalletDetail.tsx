@@ -10,10 +10,10 @@ import {
   Image,
   Linking,
   DeviceEventEmitter,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Card,
-  ButtonGroup,
   Button,
   FormLabel,
   FormValidationMessage,
@@ -31,17 +31,13 @@ import { AddressModal } from './partials/AddressModal';
 import { FormInputWithButton, PasswordInput } from '../_shared/inputs';
 import { TransactionList } from './partials/TransactionList';
 import { GAS_LIMIT, MAX_GAS_PRICE } from '../../Constants';
-import { Wallet, Tx } from '../../Models';
+import { Wallet, Tx, Token } from '../../Models';
 import { PendingTx } from '../../Models/Wallet';
+import Colors from '../../Constants/Colors';
 
 const GAS_MIN_BALANCE = 0.01;
 const GAS_MIN_ERROR = `You need at least ${GAS_MIN_BALANCE} ETH to afford transactions fee.`;
 const DECIMALS = 8; // Display number 8 decimals
-const ETHER_ACTIONS = ['Send', 'Receive'];
-const TOKEN_ACTIONS = ['Send', 'Receive', 'Exchange'];
-const SEND_INDEX = TOKEN_ACTIONS.indexOf('Send');
-const RECEIVE_INDEX = TOKEN_ACTIONS.indexOf('Receive');
-const EXCHANGE_INDEX = TOKEN_ACTIONS.indexOf('Exchange');
 
 interface InternalProps {
   navigation: any;
@@ -64,7 +60,7 @@ interface InternalState {
   exchangeModalVisible: boolean;
   txs: Tx[];
   pendingTxs: PendingTx[];
-  token: any;
+  token: Token;
   balance: number;
   ETHBalance: number;
   sendAddress: string | null;
@@ -95,12 +91,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   public refs: {
     actionSheet: ActionSheet;
   };
-  public static navigationOptions = (_navigationOptions: { navigation: any }) => ({
-    title: 'Asset',
-    tabBar: {
-      visible: false,
-    },
-  })
 
   public constructor(props) {
     super(props);
@@ -141,8 +131,6 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     };
     this.scanner = null;
 
-    // bind methods
-    this.reloadTxs = this.reloadTxs.bind(this);
   }
 
   public componentWillMount() {
@@ -181,14 +169,16 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
   }
 
   private reloadTxs(wallet: Wallet) {
-    const token = wallet.tokens.find((token) => token.address === this.state.token.address);
+    if (!this.state) { return; } // Async call after component unmounted
+
+    const { token } = this.state;
     const exchangeType = this.state.exchangeType;
     const ETHBalance = wallet.tokens.find((token) => token.address === Constants.ETHER_ADDRESS).balance;
     const txs = wallet.txs.filter((tx) => {
       // In case of eth, there is no input object
       if (this.state.token.address === Constants.ETHER_ADDRESS) {
         return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
-          && ((typeof tx.input === 'string') || tx.input.destToken.symbol === Constants.ETH);
+          && ((typeof tx.input === 'string') || (tx.input.destToken && tx.input.destToken.symbol === Constants.ETH));
       }
 
       return (tx.from === token.ownerAddress || tx.to === token.ownerAddress)
@@ -204,7 +194,7 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
       balance = token.balance;
     }
     this.setState({
-      token, txs, ETHBalance, balance,
+      txs, ETHBalance, balance,
     });
     this.updatePendingTransactions(wallet);
   }
@@ -509,25 +499,28 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
 
     this.setState({ sendAmount });
   }
-  private onActionsButtonPress(selectedIndex: number) {
-    this.setState({ buttonGroupSelectedIndex: selectedIndex });
-    if (SEND_INDEX === selectedIndex) {
-      if (this.state.ETHBalance < GAS_MIN_BALANCE) {
-        return DeviceEventEmitter.emit('showToast', GAS_MIN_ERROR);
-      } else if (this.state.token.balance <= 0) {
-        return DeviceEventEmitter.emit('showToast', `Your balance in ${this.state.token.symbol} is insufficient.`);
-      } else {
-        this.onSend();
-      }
-    } else if (RECEIVE_INDEX === selectedIndex) {
-      this.onReceive();
-    } else if (EXCHANGE_INDEX === selectedIndex) {
-      if (this.state.ETHBalance < GAS_MIN_BALANCE) {
-        return DeviceEventEmitter.emit('showToast', GAS_MIN_ERROR);
-      } else {
-        this.onExchange();
-      }
+
+  private openSendModal() {
+    if (this.state.ETHBalance < GAS_MIN_BALANCE) {
+      return DeviceEventEmitter.emit('showToast', GAS_MIN_ERROR);
+    } else if (this.state.token.balance <= 0) {
+      return DeviceEventEmitter.emit('showToast', `Your balance in ${this.state.token.symbol} is insufficient.`);
     }
+    this.onSend();
+  }
+
+  private openReceiveModal() {
+    this.onReceive();
+  }
+
+  private openExchangeModal() {
+    if (!Token.supportExchange(this.state.token)) {
+      return DeviceEventEmitter.emit('showToast', `We currently doent support exchanges for this token.`);
+    }
+    if (this.state.ETHBalance < GAS_MIN_BALANCE) {
+      return DeviceEventEmitter.emit('showToast', GAS_MIN_ERROR);
+    }
+    this.onExchange();
   }
 
   private async onFeeSliderUpdate(gasPrice) {
@@ -758,7 +751,8 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
     );
   }
   public render() {
-
+    const isETHScreen = Token.isETH(this.state.token);
+    const isExchangeSupported = Token.supportExchange(this.state.token);
     return (
       <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
         {this.renderSendModal()}
@@ -778,13 +772,31 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
           <Text style={styles.name}>{this.state.token.symbol}</Text>
           <Text style={styles.balance}>{this.state.token.balance.toFixed(DECIMALS)}</Text>
         </Card>
-        <View style={{ marginTop: 20 }}>
-          <ButtonGroup
-            textStyle={{ fontSize: 13 }}
-            selectedIndex={this.state.buttonGroupSelectedIndex}
-            onPress={(selectedIndex) => this.onActionsButtonPress(selectedIndex)}
-            buttons={this.state.token.address === Constants.ETHER_ADDRESS ? ETHER_ACTIONS : TOKEN_ACTIONS}
-          />
+        <View style={styles.buttonGroup}>
+          <Row alignItems="center">
+            <TouchableOpacity
+              style={[styles.buttonTouchable, styles.lateralBorder]}
+              onPress={() => this.openSendModal()}
+            >
+              <Text style={styles.buttonGroupText} >Send</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.buttonTouchable, !isETHScreen ? styles.lateralBorder : {}]}
+              onPress={() => this.openReceiveModal()}
+            >
+              <Text style={styles.buttonGroupText} >Receive</Text>
+            </TouchableOpacity>
+            {!isETHScreen &&
+              <TouchableOpacity
+                style={[styles.buttonTouchable]}
+                disabled={!isExchangeSupported}
+                onPress={() => this.openExchangeModal()}
+              >
+                <Text style={[styles.buttonGroupText, !isExchangeSupported ? styles.groupButtonDisabled : {}]} >
+                  Exchange
+                </Text>
+              </TouchableOpacity>}
+          </Row>
         </View>
         <TransactionList
           token={this.state.token}
@@ -808,24 +820,24 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
 const styles = StyleSheet.create({
   name: {
     fontSize: 30,
-    color: '#4A4A4A',
+    color: Colors.pageTitleText,
     marginLeft: 15,
   },
   address: {
     fontSize: 10,
-    color: '#4A4A4A',
+    color: Colors.pageTitleText,
     marginLeft: 15,
     marginTop: 6,
   },
   tips: {
     fontSize: 10,
-    color: '#4A4A4A',
+    color: Colors.pageTitleText,
     marginLeft: 15,
     marginTop: 40,
   },
   balance: {
     fontSize: 40,
-    color: '#4A4A4A',
+    color: Colors.pageTitleText,
     marginLeft: 15,
     marginTop: 6,
   },
@@ -858,6 +870,31 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
+  },
+  buttonGroup: {
+    marginLeft: 8,
+    marginRight: 8,
+    marginTop: 40,
+    borderRadius: 8,
+    borderColor: Colors.borderColor,
+    backgroundColor: Colors.textAreaBackground,
+    borderWidth: 0.5,
+  },
+  buttonTouchable: {
+    paddingVertical: 16,
+    flex: 1,
+  },
+  lateralBorder: {
+    borderRightWidth: 1,
+    borderColor: Colors.borderColor,
+  },
+  buttonGroupText: {
+    color: Colors.activeText,
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  groupButtonDisabled: {
+    color: Colors.inactiveText,
   },
   inputButton: {
     color: '#58f',
