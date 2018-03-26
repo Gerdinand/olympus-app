@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Modal, View, Dimensions } from 'react-native';
+import { Modal, View, Dimensions, ViewStyle } from 'react-native';
 import style from './ModalContainerStyle';
 
 interface ModalContainerProps {
   width?: number;
   height?: number;
   visible: boolean;
-  style?: any;
+  style?: ViewStyle;
 }
 
 const DEFAULT_WIDTH = Dimensions.get('window').width;
