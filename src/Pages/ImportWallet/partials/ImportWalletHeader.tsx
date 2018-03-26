@@ -48,7 +48,7 @@ export default class ImportWalletHeader extends React.Component<InternalProps, I
             return (
               <TouchableOpacity
                 key={tab + index}
-                style={this.state.activeTab === tab ? [style.flexColumn, style.selected] : style.flexColumn}
+                style={[style.flexColumn, this.state.activeTab === tab ? style.selected : {}]}
                 onPress={() => {
                   this.setState({ activeTab: tab });
                   this.props.onChangeTab(tab);
