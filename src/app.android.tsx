@@ -181,14 +181,26 @@ class Root extends React.Component<InternalProps, InternalState> {
     });
     // FcmNotificationListener
     FcmNotificationListener = FCM.on(FCMEvent.Notification, async (notification) => {
-      console.log('notification' + JSON.stringify(notification));
-      // save notification to database
-      const realm = await RealmService.instance();
-      realm.write(() => {
-        realm.create('Notification', notification.notification);
-        realm.create('Transation', { ...JSON.parse(notification.transation), stringify: notification.transation });
-      });
       notification.finish();
+      if (!notification.fcm.title || !notification.fcm.title) {
+        return;
+      }
+      try {
+        // save notification to database
+        const realm = await RealmService.instance();
+        realm.write(() => {
+          realm.create('Notification', notification.fcm);
+          realm.create('Transation', {
+            sender: notification.sender,
+            receiver: notification.receiver,
+            symbol: notification.symbol,
+            amount: +notification.amount,
+            stringify: notification.transation,
+          });
+        });
+      } catch (e) {
+        console.error(e);
+      }
     });
 
   }

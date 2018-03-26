@@ -5,24 +5,20 @@ const Notification = {
     properties: {
         title: 'string',
         body: 'string',
-        sound: 'string',
+        action: 'string?',
+        color: 'string?',
+        icon: 'string?',
+        tag: 'string?',
     },
 };
 
 const Transation = {
     name: 'Transation',
     properties: {
-        hash: 'string',
-        nonce: 'int',
-        blockHash: 'string',
-        blockNumber: 'int',
-        transactionIndex: 'int',
-        from: 'string',
-        to: 'string',
-        value: 'string',
-        gasPrice: 'string',
-        gas: 'int',
-        input: 'string',
+        sender: 'string',
+        receiver: 'string',
+        symbol: 'string',
+        amount: 'int',
         stringify: 'string',
     },
 };
@@ -34,6 +30,7 @@ export default class RealmService {
             this.realm = await Realm.open({
                 schema: [Notification, Transation],
             });
+            return this.realm;
         }
         return this.realm;
     }
