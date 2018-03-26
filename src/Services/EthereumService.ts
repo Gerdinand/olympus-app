@@ -209,7 +209,6 @@ export class EthereumService {
         if (tokenPrice !== 0) {
           balanceInUSD += (1.0 / tokenPrice) * ethPrice * tokenBalance;
         }
-        // console.log(`${token.symbol} price: ${token.price}  balance: ${token.balance}`);
       }
 
       wallet.balanceInUSD = Number(balanceInUSD !== 0 ? balanceInUSD.toFixed(2) : 0);

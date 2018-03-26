@@ -31,7 +31,7 @@ const WalletTab = StackNavigator({
         <Icon
           name="ios-add-circle-outline"
           style={style.addTokenIcon}
-          color="#5589FF"
+          color={Colors.buttonBlue}
           size={32}
           onPress={() => navigation.navigate('AddToken')}
         />),

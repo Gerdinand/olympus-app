@@ -33,6 +33,7 @@ import { TransactionList } from './partials/TransactionList';
 import { GAS_LIMIT, MAX_GAS_PRICE } from '../../Constants';
 import { Wallet, Tx, Token } from '../../Models';
 import { PendingTx } from '../../Models/Wallet';
+import Colors from '../../Constants/Colors';
 
 const GAS_MIN_BALANCE = 0.01;
 const GAS_MIN_ERROR = `You need at least ${GAS_MIN_BALANCE} ETH to afford transactions fee.`;
@@ -819,24 +820,24 @@ export default class WalletDetailView extends React.Component<InternalProps, Int
 const styles = StyleSheet.create({
   name: {
     fontSize: 30,
-    color: '#4A4A4A',
+    color: Colors.pageTitleText,
     marginLeft: 15,
   },
   address: {
     fontSize: 10,
-    color: '#4A4A4A',
+    color: Colors.pageTitleText,
     marginLeft: 15,
     marginTop: 6,
   },
   tips: {
     fontSize: 10,
-    color: '#4A4A4A',
+    color: Colors.pageTitleText,
     marginLeft: 15,
     marginTop: 40,
   },
   balance: {
     fontSize: 40,
-    color: '#4A4A4A',
+    color: Colors.pageTitleText,
     marginLeft: 15,
     marginTop: 6,
   },
@@ -875,8 +876,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginTop: 40,
     borderRadius: 8,
-    borderColor: '#AAAAAA',
-    backgroundColor: '#EFEFEF',
+    borderColor: Colors.borderColor,
+    backgroundColor: Colors.textAreaBackground,
     borderWidth: 0.5,
   },
   buttonTouchable: {
@@ -885,15 +886,15 @@ const styles = StyleSheet.create({
   },
   lateralBorder: {
     borderRightWidth: 1,
-    borderColor: '#AAAAAA',
+    borderColor: Colors.borderColor,
   },
   buttonGroupText: {
-    color: '#626262',
+    color: Colors.activeText,
     textAlign: 'center',
     fontSize: 14,
   },
   groupButtonDisabled: {
-    color: '#BBBBBB',
+    color: Colors.inactiveText,
   },
   inputButton: {
     color: '#58f',

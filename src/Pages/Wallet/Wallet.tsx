@@ -22,6 +22,7 @@ import { Wallet, Token } from '../../Models';
 import { Text } from '../_shared/layout/Text';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Colors from '../../Constants/Colors';
 interface OwnProps {
   navigation: any;
 
@@ -47,7 +48,7 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
       <Icon
         name="ios-add-circle"
         size={12}
-        color="#5589FF"
+        color={Colors.buttonBlue}
         onPress={() => navigation.navigate('AddToken')}
       />
     ),
@@ -228,7 +229,8 @@ const styles = StyleSheet.create({
   },
   itemFlex: {
     flex: 1,
-    display: 'flex',
+    display: 'flex'
+    ,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginLeft: 10,
@@ -236,7 +238,7 @@ const styles = StyleSheet.create({
   },
   itemAvatar: {
     backgroundColor: 'white',
-    borderColor: '#999',
+    borderColor: Colors.borderColor,
     borderWidth: 0.5,
     padding: 2,
   },
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     padding: 24,
-    color: '#898989',
+    color: Colors.errorText,
     fontSize: 16,
     textAlign: 'center',
   },

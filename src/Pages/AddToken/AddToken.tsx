@@ -21,6 +21,7 @@ import WalletActions from '../Wallet/WalletActions';
 import { SearchBar } from '../_shared/inputs';
 import { ETH } from '../../Constants';
 import { Wrapper } from '../_shared/layout';
+import Colors from '../../Constants/Colors';
 
 interface InternalProps {
   navigation: any; // Navigation Object
@@ -62,7 +63,7 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
     this.setState({ tokens: this.state.tokens }); // refresh
   }
   private tokenFilter = (token: Token) => {
-    const searchText = this.state.searchText.toLocaleLowerCase();
+    const searchText = this.state.searchText.toLowerCase();
     return token && (
       token.symbol.toLowerCase().indexOf(searchText) !== -1
       || token.name.toLowerCase().indexOf(searchText) !== -1);
@@ -73,7 +74,7 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
     const walletTokensSymbols = wallet.tokens.map((token) => token.symbol);
     const tokens = this.state.searchText.length > 1 ? this.state.tokens.filter(this.tokenFilter) : wallet.tokens;
     return (
-      <View style={{ backgroundColor: '#FFFFFF' }} >
+      <View style={{ backgroundColor: Colors.backgroundColor }} >
         <Wrapper padding={16}>
 
           <SearchBar
@@ -93,10 +94,14 @@ class AddToken extends React.Component<InternalProps & ReduxProps, InternalState
             {this.state.tokens.length === 0 && <View style={{ height: 640 }} />}
             <List containerStyle={{ borderTopWidth: 0, marginTop: 4 }} >
               {tokens.map((token, index) => {
+                // Dont show all FIX tokens (now ETH only)
+                if (token.symbol === ETH) {
+                  return null;
+                }
                 const isSelected = walletTokensSymbols.indexOf(token.symbol) !== -1;
                 return (
                   <ListItem
-                    containerStyle={{ borderBottomColor: '#DDDDDD', borderTopColor: '#DDDDDD' }}
+                    containerStyle={{ borderBottomColor: Colors.inputUnderline, borderTopColor: Colors.inputUnderline }}
                     key={index}
                     title={`${token.name}: ${token.symbol}`}
                     titleStyle={{ fontSize: 14, marginLeft: 0 }}
