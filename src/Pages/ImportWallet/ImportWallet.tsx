@@ -13,6 +13,7 @@ import MnemonicImport from './partials/MnemonicImport';
 import PrivateKeyImport from './partials/PrivateKeyImport';
 import KeystoreWallet from './partials/KeystoreImport';
 import styles from './ImportWalletStyle';
+import { Margin } from '../_shared/layout';
 
 interface InternalState {
   activeTab: ImportWalletTabs;
@@ -38,11 +39,14 @@ class ImportWalletView extends React.Component<ReduxProps, InternalState> {
   public render() {
     return (
       <ScrollView keyboardShouldPersistTaps={'handled'} style={styles.pagePadding}>
+        <Margin marginTop={60} />
         <Text
           style={styles.pageHeader}
         >
           Import my wallet
         </Text>
+        <Margin marginBottom={20} />
+
         <ImportWalletHeader
           onChangeTab={(activeTab: ImportWalletTabs) => {
             this.setState({ activeTab });

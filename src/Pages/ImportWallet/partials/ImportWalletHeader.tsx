@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { Text } from '../../_shared/layout/Text';
 import style from './ImportWalletHeaderStyle';
+import { Margin } from '../../_shared/layout';
 interface InternalState {
   activeTab: ImportWalletTabs;
 }
@@ -36,23 +37,29 @@ export default class ImportWalletHeader extends React.Component<InternalProps, I
 
   public render() {
     return (
-      <View style={style.flexRow}>
-        {availableTabs.map((tab, index) => {
-          return (
-            <TouchableOpacity
-              key={tab + index}
-              style={this.state.activeTab === tab ? [style.flexColumn, style.selected] : style.flexColumn}
-              onPress={() => {
-                this.setState({ activeTab: tab });
-                this.props.onChangeTab(tab);
-              }}
-            >
-              <Text style={this.state.activeTab === tab ? style.bold : style.text}>
-                {tab}
-              </Text>
-            </TouchableOpacity>);
-        })}
-      </View>
-    );
+      <View>
+        <Margin key={'margin1'} marginTop={16} />
+        <View
+          key={'content'}
+          style={style.flexRow}
+        >
+          {availableTabs.map((tab, index) => {
+            return (
+              <TouchableOpacity
+                key={tab + index}
+                style={this.state.activeTab === tab ? [style.flexColumn, style.selected] : style.flexColumn}
+                onPress={() => {
+                  this.setState({ activeTab: tab });
+                  this.props.onChangeTab(tab);
+                }}
+              >
+                <Text style={this.state.activeTab === tab ? style.bold : style.text}>
+                  {tab}
+                </Text>
+              </TouchableOpacity>);
+          })}
+        </View>
+        <Margin key={'margin2'} marginBottom={16} />
+      </View>);
   }
 }

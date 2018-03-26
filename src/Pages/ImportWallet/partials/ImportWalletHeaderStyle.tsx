@@ -7,7 +7,6 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 16,
   },
   flexColumn: {
     flex: 1,
