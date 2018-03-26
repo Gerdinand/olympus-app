@@ -15,10 +15,10 @@ export default StyleSheet.create({
   checkbox: {
     alignSelf: 'center',
     resizeMode: 'contain',
-    width: 16,
-    height: 16,
-    maxWidth: 16,
-    maxHeight: 16,
+    width: 18,
+    height: 18,
+    maxWidth: 18,
+    maxHeight: 18,
   },
   checkboxContainer: {
     marginTop: 4,
