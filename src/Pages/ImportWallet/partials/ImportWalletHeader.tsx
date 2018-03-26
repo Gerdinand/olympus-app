@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { Text } from '../../_shared/layout/Text';
 import style from './ImportWalletHeaderStyle';
-import { Margin } from '../../_shared/layout';
+import { Margin, Row } from '../../_shared/layout';
 interface InternalState {
   activeTab: ImportWalletTabs;
 }
@@ -39,9 +39,10 @@ export default class ImportWalletHeader extends React.Component<InternalProps, I
     return (
       <View>
         <Margin key={'margin1'} marginTop={16} />
-        <View
+        <Row
           key={'content'}
-          style={style.flexRow}
+          alignItems={'center'}
+          justifyContent={'center'}
         >
           {availableTabs.map((tab, index) => {
             return (
@@ -58,7 +59,7 @@ export default class ImportWalletHeader extends React.Component<InternalProps, I
                 </Text>
               </TouchableOpacity>);
           })}
-        </View>
+        </Row>
         <Margin key={'margin2'} marginBottom={16} />
       </View>);
   }

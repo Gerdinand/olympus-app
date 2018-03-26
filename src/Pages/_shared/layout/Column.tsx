@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ViewProperties, ViewStyle } from 'react-native';
 
 interface InternalProps extends ViewProperties {
-  style?: ViewStyle; // Setting it as ViewStyle creates a strange type issue
+  style?: ViewStyle | ViewStyle[]; // Setting it as ViewStyle creates a strange type issue
   justifyContent?: string;
   alignItems?: string;
   alignSelf?: string;

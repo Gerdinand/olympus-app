@@ -15,7 +15,7 @@ import { WalletService, EthereumService } from '../../../Services';
 import ModalContainer from '../../_shared/layout/ModalContainer';
 import AgreeWithTerms from './AgreeWithTerms';
 import ImportPasswordInput from './ImportPasswordInput';
-import { Margin } from '../../_shared/layout';
+import { Margin, Column, Row } from '../../_shared/layout';
 
 // Derive PATH should be the following:
 // https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#path-levels.
@@ -120,7 +120,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
     return (
       <View>
         <ModalContainer visible={this.state.modalVisible} style={styles.modalStyle}>
-          <View style={styles.modalInnerContainer}>
+          <Column style={styles.modalInnerContainer}>
             <Margin marginTop={18} />
             <Text style={styles.modalTitle}>Create a password</Text>
             <Margin marginTop={32} />
@@ -132,8 +132,8 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
               placeholder={`Repeat password`}
               onTextChange={(walletPasswordConfirmation) => this.setState({ walletPasswordConfirmation })}
             />
-          </View>
-          <View style={styles.buttonContainer}>
+          </Column>
+          <Row style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => {
@@ -148,7 +148,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             >
               <Text style={styles.confirmText}>OK</Text>
             </TouchableOpacity>
-          </View>
+          </Row>
         </ModalContainer>
         <TextInput
           placeholder={`Please enter your mnemonic phrase`}

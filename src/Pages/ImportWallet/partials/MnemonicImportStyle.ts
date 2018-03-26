@@ -28,13 +28,10 @@ export default StyleSheet.create({
   },
   modalInnerContainer: {
     flex: 4,
-    flexDirection: 'column',
     paddingHorizontal: 10,
     alignSelf: 'stretch',
   },
   buttonContainer: {
-    flex: 1,
-    flexDirection: 'row',
     alignSelf: 'flex-end',
   },
   cancelButton: {

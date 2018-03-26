@@ -2,9 +2,10 @@
 
 import React from 'react';
 import Colors from '../../../Constants/Colors';
-import { TextInput, TouchableOpacity, View, Image, ViewStyle } from 'react-native';
+import { TextInput, TouchableOpacity, Image, ViewStyle } from 'react-native';
 
 import styles from './ImportPasswordInputStyle';
+import { Row } from '../../_shared/layout';
 
 interface InternalProps {
   onTextChange: (password: string) => void;
@@ -36,7 +37,11 @@ export default class ImportPasswordInput extends React.Component<InternalProps, 
 
   public render() {
     return (
-      <View style={[styles.passwordInputContainer, this.props.style ? this.props.style : {}]}>
+      <Row
+        style={[styles.passwordInputContainer, this.props.style ? this.props.style : {}]}
+        justifyContent={'center'}
+        alignItems={'center'}
+      >
         <Image
           source={require('../../../../images/lock_icon.jpg')}
           style={[styles.image, styles.lockSize]}
@@ -63,6 +68,6 @@ export default class ImportPasswordInput extends React.Component<InternalProps, 
             style={[styles.image, styles.eyeSize]}
           />
         </TouchableOpacity>
-      </View>);
+      </Row>);
   }
 }

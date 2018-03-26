@@ -11,13 +11,10 @@ export default StyleSheet.create({
   },
   passwordInputContainer: {
     flex: 1,
-    flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: Colors.inputUnderline,
     paddingBottom: 4,
     marginBottom: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
     height: 30,
     maxHeight: 30,
   },

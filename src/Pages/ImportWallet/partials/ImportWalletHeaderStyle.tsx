@@ -2,12 +2,6 @@ import { StyleSheet } from 'react-native';
 import Colors from '../../../Constants/Colors';
 // Style
 export default StyleSheet.create({
-  flexRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   flexColumn: {
     flex: 1,
     flexDirection: 'column',
