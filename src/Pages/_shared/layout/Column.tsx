@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, ViewProperties } from 'react-native';
+import { View, ViewProperties, ViewStyle } from 'react-native';
 
 interface InternalProps extends ViewProperties {
-  style?: any; // Setting it as ViewStyle creates a strange type issue
+  style?: ViewStyle | ViewStyle[]; // Setting it as ViewStyle creates a strange type issue
   justifyContent?: string;
   alignItems?: string;
   alignSelf?: string;
@@ -21,7 +21,7 @@ export class Column extends React.PureComponent<InternalProps> {
       justifyContent ? { justifyContent } : {},
       alignItems ? { alignItems } : {},
       alignSelf ? { alignSelf } : {},
-    ];
+    ] as ViewStyle[];
 
     return (
       <View
