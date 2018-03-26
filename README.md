@@ -37,5 +37,5 @@ react-native run-ios
 
 ## Colors
 
-Through the app in order to keep the same styling, don't hardcore any color, but use the colors
+Through the app in order to keep the same styling, don't hardcode any color, but use the colors
 available in Colors Constant file.
