@@ -10,9 +10,6 @@ export default StyleSheet.create({
   },
   agreementRow: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     height: 16,
   },
   checkbox: {

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Text } from '../../_shared/layout/Text';
 import CheckBox from 'react-native-checkbox';
 import styles from './AgreeWithTermsStyle';
-import { Margin } from '../../_shared/layout';
+import { Margin, Row } from '../../_shared/layout';
 interface InternalProps {
   toggleAgreed: () => void;
 }
@@ -22,7 +22,7 @@ export default class AgreeWithTerms extends React.Component<InternalProps, Inter
     return (
       <View>
         <Margin marginTop={12} />
-        <View style={styles.agreementRow}>
+        <Row style={styles.agreementRow} alignItems={'center'} justifyContent={'center'}>
           <CheckBox
             label={null}
             checked={this.state.termsAgreed}
@@ -38,7 +38,7 @@ export default class AgreeWithTerms extends React.Component<InternalProps, Inter
           />
           <Text style={styles.termsAgreeText}>I have carefully read and agree to the
         <Text style={styles.textLink}> terms and conditions</Text></Text>
-        </View>
+        </Row>
       </View>
     );
   }
