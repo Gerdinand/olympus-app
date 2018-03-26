@@ -5,6 +5,8 @@ export default {
   textAreaBackground: '#FCFCFC',
   borderColor: '#D5DBE5',
   inputUnderline: '#DDDDDD',
+  subTitle: '#DDDDDD',
+
   inactiveText: '#AAAAAA',
   activeText: '#444444',
   lightgray: 'lightgray',

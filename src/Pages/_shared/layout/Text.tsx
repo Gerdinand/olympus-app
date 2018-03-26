@@ -8,7 +8,7 @@ export class Text extends React.PureComponent<TextProperties> {
     return (
       <SytemText
         numberOfLines={1}
-        style={[{}, style]}
+        style={[{ fontFamily: 'System' }, style]}
         {...props}
       >
         {this.props.children}

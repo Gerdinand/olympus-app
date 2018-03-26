@@ -16,6 +16,7 @@ import { Row, Column, Margin } from '../../_shared/layout';
 import { AppState } from '../../../reducer';
 import WalletActions from '../WalletActions';
 import { WalletService } from '../../../Services';
+import Colors from '../../../Constants/Colors';
 
 interface ReduxProps {
   balanceVisibility: boolean;
@@ -70,7 +71,7 @@ class WalletHeader extends React.Component<ReduxProps, InternalState> {
               <Margin margin={12} />
               <Icon
                 name="qrcode"
-                color="#DDDDDD"
+                color={Colors.subTitle}
                 size={28}
               />
             </Row>
@@ -124,14 +125,15 @@ const styles = StyleSheet.create({
   },
   address: {
     fontSize: 12,
-    color: '#DDDDDD',
+    color: Colors.subTitle,
   },
   tips: {
     fontSize: 14,
-    color: '#DDDDDD',
+    color: Colors.subTitle,
   },
   assets: {
     fontSize: 40,
+    fontFamily: 'ArialNarrowBold',
     fontWeight: 'bold',
     color: 'white',
   },
