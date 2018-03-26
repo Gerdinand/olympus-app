@@ -9,6 +9,7 @@ import BigNumber from 'bignumber.js';
 import Moment from 'moment';
 import { Tx, Token } from '../../../Models';
 import { PendingTx } from '../../../Models/Wallet';
+import { WalletService } from '../../../Services';
 
 const TRADE = 'Trade';
 const ETHER_RECEIVAL = 'EtherReceival';
@@ -25,10 +26,6 @@ export class TransactionList extends PureComponent<InternalProps> {
 
   public constructor(props) {
     super(props);
-  }
-
-  private formatAddress(address: string) {
-    return address.replace(/(0x.{6}).{29}/, '$1****');
   }
 
   private getTransactionInformation(tx: Tx): { isSending: boolean, tokenAmount: any, isExchange: boolean } {
@@ -98,7 +95,7 @@ export class TransactionList extends PureComponent<InternalProps> {
     const { isSending, tokenAmount, isExchange } = this.getTransactionInformation(tx);
     const amount = (new BigNumber(tokenAmount)).div(Math.pow(10, this.props.token.decimals)).toFixed(6);
 
-    const dest = this.formatAddress(isSending ? tx.to : tx.from);
+    const dest = WalletService.formatAddress(isSending ? tx.to : tx.from);
     const time = Moment(Number(`${tx.timeStamp}000`)).fromNow();
     const direction = isSending ? '-' : '+';
     const avatar = isExchange ?
@@ -140,7 +137,7 @@ export class TransactionList extends PureComponent<InternalProps> {
             }}
             hideChevron={true}
             key={'pending' + pendingTx.tx.hash}
-            title={`PENDING ${this.formatAddress(pendingTx.tx.to)}`}
+            title={`PENDING ${WalletService.formatAddress(pendingTx.tx.to)}`}
             subtitle={'wait for a minute...'}
             onPress={() => {
               this.props.onListItemPress && this.props.onListItemPress(pendingTx.tx.hash);

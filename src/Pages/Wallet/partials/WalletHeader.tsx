@@ -12,15 +12,11 @@ import {
 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
-import { Row } from '../../_shared/layout';
+import { Row, Column, Margin } from '../../_shared/layout';
 import { AppState } from '../../../reducer';
 import WalletActions from '../WalletActions';
+import { WalletService } from '../../../Services';
 
-interface OwnProps {
-  name: string;
-  address: string;
-  balance: string | number;
-}
 interface ReduxProps {
   balanceVisibility: boolean;
   changeBalanceVisibility: () => void;
@@ -28,7 +24,7 @@ interface ReduxProps {
 interface InternalState {
   modalVisible: boolean;
 }
-class WalletHeader extends React.Component<OwnProps & ReduxProps, InternalState> {
+class WalletHeader extends React.Component<ReduxProps, InternalState> {
 
   public constructor(props) {
     super(props);
@@ -38,38 +34,53 @@ class WalletHeader extends React.Component<OwnProps & ReduxProps, InternalState>
   }
 
   public render() {
-    const { name, address, balance } = this.props;
+    const wallet = WalletService.getInstance().wallet;
+
     return (
       <View style={{ backgroundColor: 'transparent' }}>
-        <View style={styles.container}>
-          <Text style={styles.name}>{name}</Text>
-          <Row
-            onPress={() => { this.setState({ modalVisible: true }); }}
-          >
-            <Text style={styles.address}> {address}</Text>
-            <Icon
-              name="qrcode"
-              color="white"
-              size={22}
-              style={styles.icon}
-            />
-          </Row>
-          <Text style={styles.tips}>
-            {`BALANCE  `}
-            <Icon
-              style={styles.balanceVisibilityIcon}
-              name={this.props.balanceVisibility ? 'eye' : 'eye-slash'}
-              onPress={() => this.props.changeBalanceVisibility()}
-            />
-          </Text>
 
-          <Text style={styles.assets}>{balance}</Text>
+        <View style={styles.walletContainer}>
+          <Column justifyContent="space-between" style={{ flex: 1 }} >
+
+            <View>
+              <Row>
+                <Text style={styles.tips}>Total Assets(ETH) </Text>
+                <Icon
+                  size={14}
+                  color="white"
+                  name={this.props.balanceVisibility ? 'eye' : 'eye-slash'}
+                  onPress={() => this.props.changeBalanceVisibility()}
+                />
+              </Row>
+              <Text style={styles.assets}>
+                {this.props.balanceVisibility ? wallet.balance.toFixed(6) : '********'}
+
+              </Text>
+              <Row>
+                <Text style={styles.tips}>
+                  {this.props.balanceVisibility ? `\u2245$${wallet.balanceInUSD}` : '\u2245$*******'}
+                </Text>
+              </Row>
+            </View>
+            <Row
+              onPress={() => { this.setState({ modalVisible: true }); }}
+              alignItems="center"
+            >
+              <Text style={styles.address}> {WalletService.formatAddress(wallet.address)}</Text>
+              <Margin margin={12} />
+              <Icon
+                name="qrcode"
+                color="#DDDDDD"
+                size={28}
+              />
+            </Row>
+          </Column >
         </View>
 
         <AddressModal
           title={'My Address'}
           visible={this.state.modalVisible}
-          address={address}
+          address={wallet.address}
           onClose={(message) => {
             this.setState({ modalVisible: false });
             if (message) {
@@ -99,47 +110,30 @@ const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
 export default connect(mapReduxStateToProps, mapDispatchToProps, mergeProps)(WalletHeader);
 
 const styles = StyleSheet.create({
-  container: {
+  walletContainer: {
     marginRight: 10,
     marginLeft: 10,
     marginTop: 10,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 36,
     aspectRatio: 16 / 9,
     backgroundColor: '#4B5FFE',
     borderRadius: 8,
     borderWidth: 0,
     borderColor: 'transparent',
   },
-  name: {
-    fontSize: 30,
-    color: 'white',
-    marginLeft: 15,
-  },
   address: {
     fontSize: 12,
-    color: 'white',
-    marginLeft: 15,
-    marginRight: 5,
-    marginTop: 6,
+    color: '#DDDDDD',
   },
   tips: {
     fontSize: 14,
-    color: 'white',
-    marginLeft: 15,
-    marginTop: 30,
+    color: '#DDDDDD',
   },
   assets: {
     fontSize: 40,
+    fontWeight: 'bold',
     color: 'white',
-    marginLeft: 15,
-    marginTop: 6,
   },
-  icon: {
-    alignSelf: 'flex-end',
-  },
-  balanceVisibilityIcon: {
-    fontSize: 14,
-    color: '#fff',
-  },
+
 });

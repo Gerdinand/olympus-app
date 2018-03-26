@@ -122,4 +122,7 @@ export class WalletService {
     return json;
   }
 
+  public static formatAddress(address: string) {
+    return address.replace(/(0x.{6}).{29}/, '$1****');
+  }
 }
