@@ -83,6 +83,10 @@ export default StyleSheet.create({
     backgroundColor: Colors.textAreaBackground,
     padding: 8,
   },
+  lastDropdownListItem: {
+    marginTop: -1,
+    marginBottom: 8,
+  },
   dropdownIcon: {
     flex: 1,
     resizeMode: 'contain',

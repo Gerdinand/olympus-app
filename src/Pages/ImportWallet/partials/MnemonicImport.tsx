@@ -178,7 +178,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
           return (
             <TouchableOpacity
               key={path.wallets}
-              style={[styles.dropdownListItem, derivePaths.length === index + 1 && { marginTop: -1, marginBottom: 8 }]}
+              style={[styles.dropdownListItem, derivePaths.length === index + 1 && styles.lastDropdownListItem]}
               onPress={() => this.setState({ derivePath: path, showDropdown: false })}
             >
               <Text style={styles.dropdownText}>{path.wallets}</Text>
