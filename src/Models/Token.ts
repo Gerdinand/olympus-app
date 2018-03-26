@@ -2,7 +2,7 @@
 
 export enum TokenExchanges {
   KYBER = 'Kyber',
-  SPACE_SHIFT = 'Space_shift',
+  SHAPE_SHIFT = 'Shape_shift',
 }
 export class Token {
   public name: string;
