@@ -4,6 +4,7 @@ import React from 'react';
 import { StackNavigator } from 'react-navigation';
 import MarketView from '../Pages/Market/Market';
 import MarketIndex from '../Pages/Market/partials/MarketIndex';
+import Colors from '../Constants/Colors';
 
 const MarketScreen = ({ navigation }) => (
   <MarketView navigation={navigation} />
@@ -28,6 +29,12 @@ const MarketTab = StackNavigator({
       title: 'Market Index',
     }),
   },
-});
+}, {
+    navigationOptions: {
+      headerStyle: { backgroundColor: 'white' },
+      headerTintColor: Colors.navigationHeaderBack,
+      headerTitleStyle: { color: Colors.navigationHeaderTitle },
+    },
+  });
 
 export default MarketTab;

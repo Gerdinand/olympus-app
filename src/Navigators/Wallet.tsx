@@ -8,6 +8,7 @@ import WalletView from '../Pages/Wallet/Wallet';
 import WalletDetail from '../Pages/WalletDetail/WalletDetail';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AddToken from '../Pages/AddToken/AddToken';
+import Colors from '../Constants/Colors';
 
 const WalletScreen = ({ navigation }) => (
   <WalletView navigation={navigation} />
@@ -53,7 +54,13 @@ const WalletTab = StackNavigator({
 
     }),
   },
-});
+}, {
+    navigationOptions: {
+      headerStyle: { backgroundColor: 'white' },
+      headerTintColor: Colors.navigationHeaderBack,
+      headerTitleStyle: { color: Colors.navigationHeaderTitle },
+    },
+  });
 
 export default WalletTab;
 

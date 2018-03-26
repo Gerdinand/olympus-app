@@ -14,6 +14,7 @@ import CreateWalletView from '../CreateWallet/CreateWallet';
 import ImportWalletView from '../ImportWallet/ImportWallet';
 import styles from './WelcomeStyle';
 import PropTypes from 'prop-types';
+import Colors from '../../Constants/Colors';
 
 interface InternalProps {
   navigation;
@@ -26,6 +27,7 @@ class WelcomeView extends React.Component<InternalProps> {
   public static navigationOptions = {
     title: 'Welcome',
     header: null,
+    headerBackTitle: null,
   };
 
   public render() {
@@ -52,7 +54,13 @@ const WelcomeNav = StackNavigator({
   Home: { screen: WelcomeView },
   CreateWallet: { screen: CreateWalletView },
   ImportWallet: { screen: ImportWalletView },
-
-}, { cardStyle: { backgroundColor: 'white' } });
+}, {
+    cardStyle: { backgroundColor: 'white' },
+    navigationOptions: {
+      headerTintColor: Colors.navigationHeaderBack,
+      headerStyle: { backgroundColor: 'white' },
+      headerTitleStyle: { color: Colors.navigationHeaderTitle },
+    },
+  });
 
 export default WelcomeNav;
