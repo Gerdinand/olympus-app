@@ -11,7 +11,7 @@ interface InternalState {
   activeTab: ImportWalletTabs;
 }
 interface InternalProps {
-  onChangeTab: (newTab: string) => any;
+  onChangeTab: (newTab: string) => void;
 }
 
 const availableTabs = [

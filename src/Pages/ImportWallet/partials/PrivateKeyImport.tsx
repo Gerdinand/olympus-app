@@ -11,7 +11,7 @@ import styles from './PrivateKeyImportStyle';
 import { EthereumService, WalletService } from '../../../Services';
 
 interface InternalProps {
-  setWallet: (wallet: Wallet) => any;
+  setWallet: (wallet: Wallet) => void;
 }
 interface InternalState {
   privateKey: string;

@@ -11,7 +11,7 @@ import ImportPasswordInput from './ImportPasswordInput';
 import AgreeWithTerms from './AgreeWithTerms';
 import styles from './KeystoreImportStyle';
 interface InternalProps {
-  setWallet: (wallet: Wallet) => any;
+  setWallet: (wallet: Wallet) => void;
 }
 interface InternalState {
   password: string;

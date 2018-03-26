@@ -2,14 +2,14 @@
 
 import React from 'react';
 import Colors from '../../../Constants/Colors';
-import { TextInput, TouchableOpacity, View, Image } from 'react-native';
+import { TextInput, TouchableOpacity, View, Image, ViewStyle } from 'react-native';
 
 import styles from './ImportPasswordInputStyle';
 
 interface InternalProps {
-  onTextChange: (password: string) => any;
+  onTextChange: (password: string) => void;
   placeholder: string;
-  style?: any;
+  style?: ViewStyle;
 }
 interface InternalState {
   passwordSecure: boolean;

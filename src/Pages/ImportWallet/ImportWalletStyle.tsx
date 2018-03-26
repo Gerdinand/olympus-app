@@ -7,9 +7,9 @@ export default StyleSheet.create({
     fontWeight: '600',
     color: Colors.pageTitleText,
     marginTop: 80,
-    marginLeft: 5,
+    marginLeft: 4,
   },
   pagePadding: {
-    padding: 15,
+    padding: 16,
   },
 });

@@ -4,7 +4,7 @@ import { Text } from '../../_shared/layout/Text';
 import CheckBox from 'react-native-checkbox';
 import styles from './AgreeWithTermsStyle';
 interface InternalProps {
-  toggleAgreed: () => any;
+  toggleAgreed: () => void;
 }
 interface InternalState {
   termsAgreed: boolean;

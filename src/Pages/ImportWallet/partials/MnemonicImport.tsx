@@ -37,7 +37,7 @@ const derivePaths: Array<{ path: string, wallets: string }> = [
   },
 ];
 interface InternalProps {
-  setWallet: (wallet: Wallet) => any;
+  setWallet: (wallet: Wallet) => void;
 }
 interface InternalState {
   showDropdown: boolean;
