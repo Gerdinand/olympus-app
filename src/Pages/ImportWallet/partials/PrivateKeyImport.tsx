@@ -56,6 +56,7 @@ export default class PrivateKeyImport extends React.Component<InternalProps, Int
         <TextInput
           placeholder={`Please enter your private key`}
           placeholderTextColor={Colors.inactiveText}
+          autoCapitalize={'none'}
           multiline={true}
           style={styles.privateKeyInput}
           value={this.state.privateKey}

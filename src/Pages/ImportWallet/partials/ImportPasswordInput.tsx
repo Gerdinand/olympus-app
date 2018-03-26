@@ -44,6 +44,7 @@ export default class ImportPasswordInput extends React.Component<InternalProps, 
         <TextInput
           placeholder={this.props.placeholder}
           placeholderTextColor={Colors.inactiveText}
+          autoCapitalize={'none'}
           style={styles.passwordInput}
           value={this.state.password}
           secureTextEntry={this.state.passwordSecure}

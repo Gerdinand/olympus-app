@@ -150,6 +150,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
         </ModalContainer>
         <TextInput
           placeholder={`Please enter your mnemonic phrase`}
+          autoCapitalize={'none'}
           placeholderTextColor={Colors.inactiveText}
           multiline={true}
           style={styles.seedWordsInput}

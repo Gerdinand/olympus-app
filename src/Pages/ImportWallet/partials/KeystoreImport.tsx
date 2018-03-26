@@ -61,6 +61,7 @@ export default class JSONImport extends React.Component<InternalProps, InternalS
         <TextInput
           placeholder={`Please enter your keystore`}
           placeholderTextColor={Colors.inactiveText}
+          autoCapitalize={'none'}
           multiline={true}
           style={styles.keystoreInput}
           value={this.state.keystore}
