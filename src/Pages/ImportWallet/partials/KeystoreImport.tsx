@@ -10,6 +10,7 @@ import Colors from '../../../Constants/Colors';
 import ImportPasswordInput from './ImportPasswordInput';
 import AgreeWithTerms from './AgreeWithTerms';
 import styles from './KeystoreImportStyle';
+import { Margin } from '../../_shared/layout';
 interface InternalProps {
   setWallet: (wallet: Wallet) => void;
 }
@@ -69,6 +70,8 @@ export default class JSONImport extends React.Component<InternalProps, InternalS
             this.setState({ keystore });
           }}
         />
+        <Margin marginTop={26} />
+
         <ImportPasswordInput
           placeholder={`Keystore password`}
           onTextChange={(password) => this.setState({ password })}
@@ -77,6 +80,7 @@ export default class JSONImport extends React.Component<InternalProps, InternalS
         <AgreeWithTerms
           toggleAgreed={() => this.setState({ termsAgreed: !this.state.termsAgreed })}
         />
+        <Margin marginTop={80} />
         <Button
           buttonStyle={[styles.startImportButton, !this.state.termsAgreed && { backgroundColor: Colors.lightgray }]}
           title="Start importing"

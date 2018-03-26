@@ -10,11 +10,9 @@ export default StyleSheet.create({
     paddingTop: 10,
     height: 64,
     fontSize: 14,
-    marginBottom: 26,
   },
   startImportButton: {
     borderRadius: 4,
-    marginTop: 80,
     paddingTop: 15,
     backgroundColor: Colors.buttonBlue,
   },

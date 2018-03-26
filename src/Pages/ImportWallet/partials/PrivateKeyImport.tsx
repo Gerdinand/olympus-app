@@ -9,6 +9,7 @@ import AgreeWithTerms from './AgreeWithTerms';
 import { Button } from 'react-native-elements';
 import styles from './PrivateKeyImportStyle';
 import { EthereumService, WalletService } from '../../../Services';
+import { Margin } from '../../_shared/layout';
 
 interface InternalProps {
   setWallet: (wallet: Wallet) => void;
@@ -64,6 +65,7 @@ export default class PrivateKeyImport extends React.Component<InternalProps, Int
             this.setState({ privateKey });
           }}
         />
+        <Margin marginTop={26} />
         <ImportPasswordInput
           placeholder={`Create a transaction password`}
           onTextChange={(walletPassword) => this.setState({ walletPassword })}
@@ -75,6 +77,7 @@ export default class PrivateKeyImport extends React.Component<InternalProps, Int
         <AgreeWithTerms
           toggleAgreed={() => this.setState({ termsAgreed: !this.state.termsAgreed })}
         />
+        <Margin marginTop={80} />
         <Button
           buttonStyle={[styles.startImportButton, !this.state.termsAgreed && { backgroundColor: Colors.lightgray }]}
           title="Start importing"

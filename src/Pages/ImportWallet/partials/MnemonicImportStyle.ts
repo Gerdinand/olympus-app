@@ -10,20 +10,9 @@ export default StyleSheet.create({
     paddingTop: 10,
     height: 64,
     fontSize: 14,
-    marginBottom: 26,
-  },
-  mnemonicPassword: {
-    marginTop: 20,
-  },
-  marginTop: {
-    marginTop: 32,
-  },
-  marginBottom: {
-    marginBottom: 40,
   },
   startImportButton: {
     borderRadius: 4,
-    marginTop: 80,
     paddingTop: 15,
     backgroundColor: Colors.buttonBlue,
   },
@@ -33,7 +22,6 @@ export default StyleSheet.create({
     paddingHorizontal: 0,
   },
   modalTitle: {
-    marginTop: 18,
     fontSize: 16,
     color: Colors.activeText,
     alignSelf: 'center',
@@ -76,7 +64,6 @@ export default StyleSheet.create({
   },
   dropdown: {
     flex: 1,
-    marginBottom: 8,
     alignSelf: 'stretch',
     flexDirection: 'row',
     alignContent: 'space-between',

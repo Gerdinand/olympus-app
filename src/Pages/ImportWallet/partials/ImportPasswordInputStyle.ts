@@ -4,9 +4,10 @@ import Colors from '../../../Constants/Colors';
 export default StyleSheet.create({
   passwordInput: {
     fontSize: 14,
-    marginTop: 8,
     flex: 5,
     alignItems: 'center',
+    height: 24,
+    maxHeight: 24,
   },
   passwordInputContainer: {
     flex: 1,
@@ -17,6 +18,8 @@ export default StyleSheet.create({
     marginBottom: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    height: 30,
+    maxHeight: 30,
   },
   image: {
     flex: 1,

@@ -15,6 +15,7 @@ import { WalletService, EthereumService } from '../../../Services';
 import ModalContainer from '../../_shared/layout/ModalContainer';
 import AgreeWithTerms from './AgreeWithTerms';
 import ImportPasswordInput from './ImportPasswordInput';
+import { Margin } from '../../_shared/layout';
 
 // Derive PATH should be the following:
 // https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#path-levels.
@@ -120,11 +121,12 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
       <View>
         <ModalContainer visible={this.state.modalVisible} style={styles.modalStyle}>
           <View style={styles.modalInnerContainer}>
+            <Margin marginTop={18} />
             <Text style={styles.modalTitle}>Create a password</Text>
+            <Margin marginTop={32} />
             <ImportPasswordInput
               placeholder={`Create a transaction password`}
               onTextChange={(walletPassword) => this.setState({ walletPassword })}
-              style={styles.marginTop}
             />
             <ImportPasswordInput
               placeholder={`Repeat password`}
@@ -159,6 +161,8 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             this.setState({ mnemonic });
           }}
         />
+        <Margin marginTop={26} />
+
         <TouchableOpacity
           style={styles.dropdown}
           onPress={() => this.setState({ showDropdown: !this.state.showDropdown })}
@@ -169,6 +173,7 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             style={styles.dropdownIcon}
           />
         </TouchableOpacity>
+        <Margin marginBottom={8} />
         {this.state.showDropdown && derivePaths.map((path, index) => {
           return (
             <TouchableOpacity
@@ -180,14 +185,16 @@ export default class MnemonicImport extends React.Component<InternalProps, Inter
             </TouchableOpacity>);
         })
         }
+        <Margin marginTop={20} />
+
         <ImportPasswordInput
           onTextChange={(password) => this.setState({ password })}
           placeholder={`Please enter your password (optional)`}
-          style={styles.mnemonicPassword}
         />
         <AgreeWithTerms
           toggleAgreed={() => this.setState({ termsAgreed: !this.state.termsAgreed })}
         />
+        <Margin marginTop={80} />
 
         <Button
           buttonStyle={[styles.startImportButton, !this.state.termsAgreed && { backgroundColor: Colors.lightgray }]}
