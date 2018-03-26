@@ -25,6 +25,7 @@ interface ReduxProps {
 class ImportWalletView extends React.Component<ReduxProps, InternalState> {
 
   public static navigationOptions = {
+    headerBackTitle: '',
   };
 
   public constructor(props) {

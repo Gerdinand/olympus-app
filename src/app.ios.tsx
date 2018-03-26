@@ -26,6 +26,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
 import { Wallet } from './Models';
 import { WalletService } from './Services';
+import Colors from './Constants/Colors';
 
 const TabRoot = TabNavigator({
   WalletTab: {
@@ -79,6 +80,8 @@ const RootNavigation = StackNavigator({
     navigationOptions: {
       headerLeft: null,
       title: 'Wallet Success',
+      headerTintColor: Colors.navigationHeaderBack,
+      headerTitleStyle: { color: Colors.navigationHeaderTitle },
     },
   },
 });
