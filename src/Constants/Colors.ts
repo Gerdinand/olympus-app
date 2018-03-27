@@ -10,6 +10,8 @@ export default {
   // Borders
   borderColor: '#D5DBE5',
   inputUnderline: '#DDDDDD',
+  subTitle: '#FFFFFF',
+
   // Text
   inactiveText: '#AAAAAA',
   activeText: '#444444',

@@ -34,8 +34,29 @@ npm i --save-dev mvayngrib/rn-nodeify
 react-native run-ios
 ```
 
+## Troublesome
 
-## Colors
+a). Cant compile with xCode get the error
+
+`library not found for -lGoogleToolboxForMac clang: error: linker command failed with exit code 1 (use -v to see invocation)]`
+
+1. Install pod
+```shell
+// Install pod
+brew install pod
+// Run pod, with international connection (make sure you can connect google)
+pod update
+// Verify
+pod install
+```
+
+2. Open the project file with xCode `Olympus.xcworkspace`, not `Olympus.xcodeproj`. Run from this one.
+
+## LAYOUT
+
+ - Colors
 
 Through the app in order to keep the same styling, don't hardcode any color, but use the colors
 available in Colors Constant file.
+
+- In order to keep consitency in the fonts, use Text and TextInput form layout border.

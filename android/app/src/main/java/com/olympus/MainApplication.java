@@ -3,6 +3,8 @@ package com.olympus;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import co.airbitz.fastcrypto.RNFastCryptoPackage;
+import com.bitgo.randombytes.RandomBytesPackage;
 import com.rnfingerprint.FingerprintAuthPackage;
 import io.realm.react.RealmReactPackage;
 import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
@@ -34,7 +36,9 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-            new MainReactPackage(),
+          new MainReactPackage(),
+            new RNFastCryptoPackage(),
+            new RandomBytesPackage(),
             new FingerprintAuthPackage(),
             new RealmReactPackage(),
             new ReactNativeFingerprintScannerPackage(),

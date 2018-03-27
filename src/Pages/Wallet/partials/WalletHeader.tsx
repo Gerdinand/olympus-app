@@ -5,19 +5,22 @@ import {
   StyleSheet,
   View,
   DeviceEventEmitter,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
-import { Row, Text } from '../../_shared/layout';
+import { Row, Column, Margin, Text } from '../../_shared/layout';
 import { AppState } from '../../../reducer';
 import WalletActions from '../WalletActions';
+import { WalletService } from '../../../Services';
+import Colors from '../../../Constants/Colors';
+import { Wallet } from '../../../Models';
 
-interface OwnProps {
-  name: string;
-  address: string;
-  balance: string | number;
+const ALMOST_EQUAL = '\u2248';
+interface InternalProps {
+  wallet: Wallet;
 }
 interface ReduxProps {
   balanceVisibility: boolean;
@@ -26,7 +29,7 @@ interface ReduxProps {
 interface InternalState {
   modalVisible: boolean;
 }
-class WalletHeader extends React.Component<OwnProps & ReduxProps, InternalState> {
+class WalletHeader extends React.Component<ReduxProps & InternalProps, InternalState> {
 
   public constructor(props) {
     super(props);
@@ -36,38 +39,56 @@ class WalletHeader extends React.Component<OwnProps & ReduxProps, InternalState>
   }
 
   public render() {
-    const { name, address, balance } = this.props;
+    const wallet = this.props.wallet;
+
     return (
       <View style={{ backgroundColor: 'transparent' }}>
-        <View style={styles.container}>
-          <Text style={styles.name}>{name}</Text>
-          <Row
-            onPress={() => { this.setState({ modalVisible: true }); }}
-          >
-            <Text style={styles.address}> {address}</Text>
-            <Icon
-              name="qrcode"
-              color="white"
-              size={22}
-              style={styles.icon}
-            />
-          </Row>
-          <Text style={styles.tips}>
-            {`BALANCE  `}
-            <Icon
-              style={styles.balanceVisibilityIcon}
-              name={this.props.balanceVisibility ? 'eye' : 'eye-slash'}
-              onPress={() => this.props.changeBalanceVisibility()}
-            />
-          </Text>
 
-          <Text style={styles.assets}>{balance}</Text>
+        <View style={styles.walletContainer}>
+          <Column justifyContent="space-between" style={{ flex: 1 }} >
+
+            <View>
+              <Row>
+                <Text style={styles.tips}>Total Assets(ETH) </Text>
+                <TouchableOpacity
+                  onPress={() => this.props.changeBalanceVisibility()}
+                >
+                  <Image
+                    source={
+                      this.props.balanceVisibility ? require('../../../../images/eye_icon.png')
+                        : require('../../../../images/eye_closed_icon.png')}
+                    style={[styles.image, styles.eyeSize]}
+                  />
+                </TouchableOpacity>
+              </Row>
+              <Text style={styles.assets}>
+                {this.props.balanceVisibility ? wallet.balance.toFixed(6) : '********'}
+
+              </Text>
+              <Row>
+                <Text style={styles.tips}>
+                  {this.props.balanceVisibility ? `${ALMOST_EQUAL}$${wallet.balanceInUSD}` : `${ALMOST_EQUAL}$*******`}
+                </Text>
+              </Row>
+            </View>
+            <Row
+              onPress={() => { this.setState({ modalVisible: true }); }}
+              alignItems="center"
+            >
+              <Text style={styles.address}> {WalletService.formatAddressLong(wallet.address)}</Text>
+              <Margin margin={12} />
+              <Image
+                source={require('../../../../images/qrcode.png')}
+                style={styles.qrcodeIcon}
+              />
+            </Row>
+          </Column >
         </View>
 
         <AddressModal
           title={'My Address'}
           visible={this.state.modalVisible}
-          address={address}
+          address={wallet.address}
           onClose={(message) => {
             this.setState({ modalVisible: false });
             if (message) {
@@ -97,47 +118,41 @@ const mergeProps = (reduxStatePros, dispatchProps, ownProps) => {
 export default connect(mapReduxStateToProps, mapDispatchToProps, mergeProps)(WalletHeader);
 
 const styles = StyleSheet.create({
-  container: {
+  walletContainer: {
     marginRight: 10,
     marginLeft: 10,
     marginTop: 10,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 32,
     aspectRatio: 16 / 9,
     backgroundColor: '#4B5FFE',
     borderRadius: 8,
     borderWidth: 0,
     borderColor: 'transparent',
   },
-  name: {
-    fontSize: 30,
-    color: 'white',
-    marginLeft: 15,
-  },
   address: {
     fontSize: 12,
-    color: 'white',
-    marginLeft: 15,
-    marginRight: 5,
-    marginTop: 6,
+    color: Colors.subTitle,
   },
   tips: {
-    fontSize: 14,
-    color: 'white',
-    marginLeft: 15,
-    marginTop: 30,
+    fontSize: 12,
+    color: Colors.subTitle,
   },
   assets: {
-    fontSize: 40,
+    fontSize: 48,
+    fontFamily: 'ArialNarrow',
+    fontWeight: '600',
     color: 'white',
-    marginLeft: 15,
-    marginTop: 6,
   },
-  icon: {
-    alignSelf: 'flex-end',
+  image: {
+    flex: 1,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
-  balanceVisibilityIcon: {
-    fontSize: 14,
-    color: '#fff',
+  eyeSize: {
+    width: 16,
+  },
+  qrcodeIcon: {
+    width: 16,
   },
 });

@@ -128,15 +128,7 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
           />
         }
       >
-        <WalletHeader
-          name={this.state.wallet.name}
-          address={this.state.wallet.address}
-          balance={
-            !this.props.balanceVisibility ?
-              '$ ******' :
-              this.state.wallet.ethPrice ? `$ ${this.state.wallet.balanceInUSD}` : '$ --'
-          }
-        />
+        <WalletHeader wallet={this.state.wallet} />
         {!this.state.wallet.ethPrice && !this.state.refreshing &&
           <View >
             <Text numberOfLines={3} style={styles.errorText}>
