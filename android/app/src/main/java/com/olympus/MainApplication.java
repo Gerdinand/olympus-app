@@ -5,6 +5,7 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import co.airbitz.fastcrypto.RNFastCryptoPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
+import io.realm.react.RealmReactPackage;
 import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new RNFastCryptoPackage(),
             new RandomBytesPackage(),
+            new RealmReactPackage(),
             new ReactNativeFingerprintScannerPackage(),
             new RandomBytesPackage(),
             new FIRMessagingPackage(),

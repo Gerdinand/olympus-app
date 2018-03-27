@@ -47,16 +47,19 @@
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		615D6DA6C7EB4413BF995983 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9ED8A7E6298443469DE55D40 /* Foundation.ttf */; };
 		68A170D5CA5A46669F1FD97A /* libRNFastCrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62F5A3304EF74DE994FC983A /* libRNFastCrypto.a */; };
+		6944421017C84AC299EE0000 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 504831D47B6A4656BBE4E54D /* libc++.tbd */; };
 		6C0B81520C2B4DCCBC76036F /* libTcpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B6A04650DBF479BA46C9C73 /* libTcpSockets.a */; };
 		794539DB1A9943E492219D1A /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D2A7DE8BC62B46C8B5172A9E /* FontAwesome.ttf */; };
 		7FA20B1658734421B2390F18 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55F674B22C04491BAADB618D /* EvilIcons.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		90ACB0CF2FB94B74A0219F3B /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12111DE0ED744BCA86B94C2A /* Zocial.ttf */; };
 		A1720A1BECDB4A6EB03C9723 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC81A23093154C3C9138D870 /* libRNRandomBytes.a */; };
+		A86C763701454BB49A149021 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 60939E91A4A44C11B1944004 /* libz.tbd */; };
 		B61C2E109CAC429C91E81A26 /* libRNKeychain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D654B58013944F86B460C887 /* libRNKeychain.a */; };
 		B6E53EF6942346389C37AF19 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9B8DF2B428864FA8A7E535B3 /* Octicons.ttf */; };
 		BCC6337F418A41AEA9ADD9A6 /* libRNFIRMessaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6234AF8AA2D54C509C6647CB /* libRNFIRMessaging.a */; };
 		BFB8222A2059303F00B2191C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFB822082059303D00B2191C /* GoogleService-Info.plist */; };
+		D2057B5887A34ED9BB9C0853 /* libRealmReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDEA8B3F36EA4E0D85DB84D6 /* libRealmReact.a */; };
 		E3B5820742D04159A05CE93A /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDBC35990EE8428383123860 /* libRCTCamera.a */; };
 		E8E4AC9B4EE44E7AA2C32F47 /* libReactNativeFingerprintScanner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79349759818148A69601B4F2 /* libReactNativeFingerprintScanner.a */; };
 		935F30CB4A39431E9A5F1DF6 /* HelveticaNeue-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5586DC54A204823A2048461 /* HelveticaNeue-Bold.ttf */; };
@@ -335,6 +338,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNFIRMessaging;
 		};
+		BFFFD81D20653A3C002A353C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B6DC1CB9E7954021ABE849F7 /* RealmReact.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F60690131CA2766F0003FB26;
+			remoteInfo = RealmReact;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -367,10 +377,12 @@
 		2D02E4901E0B4A5D006451C7 /* Olympus-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Olympus-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		35AF2429CE4178EED68595F9 /* Pods-Olympus.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Olympus.release.xcconfig"; path = "Pods/Target Support Files/Pods-Olympus/Pods-Olympus.release.xcconfig"; sourceTree = "<group>"; };
 		49C000025E384252AB22FD85 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
+		504831D47B6A4656BBE4E54D /* libc++.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		55F674B22C04491BAADB618D /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		561B745C09564B559DE04390 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		57B5CFB675B48455BF4DF50A /* Pods-OlympusTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OlympusTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OlympusTests/Pods-OlympusTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		60939E91A4A44C11B1944004 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		6234AF8AA2D54C509C6647CB /* libRNFIRMessaging.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFIRMessaging.a; sourceTree = "<group>"; };
 		62F5A3304EF74DE994FC983A /* libRNFastCrypto.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFastCrypto.a; sourceTree = "<group>"; };
 		67E19EF46B62A9C5233F7C95 /* Pods-Olympus.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Olympus.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Olympus/Pods-Olympus.debug.xcconfig"; sourceTree = "<group>"; };
@@ -388,6 +400,7 @@
 		A7CD43BA2E1EA7884BC132C2 /* libPods-OlympusTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OlympusTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC81A23093154C3C9138D870 /* libRNRandomBytes.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNRandomBytes.a; sourceTree = "<group>"; };
 		B2CDDF7949CD4EC18BCD9BC3 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
+		B6DC1CB9E7954021ABE849F7 /* RealmReact.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RealmReact.xcodeproj; path = "../node_modules/realm/react-native/ios/RealmReact.xcodeproj"; sourceTree = "<group>"; };
 		BA93218A908442C28F4E6658 /* RNOS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNOS.xcodeproj; path = "../node_modules/react-native-os/ios/RNOS.xcodeproj"; sourceTree = "<group>"; };
 		BBF1FD299E05E265B2DA3EC5 /* libPods-Olympus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Olympus.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC479253DD414D2E847852D0 /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
@@ -402,6 +415,7 @@
 		F362C11CF5124F3C9E0C1FB0 /* RNFIRMessaging.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFIRMessaging.xcodeproj; path = "../node_modules/react-native-fcm/ios/RNFIRMessaging.xcodeproj"; sourceTree = "<group>"; };
 		F7EDBBD62BB440F3991D82F5 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		FBBF1172192941C8A425AD94 /* RCTCamera.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RCTCamera.xcodeproj"; sourceTree = "<group>"; };
+		FDEA8B3F36EA4E0D85DB84D6 /* libRealmReact.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRealmReact.a; sourceTree = "<group>"; };
 		FE8F4D7276C548CABEE87935 /* libUdpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libUdpSockets.a; sourceTree = "<group>"; };
 		C5586DC54A204823A2048461 /* HelveticaNeue-Bold.ttf */ = {isa = PBXFileReference; name = "HelveticaNeue-Bold.ttf"; path = "../assets/fonts/HelveticaNeue-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		2C80A2AC945044379445CB54 /* HelveticaNeue-BoldItalic.ttf */ = {isa = PBXFileReference; name = "HelveticaNeue-BoldItalic.ttf"; path = "../assets/fonts/HelveticaNeue-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
@@ -455,6 +469,9 @@
 				E8E4AC9B4EE44E7AA2C32F47 /* libReactNativeFingerprintScanner.a in Frameworks */,
 				BCC6337F418A41AEA9ADD9A6 /* libRNFIRMessaging.a in Frameworks */,
 				2DD9676AF08490C12FA1BCD8 /* libPods-Olympus.a in Frameworks */,
+				D2057B5887A34ED9BB9C0853 /* libRealmReact.a in Frameworks */,
+				6944421017C84AC299EE0000 /* libc++.tbd in Frameworks */,
+				A86C763701454BB49A149021 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,6 +574,7 @@
 				7F8EAFF8742E4830B32E584D /* libLRDRCTSimpleToast.a */,
 				79349759818148A69601B4F2 /* libReactNativeFingerprintScanner.a */,
 				6234AF8AA2D54C509C6647CB /* libRNFIRMessaging.a */,
+				FDEA8B3F36EA4E0D85DB84D6 /* libRealmReact.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -674,14 +692,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		51DA5E14205B9BDA00DB875B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				51DA5E18205B9BDB00DB875B /* libReactNativeFingerprintScanner.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		302B3F67532EFB9B3C2DFB60 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -691,6 +701,14 @@
 				27AA2FD4EC655DB721C2EE82 /* Pods-OlympusTests.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		51DA5E14205B9BDA00DB875B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				51DA5E18205B9BDB00DB875B /* libReactNativeFingerprintScanner.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
@@ -767,6 +785,7 @@
 				792612EF518349399E38197C /* RNVectorIcons.xcodeproj */,
 				A49829CD2647406DBD8047D1 /* ReactNativeFingerprintScanner.xcodeproj */,
 				F362C11CF5124F3C9E0C1FB0 /* RNFIRMessaging.xcodeproj */,
+				B6DC1CB9E7954021ABE849F7 /* RealmReact.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -812,6 +831,8 @@
 			children = (
 				BBF1FD299E05E265B2DA3EC5 /* libPods-Olympus.a */,
 				A7CD43BA2E1EA7884BC132C2 /* libPods-OlympusTests.a */,
+				504831D47B6A4656BBE4E54D /* libc++.tbd */,
+				60939E91A4A44C11B1944004 /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -820,6 +841,14 @@
 			isa = PBXGroup;
 			children = (
 				BFB82263205930E600B2191C /* libRNFIRMessaging.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BFFFD81A20653A3B002A353C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFFFD81E20653A3C002A353C /* libRealmReact.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1004,6 +1033,10 @@
 				{
 					ProductGroup = 51DA5E14205B9BDA00DB875B /* Products */;
 					ProjectRef = A49829CD2647406DBD8047D1 /* ReactNativeFingerprintScanner.xcodeproj */;
+				},
+				{
+					ProductGroup = BFFFD81A20653A3B002A353C /* Products */;
+					ProjectRef = B6DC1CB9E7954021ABE849F7 /* RealmReact.xcodeproj */;
 				},
 				{
 					ProductGroup = 02B772F12024B06400E2C6DE /* Products */;
@@ -1294,6 +1327,13 @@
 			remoteRef = BFB82262205930E600B2191C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		BFFFD81E20653A3C002A353C /* libRealmReact.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRealmReact.a;
+			remoteRef = BFFFD81D20653A3C002A353C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1568,12 +1608,14 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 				INFOPLIST_FILE = OlympusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1614,12 +1656,14 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 				INFOPLIST_FILE = OlympusTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1663,6 +1707,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 				INFOPLIST_FILE = Olympus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1698,6 +1743,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 				INFOPLIST_FILE = Olympus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1736,11 +1782,13 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 				INFOPLIST_FILE = "Olympus-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1789,11 +1837,13 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 				INFOPLIST_FILE = "Olympus-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1844,6 +1894,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Olympus-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1868,6 +1919,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
