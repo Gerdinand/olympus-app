@@ -17,7 +17,7 @@ export class Wallet {
 
     return {
       ...wallet,
-      txs: [...wallet.txs], // logs is nested array, change in log wont update the wallet
+      txs: [...wallet.txs],
       tokens: [...wallet.tokens],
       pendingTxs: [...wallet.pendingTxs],
     };

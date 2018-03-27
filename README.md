@@ -44,7 +44,7 @@ a). Cant compile with xCode get the error
 ```shell
 // Install pod
 brew install pod
-// Run pod, with VPN
+// Run pod, with international connection (make sure you can connect google)
 pod update
 // Verify
 pod install
