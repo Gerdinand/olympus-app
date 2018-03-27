@@ -1,4 +1,4 @@
 export default {
-    development: { server: 'http://192.168.2.100:8080' },
+    development: { server: 'http://services.aireach.com.cn' },
     production: { server: 'http://services.aireach.com.cn' },
 };
