@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as SytemText, TextProperties } from 'react-native';
+import { Text as SytemText, TextProperties, Platform } from 'react-native';
 
 export class Text extends React.PureComponent<TextProperties> {
 
@@ -8,7 +8,7 @@ export class Text extends React.PureComponent<TextProperties> {
     return (
       <SytemText
         numberOfLines={1}
-        style={[{}, style]}
+        style={[Platform.OS === 'android' ? { fontFamily: 'HelveticaNeue' } : {}, style]}
         {...props}
       >
         {this.props.children}
