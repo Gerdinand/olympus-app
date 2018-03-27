@@ -14,13 +14,12 @@ import {
 import { Provider } from 'react-redux';
 
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
-import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
 import { WalletService, FcmService, MasterDataService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
-import LoginGesture from './Pages/Security/LoginGesture';
+import Login from './Pages/Security/Login';
 import FCM, { FCMEvent } from 'react-native-fcm';
 import { Wallet } from './Models';
 import { store, persistor, AppState as ReducerState } from './reducer';
@@ -110,10 +109,12 @@ const RootNavigation = StackNavigator({
     },
   },
 });
-let FcmNotificationListener;
+
 interface InternalState {
   loading: boolean;
-  isSecurityProtect: boolean;
+  hasGestureProtect: boolean;
+  hasFingerPrintProtect: boolean;
+  userLoged: boolean;
   hasWallet: boolean;
   appState: AppStateStatus;
 
@@ -121,9 +122,10 @@ interface InternalState {
 }
 interface InternalProps {
   wallet: Wallet;
+  gesturePassword: string;
+  fingerprintPassword: boolean;
 }
 class Root extends React.Component<InternalProps, InternalState> {
-
   private toastListener: EmitterSubscription;
   public refs: {
     toast: Toast;
@@ -133,15 +135,24 @@ class Root extends React.Component<InternalProps, InternalState> {
 
     this.state = {
       loading: true,
+      userLoged: false,
       hasWallet: false,
-      isSecurityProtect: false,
+      hasGestureProtect: false,
+      hasFingerPrintProtect: false,
       appState: AppState.currentState,
       token: null,
     };
 
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
+    this.loginSucceed = this.loginSucceed.bind(this);
     // Restore the wallet which came from redux , whatever is null or not.
     WalletService.getInstance().setWallet(props.wallet);
+  }
+
+  public componentWillMount() {
+    this.loadingSecurityProtects();
+
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   public async componentDidMount() {
@@ -149,20 +160,6 @@ class Root extends React.Component<InternalProps, InternalState> {
       this.refs.toast.show(text, DURATION.LENGTH_LONG);
     });
 
-    FingerprintScanner
-      .isSensorAvailable()
-      .then(() => {
-        FingerprintScanner
-          .authenticate({ onAttempt: () => this.setState({ isSecurityProtect: true }) })
-          .then(() => {
-            this.setState({ isSecurityProtect: false });
-          })
-          .catch((error) => {
-            this.setState({ isSecurityProtect: true });
-            console.log(error.message);
-          });
-      })
-      .catch((error) => console.log(error.message));
     // RequestPermissions
     FCM.requestPermissions()
       .then(() => console.log('granted'))
@@ -175,6 +172,7 @@ class Root extends React.Component<InternalProps, InternalState> {
         token,
       });
     });
+
     // RefreshToken
     FCM.on(FCMEvent.RefreshToken, (token) => {
       FcmService.uploadFcmToken(token, this.props.wallet);
@@ -183,7 +181,7 @@ class Root extends React.Component<InternalProps, InternalState> {
       });
     });
     // FcmNotificationListener
-    FcmNotificationListener = FCM.on(FCMEvent.Notification, async (notification) => {
+    FCM.on(FCMEvent.Notification, async (notification) => {
       notification.finish();
       if (!notification.fcm.title || !notification.fcm.title) {
         return;
@@ -210,26 +208,38 @@ class Root extends React.Component<InternalProps, InternalState> {
   }
 
   public componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
     if (this.toastListener) {
       this.toastListener.remove();
     }
-    FingerprintScanner.release();
   }
 
   private _handleAppStateChange(nextAppState) {
-    let isSecurityProtect = false;
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log('App has come to the foreground!');
+    if (this.state.appState.match(/background/) && nextAppState === 'active') {
+      // console.log('App has come to the foreground!');
 
-      isSecurityProtect = true;
+      this.loadingSecurityProtects();
     }
-    this.setState({ appState: nextAppState, isSecurityProtect });
-    FcmNotificationListener.remove();
+    this.setState({ appState: nextAppState });
+  }
+
+  private loginSucceed() {
+    this.setState({ userLoged: true });
+  }
+
+  private loadingSecurityProtects() {
+    // load passwords setting
+    const gesturePassword = this.props.gesturePassword;
+    const fingerprintPassword = this.props.fingerprintPassword;
+    this.setState({
+      hasGestureProtect: gesturePassword != null,
+      hasFingerPrintProtect: fingerprintPassword,
+      userLoged: gesturePassword === null && !fingerprintPassword,
+    });
   }
 
   public render() {
     const hasWallet = this.props.wallet !== null;
-
     return (
       <View style={{ flex: 1, zIndex: 100 }}>
         <StatusBar
@@ -237,22 +247,21 @@ class Root extends React.Component<InternalProps, InternalState> {
           barStyle="dark-content"
         />
         {!hasWallet && <Welcome />}
+        {hasWallet && !this.state.userLoged &&
+          <Login loginSucceed={() => this.loginSucceed()} />}
 
-        {hasWallet && this.state.isSecurityProtect &&
-          <LoginGesture loginSucceed={() => this.setState({ isSecurityProtect: false })} />}
-
-        {hasWallet && !this.state.isSecurityProtect &&
+        {hasWallet && this.state.userLoged &&
           <RootNavigation />}
-
-        < Toast ref="toast" />
+        <Toast ref="toast" />
       </View>
-
     );
   }
 }
 const mapReduxStateToProps = (state: ReducerState) => {
   return {
     wallet: state.wallet.wallet,
+    gesturePassword: state.security.gesture,
+    fingerprintPassword: state.security.fingerprint,
   };
 };
 const RootWithReducer = connect(mapReduxStateToProps, null)(Root);
@@ -265,8 +274,7 @@ class Olympus extends React.PureComponent {
         <PersistGate loading={null} persistor={persistor}>
           <RootWithReducer />
         </PersistGate >
-      </Provider >
-    );
+      </Provider>);
   }
 }
 /* tslint:enable:max-classes-per-file */
