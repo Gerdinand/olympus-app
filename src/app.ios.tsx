@@ -25,7 +25,8 @@ import { store, persistor, AppState as ReducerState } from './reducer';
 import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
 import { Wallet } from './Models';
-import { WalletService } from './Services';
+import { WalletService, MasterDataService } from './Services';
+import Colors from './Constants/Colors';
 
 const TabRoot = TabNavigator({
   WalletTab: {
@@ -79,6 +80,9 @@ const RootNavigation = StackNavigator({
     navigationOptions: {
       headerLeft: null,
       title: 'Wallet Success',
+      headerStyle: { backgroundColor: 'white' },
+      headerTintColor: Colors.navigationHeaderBack,
+      headerTitleStyle: { color: Colors.navigationHeaderTitle },
     },
   },
 });
@@ -113,7 +117,7 @@ class Root extends React.Component<InternalProps, InternalState> {
     WalletService.getInstance().setWallet(props.wallet);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
       this.refs.toast.show(text, DURATION.LENGTH_LONG);
     });
@@ -132,6 +136,8 @@ class Root extends React.Component<InternalProps, InternalState> {
           });
       })
       .catch((error) => console.log(error.message));
+
+    await MasterDataService.get().updateMasterData();
   }
 
   public componentWillUnmount() {

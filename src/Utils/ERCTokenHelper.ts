@@ -1,7 +1,7 @@
 import abiDecoder from 'abi-decoder';
 import * as Constants from '../Constants';
-import { EthereumService } from '../Services';
-import { SupportedTokens } from '../Constants';
+import { EthereumService, MasterDataService } from '../Services';
+import { Token } from '../Models';
 // import SolidityCoder from 'web3/lib/solidity/coder';
 
 abiDecoder.addABI(Constants.KYBER_ABI);
@@ -13,11 +13,13 @@ export const decodeTx = async (tx) => {
       tx.logs = abiDecoder.decodeLogs(receipt.logs).filter((log) => log);
     }
   }
-  tx.input = decodeInput(tx);
+  tx.input = await decodeInput(tx);
 };
 
-export const decodeInput = (tx) => {
+export const decodeInput = async (tx) => {
   const txInput = tx.input;
+  const { supportedTokens } = MasterDataService.get().getMasterData();
+
   if (typeof txInput === 'string') {
     const result = abiDecoder.decodeMethod(txInput);
     if (result) {
@@ -30,8 +32,8 @@ export const decodeInput = (tx) => {
         source = dest = { value: tx.to };
       }
 
-      const srcToken = findToken(source.value);
-      const destToken = findToken(dest.value);
+      const srcToken = findToken(supportedTokens, source.value);
+      const destToken = findToken(supportedTokens, dest.value);
 
       return { srcToken, destToken, amount };
     }
@@ -40,6 +42,6 @@ export const decodeInput = (tx) => {
   return txInput;
 };
 
-export const findToken = (address) => {
-  return SupportedTokens.find((t) => t.address === address);
+export const findToken = (supportedTokens, address): Token => {
+  return supportedTokens.find((t) => t.address === address);
 };

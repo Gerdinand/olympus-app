@@ -10,6 +10,7 @@ export class Wallet {
   public pendingTxs: PendingTx[];
   public tokens: Token[] = [];
   public txs: Tx[] = [];
+  public forceReoload: boolean;
 }
 
 export interface PendingTx { tx: Tx; token: Token; }

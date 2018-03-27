@@ -18,7 +18,7 @@ import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
-import { WalletService, FcmService } from './Services';
+import { WalletService, FcmService, MasterDataService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import LoginGesture from './Pages/Security/LoginGesture';
 // tslint:disable-next-line:max-line-length
@@ -29,6 +29,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
 import WalletSuccess from './Pages/WalletSuccess/WalletSuccess';
 import RealmService from './Services/RealmService';
+import Colors from './Constants/Colors';
 
 const TabRoot = TabNavigator(
   {
@@ -104,6 +105,9 @@ const RootNavigation = StackNavigator({
     navigationOptions: {
       headerLeft: null,
       title: 'Wallet Success',
+      headerStyle: { backgroundColor: 'white' },
+      headerTintColor: Colors.navigationHeaderBack,
+      headerTitleStyle: { color: Colors.navigationHeaderTitle },
     },
   },
 });
@@ -141,7 +145,7 @@ class Root extends React.Component<InternalProps, InternalState> {
     WalletService.getInstance().setWallet(props.wallet);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
       this.refs.toast.show(text, DURATION.LENGTH_LONG);
     });
@@ -202,6 +206,7 @@ class Root extends React.Component<InternalProps, InternalState> {
         console.error(e);
       }
     });
+    await MasterDataService.get().updateMasterData();
 
   }
 
