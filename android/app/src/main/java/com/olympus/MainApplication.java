@@ -3,6 +3,7 @@ package com.olympus;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.realm.react.RealmReactPackage;
 import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
@@ -33,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RealmReactPackage(),
             new ReactNativeFingerprintScannerPackage(),
             new RandomBytesPackage(),
             new FIRMessagingPackage(),
