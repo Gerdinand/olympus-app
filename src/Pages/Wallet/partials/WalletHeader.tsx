@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: 10,
     paddingHorizontal: 24,
-    paddingVertical: 36,
+    paddingVertical: 32,
     aspectRatio: 16 / 9,
     backgroundColor: '#4B5FFE',
     borderRadius: 8,
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   address: {
-    fontSize: 16,
+    fontSize: 12,
     color: Colors.subTitle,
   },
   tips: {
-    fontSize: 16,
+    fontSize: 12,
     color: Colors.subTitle,
   },
   assets: {
