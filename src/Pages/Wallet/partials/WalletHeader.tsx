@@ -78,13 +78,14 @@ class WalletHeader extends React.Component<ReduxProps & InternalProps, InternalS
             >
               <Text style={styles.address}> {WalletService.formatAddressLong(wallet.address)}</Text>
               <Margin margin={12} />
-              <Icon
+              {/* <Icon
                 name="qrcode"
                 color={Colors.subTitle}
                 size={28}
-              />
+              /> */}
               <Image
                 source={require('../../../../images/qrcode.png')}
+                style={styles.qrcodeIcon}
               />
             </Row>
           </Column >
@@ -155,6 +156,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   eyeSize: {
-    width: 20,
+    width: 16,
+  },
+  qrcodeIcon: {
+    width: 16,
+    color: Colors.subTitle,
   },
 });
