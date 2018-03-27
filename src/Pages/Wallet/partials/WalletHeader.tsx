@@ -7,9 +7,7 @@ import {
   DeviceEventEmitter,
 } from 'react-native';
 import { connect } from 'react-redux';
-import {
-  Text,
-} from 'react-native-elements';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
 import { Row, Column, Margin } from '../../_shared/layout';

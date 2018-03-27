@@ -43,6 +43,17 @@
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
+			<key>services.aireach.com.cn</key>
+			<dict>
+				<key>NSAllowsArbitraryLoads</key>
+				<true/>
+				<key>NSAllowsArbitraryLoadsInWebContent</key>
+				<true/>
+				<key>NSAllowsLocalNetworking</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
@@ -62,7 +73,20 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>ArialNarrowBold.ttf</string>
+		<string>HelveticaNeue-Bold.ttf</string>
+		<string>HelveticaNeue-BoldItalic.ttf</string>
+		<string>HelveticaNeue-CondensedBlack.ttf</string>
+		<string>HelveticaNeue-CondensedBold.ttf</string>
+		<string>HelveticaNeue-Italic.ttf</string>
+		<string>HelveticaNeue-Light.ttf</string>
+		<string>HelveticaNeue-LightItalic.ttf</string>
+		<string>HelveticaNeue-Medium.ttf</string>
+		<string>HelveticaNeue-MediumItalic.ttf</string>
+		<string>HelveticaNeue-Thin.ttf</string>
+		<string>HelveticaNeue-ThinItalic.ttf</string>
+		<string>HelveticaNeue-UltraLight.ttf</string>
+		<string>HelveticaNeue-UltraLightItalic.ttf</string>
+		<string>HelveticaNeue.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

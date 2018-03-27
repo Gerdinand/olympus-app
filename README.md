@@ -51,3 +51,8 @@ pod install
 ```
 
 2. Open the project file with xCode `Olympus.xcworkspace`, not `Olympus.xcodeproj`. Run from this one.
+
+## Colors
+
+Through the app in order to keep the same styling, don't hardcode any color, but use the colors
+available in Colors Constant file.

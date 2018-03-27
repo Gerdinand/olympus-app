@@ -6,6 +6,7 @@ export default class WalletActions {
   public static BACKUP_DONE = 'backup_done';
   public static LOGOUT = 'LOGOUT';
   public static UPDATE_WALLET = 'UPDATE_WALLET';
+
   public static setBalanceVisibility() {
     return {
       type: this.BALANCE_VISIBILITY,

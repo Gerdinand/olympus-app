@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   DeviceEventEmitter,
   Clipboard,
   StyleSheet,
@@ -15,7 +14,7 @@ import {
 } from 'react-native-elements';
 
 import { WalletService } from '../../Services';
-import { Hr } from '../_shared/layout';
+import { Hr, Text } from '../_shared/layout';
 
 interface InternalProps {
   navigation: any; // Navigation Object?

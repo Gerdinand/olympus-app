@@ -18,9 +18,11 @@ import { EventRegister } from 'react-native-event-listeners';
 import WalletHeader from './partials/WalletHeader';
 import { WalletService, EthereumService } from '../../Services';
 import { AppState } from '../../reducer';
-import { Wallet } from '../../Models';
-import { Text } from '../_shared/layout/Text';
-
+import { Wallet, Token } from '../../Models';
+import { Text } from '../_shared/layout';
+import _ from 'lodash';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Colors from '../../Constants/Colors';
 interface OwnProps {
   navigation: any;
 
@@ -33,12 +35,24 @@ interface ReduxProps {
 }
 
 interface InternalState {
-  wallet: any; // TODO object?
+  wallet: Wallet;
   refreshing: boolean;
 }
 class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
 
   private walletListener;
+
+  public static navigationOptions = ({ navigation }) => ({
+    title: 'Wallet',
+    headerRight: (
+      <Icon
+        name="ios-add-circle"
+        size={12}
+        color={Colors.buttonBlue}
+        onPress={() => navigation.navigate('AddToken')}
+      />
+    ),
+  })
 
   public constructor(props: ReduxProps & OwnProps) {
     super(props);
@@ -56,7 +70,12 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
   public componentWillMount() {
 
     this.walletListener = EventRegister.addEventListener('wallet.updated', (wallet) => {
-      if (this.state.wallet.length && wallet.txs.length !== this.state.wallet.length) {
+      if (_.isEmpty(wallet)) {
+        DeviceEventEmitter.emit('showToast', 'Synchronization failed.');
+        this.setState({ refreshing: false });
+        return;
+      }
+      if (this.state.wallet.txs.length && wallet.txs.length !== this.state.wallet.txs.length) {
         DeviceEventEmitter.emit('showToast', 'New transaction confirmed.');
       }
       this.setState({ wallet, refreshing: false });
@@ -68,7 +87,15 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
     this.fetchData();
     EthereumService.getInstance().fireTimer();
   }
-
+  public componentWillReceiveProps(_newProps) {
+    // We detect some change in the wallet that require reloading.
+    const wallet = WalletService.getInstance().wallet;
+    if (wallet.forceReoload) {
+      wallet.forceReoload = false;
+      EthereumService.getInstance().sync(wallet);
+      this.setState({ refreshing: true, wallet });
+    }
+  }
   public componentWillUnmount() {
     EthereumService.getInstance().invalidateTimer();
     EventRegister.removeEventListener(this.walletListener);
@@ -90,10 +117,7 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
 
   public render() {
     const { navigation } = this.props;
-    // Safeward, when logout and component didn amount properly
-    if (!this.state.wallet) {
-      return null;
-    }
+
     return (
       <ScrollView
         style={{ backgroundColor: 'white' }}
@@ -104,14 +128,23 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
           />
         }
       >
-        <WalletHeader        />
+        <WalletHeader />
+        {!this.state.wallet.ethPrice && !this.state.refreshing &&
+          <View >
+            <Text numberOfLines={3} style={styles.errorText}>
+              Error updating your wallet, try to refresh or import it one more time.
+              </Text>
+          </View>
+        }
         <List
           style={{ height: 578 }}
           containerStyle={styles.listContainer}
         >
           {this.state.wallet.tokens.filter((token) => !!token).map((token, i) => {
+            const hasRightSubtitle = i === 0 || (token.price === 0 && Token.supportExchange(token));
+
             // Ether and tokens with no price have different style
-            if (i === 0 || token.price === 0) {
+            if (hasRightSubtitle) {
               return (
                 <ListItem
                   key={i}
@@ -146,7 +179,10 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
                 subtitle={
                   <View style={styles.itemFlex}>
                     <Text style={styles.subtitle}>{token.name}</Text>
-                    <Text style={styles.subtitle}>{`1 ETH = ${token.price} ${token.symbol}`}</Text>
+                    <Text style={[styles.subtitle, { textAlign: 'left' }]}>
+                      {!Token.supportExchange(token) && `Exchange not supported`}
+                      {token.price > 0 && `1 ETH = ${token.price} ${token.symbol}`}
+                    </Text>
                   </View>}
                 onPress={() => navigation.navigate('WalletDetail', { token })}
                 containerStyle={styles.itemContainer}
@@ -184,7 +220,9 @@ const styles = StyleSheet.create({
     borderBottomColor: '#999',
   },
   itemFlex: {
-    display: 'flex',
+    flex: 1,
+    display: 'flex'
+    ,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginLeft: 10,
@@ -192,7 +230,7 @@ const styles = StyleSheet.create({
   },
   itemAvatar: {
     backgroundColor: 'white',
-    borderColor: '#999',
+    borderColor: Colors.borderColor,
     borderWidth: 0.5,
     padding: 2,
   },
@@ -203,5 +241,11 @@ const styles = StyleSheet.create({
   subtitle: {
     color: '#999',
     fontSize: 12,
+  },
+  errorText: {
+    padding: 24,
+    color: Colors.errorText,
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
