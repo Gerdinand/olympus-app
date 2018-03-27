@@ -1,6 +1,6 @@
 import * as Realm from 'realm';
 
-const Notification = {
+const NotificationSchema = {
     name: 'Notification',
     properties: {
         title: 'string',
@@ -12,8 +12,8 @@ const Notification = {
     },
 };
 
-const Transation = {
-    name: 'Transation',
+const TransactionSchema = {
+    name: 'Transaction',
     properties: {
         sender: 'string',
         receiver: 'string',
@@ -28,7 +28,7 @@ export default class RealmService {
     public static async instance() {
         if (!this.realm) {
             this.realm = await Realm.open({
-                schema: [Notification, Transation],
+                schema: [NotificationSchema, TransactionSchema],
             });
             return this.realm;
         }

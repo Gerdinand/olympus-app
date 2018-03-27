@@ -21,7 +21,6 @@ import Welcome from './Pages/Welcome/Welcome';
 import { WalletService, FcmService, MasterDataService } from './Services';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import LoginGesture from './Pages/Security/LoginGesture';
-// tslint:disable-next-line:max-line-length
 import FCM, { FCMEvent } from 'react-native-fcm';
 import { Wallet } from './Models';
 import { store, persistor, AppState as ReducerState } from './reducer';
@@ -194,12 +193,12 @@ class Root extends React.Component<InternalProps, InternalState> {
         const realm = await RealmService.instance();
         realm.write(() => {
           realm.create('Notification', notification.fcm);
-          realm.create('Transation', {
+          realm.create('Transaction', {
             sender: notification.sender,
             receiver: notification.receiver,
             symbol: notification.symbol,
             amount: +notification.amount,
-            stringify: notification.transation,
+            stringify: notification.transaction,
           });
         });
       } catch (e) {
