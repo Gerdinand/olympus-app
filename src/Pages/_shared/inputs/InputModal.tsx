@@ -2,7 +2,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   GestureResponderEvent,
   StyleSheet,
 } from 'react-native';
@@ -10,6 +9,7 @@ import {
   FormInput,
   FormValidationMessage,
 } from 'react-native-elements';
+import { Text } from '../../_shared/layout';
 
 interface InternalProps {
   onInputChangeText: (text: string) => void;

@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, DeviceEventEmitter } from 'react-native';
+import { View, DeviceEventEmitter } from 'react-native';
 import Colors from '../../../Constants/Colors';
 import ImportPasswordInput from './ImportPasswordInput';
 import AgreeWithTerms from './AgreeWithTerms';
 import { Button } from 'react-native-elements';
 import styles from './PrivateKeyImportStyle';
 import { EthereumService, WalletService } from '../../../Services';
-import { Margin } from '../../_shared/layout';
+import { Margin, TextInput } from '../../_shared/layout';
 
 interface InternalProps {
   setWallet: (wallet: Wallet) => void;

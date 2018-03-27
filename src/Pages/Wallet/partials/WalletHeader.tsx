@@ -7,12 +7,10 @@ import {
   DeviceEventEmitter,
 } from 'react-native';
 import { connect } from 'react-redux';
-import {
-  Text,
-} from 'react-native-elements';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
-import { Row } from '../../_shared/layout';
+import { Row, Text } from '../../_shared/layout';
 import { AppState } from '../../../reducer';
 import WalletActions from '../WalletActions';
 

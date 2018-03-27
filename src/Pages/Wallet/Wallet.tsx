@@ -19,7 +19,7 @@ import WalletHeader from './partials/WalletHeader';
 import { WalletService, EthereumService } from '../../Services';
 import { AppState } from '../../reducer';
 import { Wallet, Token } from '../../Models';
-import { Text } from '../_shared/layout/Text';
+import { Text } from '../_shared/layout';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Colors from '../../Constants/Colors';

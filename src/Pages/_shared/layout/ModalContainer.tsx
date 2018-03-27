@@ -13,7 +13,7 @@ interface ModalContainerProps {
 const DEFAULT_WIDTH = Dimensions.get('window').width;
 const DEFAULT_HEIGHT = 250;
 
-export default class ModalContainer extends Component<ModalContainerProps> {
+export class ModalContainer extends Component<ModalContainerProps> {
 
   constructor(props) {
     super(props);

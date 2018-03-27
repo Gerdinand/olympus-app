@@ -4,7 +4,7 @@ import React from 'react';
 import {
   ScrollView,
 } from 'react-native';
-import { Text } from '../_shared/layout/Text';
+import { Text, Margin } from '../_shared/layout';
 import { connect } from 'react-redux';
 import WalletActions from '../Wallet/WalletActions';
 import { Wallet } from '../../Models';
@@ -13,7 +13,6 @@ import MnemonicImport from './partials/MnemonicImport';
 import PrivateKeyImport from './partials/PrivateKeyImport';
 import KeystoreWallet from './partials/KeystoreImport';
 import styles from './ImportWalletStyle';
-import { Margin } from '../_shared/layout';
 
 interface InternalState {
   activeTab: ImportWalletTabs;

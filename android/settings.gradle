@@ -1,5 +1,8 @@
 rootProject.name = 'Olympus'
-
+include ':react-native-safe-crypto'
+project(':react-native-safe-crypto').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-safe-crypto/android')
+include ':react-native-randombytes'
+project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-randombytes/android')
 include ':realm'
 project(':realm').projectDir = new File(rootProject.projectDir, '../node_modules/realm/android')
 include ':react-native-fingerprint-scanner'
