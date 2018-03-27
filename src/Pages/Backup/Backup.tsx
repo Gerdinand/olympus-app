@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   DeviceEventEmitter,
   Clipboard,
   StyleSheet,
@@ -16,6 +15,7 @@ import {
 
 import { WalletService } from '../../Services';
 import { Hr } from '../_shared/layout';
+import { Text } from '../_shared/layout/Text';
 
 interface InternalProps {
   navigation: any; // Navigation Object?
