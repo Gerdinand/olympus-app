@@ -5,12 +5,13 @@ import {
   ScrollView,
   Linking,
   View,
-  // ActionSheetIOS,
+  Platform,
 } from 'react-native';
 import {
   List,
   ListItem,
 } from 'react-native-elements';
+import FingerprintScanner from 'react-native-fingerprint-scanner';
 import { connect } from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
 
@@ -65,7 +66,11 @@ interface ReduxProps {
   logout: () => void;
 }
 
-class MeView extends React.Component<InternalProps & ReduxProps> {
+interface InternalState {
+  hasSensor: boolean;
+}
+
+class MeView extends React.Component<InternalProps & ReduxProps, InternalState> {
 
   public refs = {
     actionSheet: ActionSheet,
@@ -73,6 +78,25 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
 
   public constructor(props) {
     super(props);
+
+    this.state = { hasSensor: false };
+  }
+
+  public async componentDidMount() {
+    try {
+      await FingerprintScanner.isSensorAvailable();
+      this.setState({ hasSensor: true });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  public componentWillUnmount() {
+    if (Platform.OS === 'ios') {
+      //
+    } else if (Platform.OS === 'android') {
+      FingerprintScanner.release();
+    }
   }
 
   public onPress(list, index) {
@@ -93,7 +117,7 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
       if (index === 0) {
         this.props.navigation.navigate('SetGesture');
       } else if (index === 1) {
-        // to do
+        this.props.navigation.navigate('SetFingerprint');
       }
     } else if (list === list4) {
       if (index === 0) {
@@ -178,7 +202,7 @@ class MeView extends React.Component<InternalProps & ReduxProps> {
         <List>
           {
             list3.map((l, i) => (
-              <ListItem
+              (i !== 1 || this.state.hasSensor) && <ListItem
                 key={i}
                 leftIcon={l.icon}
                 title={l.title}

@@ -6,6 +6,7 @@ import {
   View,
   Image,
   DeviceEventEmitter,
+  StatusBar,
   EmitterSubscription,
   AppState,
   AppStateStatus,
@@ -13,14 +14,12 @@ import {
 import { Provider } from 'react-redux';
 
 import { TabNavigator, StackNavigator } from 'react-navigation';
-import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import { WalletTab, MarketTab, MeTab } from './Navigators';
 import Welcome from './Pages/Welcome/Welcome';
 import Toast, { DURATION } from 'react-native-easy-toast';
-import LoginGesture from './Pages/Security/LoginGesture';
+import Login from './Pages/Security/Login';
 import WalletSuccess from './Pages/WalletSuccess/WalletSuccess';
-
 import { store, persistor, AppState as ReducerState } from './reducer';
 import { PersistGate } from 'redux-persist/integration/react';
 import { connect } from 'react-redux';
@@ -88,10 +87,14 @@ const RootNavigation = StackNavigator({
 });
 interface InternalProps {
   wallet: Wallet;
+  gesturePassword: string;
+  fingerprintPassword: boolean;
 }
 interface InternalState {
   loading: boolean;
-  isSecurityProtect: boolean;
+  hasGestureProtect: boolean;
+  hasFingerPrintProtect: boolean;
+  userLoged: boolean;
   hasWallet: boolean;
   appState: AppStateStatus;
 }
@@ -108,34 +111,27 @@ class Root extends React.Component<InternalProps, InternalState> {
 
     this.state = {
       loading: true,
+      userLoged: false,
       hasWallet: false,
-      isSecurityProtect: false,
+      hasGestureProtect: false,
+      hasFingerPrintProtect: false,
       appState: AppState.currentState,
     };
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
+    this.loginSucceed = this.loginSucceed.bind(this);
     // Restore the wallet which came from redux , whatever is null or not.
     WalletService.getInstance().setWallet(props.wallet);
+  }
+
+  public componentWillMount() {
+    this.loadingSecurityProtects();
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   public async componentDidMount() {
     this.toastListener = DeviceEventEmitter.addListener('showToast', (text) => {
       this.refs.toast.show(text, DURATION.LENGTH_LONG);
     });
-
-    FingerprintScanner
-      .isSensorAvailable()
-      .then(() => {
-        FingerprintScanner
-          .authenticate({ description: 'Scan your fingerprint on the device scanner to continue' })
-          .then(() => {
-            this.setState({ isSecurityProtect: false });
-          })
-          .catch((error) => {
-            this.setState({ isSecurityProtect: true });
-            console.log(error.message);
-          });
-      })
-      .catch((error) => console.log(error.message));
 
     await MasterDataService.get().updateMasterData();
   }
@@ -146,26 +142,45 @@ class Root extends React.Component<InternalProps, InternalState> {
     }
   }
   private _handleAppStateChange(nextAppState) {
-    let isSecurityProtect = false;
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log('App has come to the foreground!');
+    if (this.state.appState.match(/background/)
+      && nextAppState === 'active') {
+      // console.log('App has come to the foreground!');
 
-      isSecurityProtect = true;
+      this.loadingSecurityProtects();
     }
-    this.setState({ appState: nextAppState, isSecurityProtect });
+
+    this.setState({ appState: nextAppState });
+  }
+
+  private loadingSecurityProtects() {
+    // load passwords setting
+    const gesturePassword = this.props.gesturePassword;
+    const fingerprintPassword = this.props.fingerprintPassword;
+    this.setState({
+      hasGestureProtect: gesturePassword != null,
+      hasFingerPrintProtect: fingerprintPassword,
+      userLoged: gesturePassword === null && !fingerprintPassword,
+    });
+  }
+
+  private loginSucceed() {
+    this.setState({ userLoged: true });
   }
 
   public render() {
     const hasWallet = this.props.wallet !== null;
     return (
       <View style={{ flex: 1, zIndex: 100 }}>
-
+        <StatusBar
+          backgroundColor="white"
+          barStyle="dark-content"
+        />
         {!hasWallet && <Welcome />}
 
-        {hasWallet && this.state.isSecurityProtect &&
-          <LoginGesture loginSucceed={() => this.setState({ isSecurityProtect: false })} />}
+        {hasWallet && !this.state.userLoged &&
+          <Login loginSucceed={() => this.loginSucceed()} />}
 
-        {hasWallet && !this.state.isSecurityProtect &&
+        {hasWallet && this.state.userLoged &&
           <RootNavigation />}
 
         <Toast ref="toast" />
@@ -176,6 +191,8 @@ class Root extends React.Component<InternalProps, InternalState> {
 const mapReduxStateToProps = (state: ReducerState) => {
   return {
     wallet: state.wallet.wallet,
+    gesturePassword: state.security.gesture,
+    fingerprintPassword: state.security.fingerprint,
   };
 };
 const RootWithReducer = connect(mapReduxStateToProps, null)(Root);
