@@ -33,3 +33,21 @@ npm i --save-dev mvayngrib/rn-nodeify
 // MVP iOS only
 react-native run-ios
 ```
+
+## Troublesome
+
+a). Cant compile with xCode get the error
+
+`library not found for -lGoogleToolboxForMac clang: error: linker command failed with exit code 1 (use -v to see invocation)]`
+
+1. Install pod
+```shell
+// Install pod
+brew install pod
+// Run pod, with VPN
+pod update
+// Verify
+pod install
+```
+
+2. Open the project file with xCode `Olympus.xcworkspace`, not `Olympus.xcodeproj`. Run from this one.
