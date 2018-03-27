@@ -5,6 +5,7 @@ import { StackNavigator } from 'react-navigation';
 import MeView from '../Pages/Me/Me';
 import Backup from '../Pages/Backup/Backup';
 import SetGesture from '../Pages/Security/SetGesture';
+import SetFingerprint from '../Pages/Security/SetFingerprint';
 import Colors from '../Constants/Colors';
 
 const MeScreen = ({ navigation }) => (
@@ -17,6 +18,10 @@ const BackupScreen = ({ navigation }) => (
 
 const SetGestureScreen = ({ navigation }) => (
   <SetGesture navigation={navigation} />
+);
+
+const SetFingerprintScreen = ({ navigation }) => (
+  <SetFingerprint navigation={navigation} />
 );
 
 const MeTab = StackNavigator({
@@ -39,6 +44,13 @@ const MeTab = StackNavigator({
     path: 'setgesture',
     navigationOptions: () => ({
       title: 'Set Gesture',
+    }),
+  },
+  SetFingerprint: {
+    screen: SetFingerprintScreen,
+    path: 'setFingerprint',
+    navigationOptions: () => ({
+      title: 'Set Fingerprint',
     }),
   },
 }, {
