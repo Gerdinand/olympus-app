@@ -5,9 +5,8 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import { Text } from '../../_shared/layout/Text';
 import style from './ImportWalletHeaderStyle';
-import { Margin, Row } from '../../_shared/layout';
+import { Margin, Row, Text } from '../../_shared/layout';
 interface InternalState {
   activeTab: ImportWalletTabs;
 }

@@ -9,7 +9,7 @@ import {
   FormInput,
   FormValidationMessage,
 } from 'react-native-elements';
-import { Text } from '../../_shared/layout/Text';
+import { Text } from '../../_shared/layout';
 
 interface InternalProps {
   onInputChangeText: (text: string) => void;

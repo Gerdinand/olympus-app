@@ -1,9 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Text } from '../../_shared/layout/Text';
 import CheckBox from 'react-native-checkbox';
 import styles from './AgreeWithTermsStyle';
-import { Margin, Row } from '../../_shared/layout';
+import { Text, Margin, Row } from '../../_shared/layout';
 interface InternalProps {
   toggleAgreed: () => void;
 }

@@ -1,8 +1,8 @@
 import '../../shim.js';
 
 import React from 'react';
-import { Button, TextInput, StyleSheet, View } from 'react-native';
-import { Text } from '../../_shared/layout/Text';
+import { Button, StyleSheet, View } from 'react-native';
+import { Text, TextInput } from '../../_shared/layout/';
 
 import ethW from 'ethereumjs-wallet-react-native';
 import Tx from 'ethereumjs-tx';

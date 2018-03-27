@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Colors from '../../../Constants/Colors';
-import { TextInput, TouchableOpacity, Image, ViewStyle } from 'react-native';
+import { TouchableOpacity, Image, ViewStyle } from 'react-native';
 
 import styles from './ImportPasswordInputStyle';
-import { Row } from '../../_shared/layout';
+import { Row, TextInput } from '../../_shared/layout';
 
 interface InternalProps {
   onTextChange: (password: string) => void;

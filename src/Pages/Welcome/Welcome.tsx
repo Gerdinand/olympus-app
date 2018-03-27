@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-native-elements';
 import { StackNavigator } from 'react-navigation';
-import { Text } from '../_shared/layout/Text';
+import { Text } from '../_shared/layout';
 
 import CreateWalletView from '../CreateWallet/CreateWallet';
 import ImportWalletView from '../ImportWallet/ImportWallet';

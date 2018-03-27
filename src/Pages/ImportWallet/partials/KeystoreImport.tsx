@@ -1,8 +1,8 @@
 'use strict';
 
 import React from 'react';
-import { View, DeviceEventEmitter, TextInput } from 'react-native';
-import { Text } from '../../_shared/layout/Text';
+import { View, DeviceEventEmitter } from 'react-native';
+import { Text, TextInput, Margin } from '../../_shared/layout';
 import { Button } from 'react-native-elements';
 import { WalletService, EthereumService } from '../../../Services';
 import { Wallet } from '../../../Models';
@@ -10,7 +10,6 @@ import Colors from '../../../Constants/Colors';
 import ImportPasswordInput from './ImportPasswordInput';
 import AgreeWithTerms from './AgreeWithTerms';
 import styles from './KeystoreImportStyle';
-import { Margin } from '../../_shared/layout';
 interface InternalProps {
   setWallet: (wallet: Wallet) => void;
 }

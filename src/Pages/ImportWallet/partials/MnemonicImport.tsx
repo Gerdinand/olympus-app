@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { Wallet } from '../../../Models';
-import { View, TextInput, TouchableOpacity, Image, DeviceEventEmitter } from 'react-native';
-import { Text } from '../../_shared/layout/Text';
+import { View, TouchableOpacity, Image, DeviceEventEmitter } from 'react-native';
 
 import { Button } from 'react-native-elements';
 import styles from './MnemonicImportStyle';
@@ -12,10 +11,9 @@ import Colors from '../../../Constants/Colors';
 import bip39 from 'react-native-bip39';
 import hdkey from 'ethereumjs-wallet-react-native/hdkey';
 import { WalletService, EthereumService } from '../../../Services';
-import ModalContainer from '../../_shared/layout/ModalContainer';
 import AgreeWithTerms from './AgreeWithTerms';
 import ImportPasswordInput from './ImportPasswordInput';
-import { Margin, Column, Row } from '../../_shared/layout';
+import { Margin, Column, Row, Text, TextInput, ModalContainer } from '../../_shared/layout';
 
 // Derive PATH should be the following:
 // https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#path-levels.
