@@ -5,6 +5,8 @@ import {
   StyleSheet,
   View,
   DeviceEventEmitter,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -49,12 +51,16 @@ class WalletHeader extends React.Component<ReduxProps & InternalProps, InternalS
             <View>
               <Row>
                 <Text style={styles.tips}>Total Assets(ETH) </Text>
-                <Icon
-                  size={16}
-                  color="white"
-                  name={this.props.balanceVisibility ? 'eye' : 'eye-slash'}
+                <TouchableOpacity
                   onPress={() => this.props.changeBalanceVisibility()}
-                />
+                >
+                  <Image
+                    source={
+                      this.props.balanceVisibility ? require('../../../../images/eye_icon.png')
+                        : require('../../../../images/eye_closed_icon.jpg')}
+                    style={[styles.image, styles.eyeSize]}
+                  />
+                </TouchableOpacity>
               </Row>
               <Text style={styles.assets}>
                 {this.props.balanceVisibility ? wallet.balance.toFixed(6) : '********'}
@@ -76,6 +82,9 @@ class WalletHeader extends React.Component<ReduxProps & InternalProps, InternalS
                 name="qrcode"
                 color={Colors.subTitle}
                 size={28}
+              />
+              <Image
+                source={require('../../../../images/qrcode.png')}
               />
             </Row>
           </Column >
@@ -140,5 +149,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
   },
-
+  image: {
+    flex: 1,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
+  eyeSize: {
+    width: 20,
+  },
 });
