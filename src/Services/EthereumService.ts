@@ -228,7 +228,7 @@ export class EthereumService {
       if (!this.intervalID) {
         return {};
       }
-      EventRegister.emit('wallet.updated', wallet);
+      EventRegister.emit('wallet.updated', Wallet.cloneWallet(wallet));
       // We inform to redux that the wallet has been updated also
       store.dispatch(WalletActions.updateWalletRedux(wallet));
     } catch (e) {

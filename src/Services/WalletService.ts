@@ -144,6 +144,9 @@ export class WalletService {
   public static formatAddress(address: string) {
     return address.replace(/(0x.{6}).{29}/, '$1****');
   }
+  public static formatAddressLong(address: string) {
+    return address.replace(/(0x.{11}).{21}/, '$1****');
+  }
   public async recoverFromPrivateKey(privateKey, newPassword) {
     const wallet = EthJs.fromPrivateKey(Buffer.from(privateKey, 'hex'));
     const json = await wallet.toV3(newPassword, V3_WALLET_CRYPTO_OPTS);

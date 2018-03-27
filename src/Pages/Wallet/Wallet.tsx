@@ -128,7 +128,7 @@ class WalletView extends React.Component<ReduxProps & OwnProps, InternalState> {
           />
         }
       >
-        <WalletHeader />
+        <WalletHeader wallet={this.state.wallet} />
         {!this.state.wallet.ethPrice && !this.state.refreshing &&
           <View >
             <Text numberOfLines={3} style={styles.errorText}>

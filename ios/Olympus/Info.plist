@@ -87,6 +87,10 @@
 		<string>HelveticaNeue-UltraLight.ttf</string>
 		<string>HelveticaNeue-UltraLightItalic.ttf</string>
 		<string>HelveticaNeue.ttf</string>
+		<string>ArialNarrow-Bold-Italic.ttf</string>
+		<string>ArialNarrow-Bold.ttf</string>
+		<string>ArialNarrow-Italic.ttf</string>
+		<string>ArialNarrow.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

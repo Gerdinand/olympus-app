@@ -28,21 +28,10 @@ export const walletReducer = (state: WalletState = initialWalletState, action) =
     case WalletActions.LOGOUT: return initialWalletState;
 
     case WalletActions.UPDATE_WALLET: {
-      return { ...state, wallet: cloneWallet(action.payload) };
+      return { ...state, wallet: Wallet.cloneWallet(action.payload) };
     }
 
     default:
       return state;
   }
-};
-
-const cloneWallet = (wallet: Wallet): Wallet => {
-  if (!wallet) { return null; }
-
-  return {
-    ...wallet,
-    txs: [...wallet.txs], // logs is nested array, change in log wont update the wallet
-    tokens: [...wallet.tokens],
-    pendingTxs: [...wallet.pendingTxs],
-  };
 };

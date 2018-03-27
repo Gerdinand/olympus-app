@@ -52,7 +52,11 @@ pod install
 
 2. Open the project file with xCode `Olympus.xcworkspace`, not `Olympus.xcodeproj`. Run from this one.
 
-## Colors
+## LAYOUT
+
+ - Colors
 
 Through the app in order to keep the same styling, don't hardcode any color, but use the colors
 available in Colors Constant file.
+
+- In order to keep consitency in the fonts, use Text and TextInput form layout border.

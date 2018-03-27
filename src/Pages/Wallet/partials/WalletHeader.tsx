@@ -10,12 +10,17 @@ import { connect } from 'react-redux';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
-import { Row, Column, Margin } from '../../_shared/layout';
+import { Row, Column, Margin, Text } from '../../_shared/layout';
 import { AppState } from '../../../reducer';
 import WalletActions from '../WalletActions';
 import { WalletService } from '../../../Services';
 import Colors from '../../../Constants/Colors';
+import { Wallet } from '../../../Models';
 
+const ALMOST_EQUAL = '\u2248';
+interface InternalProps {
+  wallet: Wallet;
+}
 interface ReduxProps {
   balanceVisibility: boolean;
   changeBalanceVisibility: () => void;
@@ -23,7 +28,7 @@ interface ReduxProps {
 interface InternalState {
   modalVisible: boolean;
 }
-class WalletHeader extends React.Component<ReduxProps, InternalState> {
+class WalletHeader extends React.Component<ReduxProps & InternalProps, InternalState> {
 
   public constructor(props) {
     super(props);
@@ -33,7 +38,7 @@ class WalletHeader extends React.Component<ReduxProps, InternalState> {
   }
 
   public render() {
-    const wallet = WalletService.getInstance().wallet;
+    const wallet = this.props.wallet;
 
     return (
       <View style={{ backgroundColor: 'transparent' }}>
@@ -45,7 +50,7 @@ class WalletHeader extends React.Component<ReduxProps, InternalState> {
               <Row>
                 <Text style={styles.tips}>Total Assets(ETH) </Text>
                 <Icon
-                  size={14}
+                  size={16}
                   color="white"
                   name={this.props.balanceVisibility ? 'eye' : 'eye-slash'}
                   onPress={() => this.props.changeBalanceVisibility()}
@@ -57,7 +62,7 @@ class WalletHeader extends React.Component<ReduxProps, InternalState> {
               </Text>
               <Row>
                 <Text style={styles.tips}>
-                  {this.props.balanceVisibility ? `\u2245$${wallet.balanceInUSD}` : '\u2245$*******'}
+                  {this.props.balanceVisibility ? `${ALMOST_EQUAL}$${wallet.balanceInUSD}` : `${ALMOST_EQUAL}$*******`}
                 </Text>
               </Row>
             </View>
@@ -65,7 +70,7 @@ class WalletHeader extends React.Component<ReduxProps, InternalState> {
               onPress={() => { this.setState({ modalVisible: true }); }}
               alignItems="center"
             >
-              <Text style={styles.address}> {WalletService.formatAddress(wallet.address)}</Text>
+              <Text style={styles.address}> {WalletService.formatAddressLong(wallet.address)}</Text>
               <Margin margin={12} />
               <Icon
                 name="qrcode"
@@ -122,17 +127,17 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   address: {
-    fontSize: 12,
+    fontSize: 16,
     color: Colors.subTitle,
   },
   tips: {
-    fontSize: 14,
+    fontSize: 16,
     color: Colors.subTitle,
   },
   assets: {
-    fontSize: 40,
-    fontFamily: 'ArialNarrowBold',
-    fontWeight: 'bold',
+    fontSize: 48,
+    fontFamily: 'ArialNarrow',
+    fontWeight: '600',
     color: 'white',
   },
 
