@@ -64,7 +64,7 @@ export default class ImportPasswordInput extends React.Component<InternalProps, 
           <Image
             source={
               this.state.passwordSecure ? require('../../../../images/eye_icon.png')
-                : require('../../../../images/eye_closed_icon.jpg')}
+                : require('../../../../images/eye_closed_icon.png')}
             style={[styles.image, styles.eyeSize]}
           />
         </TouchableOpacity>

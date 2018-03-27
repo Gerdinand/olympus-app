@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { AddressModal } from '../../WalletDetail/partials/AddressModal';
 import { Row, Column, Margin, Text } from '../../_shared/layout';
 import { AppState } from '../../../reducer';
@@ -57,7 +56,7 @@ class WalletHeader extends React.Component<ReduxProps & InternalProps, InternalS
                   <Image
                     source={
                       this.props.balanceVisibility ? require('../../../../images/eye_icon.png')
-                        : require('../../../../images/eye_closed_icon.jpg')}
+                        : require('../../../../images/eye_closed_icon.png')}
                     style={[styles.image, styles.eyeSize]}
                   />
                 </TouchableOpacity>
@@ -78,11 +77,6 @@ class WalletHeader extends React.Component<ReduxProps & InternalProps, InternalS
             >
               <Text style={styles.address}> {WalletService.formatAddressLong(wallet.address)}</Text>
               <Margin margin={12} />
-              {/* <Icon
-                name="qrcode"
-                color={Colors.subTitle}
-                size={28}
-              /> */}
               <Image
                 source={require('../../../../images/qrcode.png')}
                 style={styles.qrcodeIcon}
@@ -160,6 +154,5 @@ const styles = StyleSheet.create({
   },
   qrcodeIcon: {
     width: 16,
-    color: Colors.subTitle,
   },
 });
